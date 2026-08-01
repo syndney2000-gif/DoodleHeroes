@@ -1,10 +1,11 @@
 /* Doodle Heroes — service worker */
-const CACHE = 'doodle-heroes-v2';
+const CACHE = 'doodle-heroes-v3';
 /* Extensionless paths only. Cloudflare Pages 307s /index.html -> / and
    /guide.html -> /guide, and cache.addAll rejects on a redirected response —
    which would silently take out the whole precache, offline support with it. */
 const ASSETS = [
   './',
+  './play',
   './guide',
   './drawing-tips',
   './parents',
@@ -60,7 +61,7 @@ self.addEventListener('fetch', (e) => {
           return resp;
         })
         .catch(() =>
-          caches.match(e.request).then((c) => c || caches.match('./'))
+          caches.match(e.request).then((c) => c || caches.match('./play'))
         )
     );
     return;

@@ -2,7 +2,7 @@
   "name": "Doodle Heroes",
   "short_name": "Doodle Heroes",
   "description": "Draw your own hero and watch them leap, bonk, and collect stars in a side-scrolling adventure!",
-  "start_url": "./",
+  "start_url": "./play",
   "scope": "./",
   "display": "fullscreen",
   "display_override": ["fullscreen", "standalone"],

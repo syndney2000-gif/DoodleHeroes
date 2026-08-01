@@ -3,13 +3,15 @@
 A kids' game where you doodle a hero and that exact drawing becomes the playable character in a side-scrolling adventure.
 
 ## Files
-- `index.html` — the game
 - `manifest.webmanifest` — app metadata
 - `sw.js` — service worker (offline support)
 - `icons/*.png` — 6 app icons
 - `generate_icons.py` — regenerate icons (optional, only if you want to customize)
 
-### Content pages
+### Pages
+- `index.html` — landing page: the game framed in a stage (iframe of `/play`),
+  ads outside the frame, content below
+- `play.html` — the fullscreen game itself, ad-free. PWA `start_url`.
 - `guide.html` — how to play
 - `drawing-tips.html` — drawing tips
 - `parents.html` — for parents & teachers
@@ -20,10 +22,17 @@ A kids' game where you doodle a hero and that exact drawing becomes the playable
 
 ## Advertising
 
-**Ads run on the content pages only. The game carries none** — no banners over the
-play area, no interstitials, nothing mis-tappable mid-jump. This is deliberate:
-ads on the fullscreen game shell are what triggered AdSense's "Google-served ads on
-screens without publisher-content" policy violation.
+Every page carries ads **except `play.html`**, which must stay ad-free — a
+fullscreen game canvas running ads is exactly what triggered AdSense's
+"Google-served ads on screens without publisher-content" violation.
+
+`index.html` monetises the landing page compliantly by putting the game in a
+framed stage (an iframe of `/play`) with real content around it and ads outside
+the frame. Do not move an ad inside the stage, and do not add the ad script to
+`play.html`.
+
+Serving different content to Googlebot than to users is cloaking — so if you ever
+make ads conditional, key it off `display-mode`, not user agent.
 
 The site is treated as child-directed throughout. Every page with ads sets, *before*
 the AdSense script loads:

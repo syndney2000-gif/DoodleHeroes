@@ -184,6 +184,46 @@ th,td{
 th{ font-weight:700; }
 .scroll-x{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
 
+/* ---------- game stage ----------
+   The game runs in an iframe so it keeps its own fullscreen layout and its
+   own viewport maths, untouched. Ads live outside this frame, never over it. */
+
+.stage-wrap{ margin:26px 0 30px; }
+
+.stage{
+  position:relative;
+  border:4px solid var(--ink);
+  border-radius:20px;
+  box-shadow:7px 8px 0 var(--shadow);
+  overflow:hidden;
+  background:var(--bg);
+  aspect-ratio:16/10;
+  max-height:min(72vh,620px);
+}
+.stage iframe{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+.stage-actions{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:12px;
+  margin-top:14px;
+}
+.stage-note{
+  font-size:14px;
+  color:var(--ink-soft);
+  opacity:0.85;
+}
+
+@media (max-width:640px){
+  .stage{ aspect-ratio:3/4; max-height:74vh; }
+}
+
 /* ---------- ads ---------- */
 
 .ad-slot{

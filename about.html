@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About Doodle Heroes — How It Was Built and Why</title>
+<meta name="description" content="Doodle Heroes is a free browser game where your drawing becomes the character. How it works under the hood, why it has no accounts or servers, and how to get in touch.">
+<link rel="canonical" href="https://doodleheros.com/about.html">
+<link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#FFF4D6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<script>
+  (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds = 1;
+  (adsbygoogle = window.adsbygoogle || []).tagForChildDirectedTreatment = 1;
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2838226413097378"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="./">Doodle <span>Heroes</span></a>
+    <nav>
+      <a href="./">Play</a>
+      <a href="guide.html">How to Play</a>
+      <a href="drawing-tips.html">Drawing Tips</a>
+      <a href="parents.html">For Parents</a>
+      <a href="about.html" aria-current="page">About</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<h1>About Doodle Heroes</h1>
+<p class="lede">A free browser game built on one idea: the thing you scribble in ten seconds should be the thing you then have to keep alive.</p>
+<p class="updated">Last updated 1 August 2026</p>
+
+<h2>The idea</h2>
+
+<p>Most drawing games for children put the drawing somewhere off to the side. You colour something in, it gets a sticker, and the actual game happens elsewhere. The drawing is decoration.</p>
+
+<p>Doodle Heroes inverts that. Your drawing is not decorated, scored, or judged — it is loaded straight into the game as the player character, exactly as you drew it, wobbles and all. The connection between "I made this" and "I am now playing this" is about two seconds long, and that gap is the whole point.</p>
+
+<p>It also means the game cannot really be won or lost at the drawing stage. A masterpiece and a single blob are both completely valid heroes. The blob is arguably better, since it is <a href="drawing-tips.html">harder to hit</a>.</p>
+
+<h2>How it works</h2>
+
+<p>The whole game is one HTML file. No framework, no build step, no bundler, no dependencies beyond two web fonts.</p>
+
+<p>When you finish drawing, the game reads the pixels off the drawing canvas, scans for anything you actually painted, and crops to a tight box around your marks. That cropped image becomes a sprite, scaled to a fixed height with its proportions preserved — which is why a wide drawing produces a wide, harder-to-play hero. The run itself is a normal game loop on a second canvas: gravity, a scrolling world, and collision boxes.</p>
+
+<p>Sound is generated on the fly with the Web Audio API rather than loaded from files, so the jumps and star pickups are synthesised tones — that is why the game weighs almost nothing and works instantly offline. On phones, short vibrations accompany jumps, hits and pickups, and the screen is kept awake during play.</p>
+
+<p>A service worker caches the game on first visit, so after that it runs with no network connection at all and can be installed to a home screen like a native app.</p>
+
+<h2>There is no server</h2>
+
+<p>This is worth stating plainly because it is unusual. Doodle Heroes has no backend. There is no database, no account system, no analytics, and no telemetry of any kind. The site is static files on a CDN.</p>
+
+<p>Nothing you draw is uploaded, because there is nowhere to upload it to. We do not know how many stars you collected, what you drew, or that you were here at all. See the <a href="privacy.html">privacy policy</a> for the full detail, including what the ads on these written pages do involve.</p>
+
+<p>The cost of that design is real: your heroes are not saved, and there is no leaderboard. We think it is worth it for a game aimed at children.</p>
+
+<h2>Why there are ads on some pages</h2>
+
+<p>A domain and hosting cost money, and the game is free with nothing for sale in it. The written pages — this one, the guide, the drawing tips, the parents' page — carry Google AdSense, and that pays for the rest.</p>
+
+<p><strong>The game itself carries no ads.</strong> No banners over the play area, no interstitial between runs, no rewarded video, and nothing that can be mis-tapped while jumping. Ads sit on prose pages where they belong, are labelled as advertisements, are non-personalised, and the site is tagged for child-directed treatment. The <a href="parents.html">parents' page</a> covers this in more detail.</p>
+
+<h2>Accessibility and support</h2>
+
+<p>The game needs a single input and no precision aiming — anywhere on the screen is the jump button. It works with touch, mouse, or the <span class="key">Space</span> and <span class="key">↑</span> keys, which means it is playable with most switch and adaptive controllers that map to a key press.</p>
+
+<p>Sound can be turned off entirely with the speaker button on the title screen, and nothing in the game depends on hearing it. There are no flashing-light effects. Colour is never the only way information is conveyed — hearts empty out visually rather than changing hue.</p>
+
+<p>It runs in any modern browser on phones, tablets, laptops and desktops. There is no minimum spec worth mentioning; if the device can open a web page, it can run this.</p>
+
+<h2>Contact</h2>
+
+<p>Bug reports, questions, accessibility problems, and complaints about an ad appearing somewhere it should not are all welcome.</p>
+
+<div class="card">
+  <h3>Get in touch</h3>
+  <p>Email: <a href="mailto:hello@doodleheros.com">hello@doodleheros.com</a></p>
+  <p>We read everything, and we reply to most things. If you are reporting a bug, telling us the device and browser you used helps enormously.</p>
+</div>
+
+<hr>
+
+<p><a class="btn play" href="./">Play Doodle Heroes ▶</a></p>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav>
+      <a href="./">Play</a>
+      <a href="guide.html">How to Play</a>
+      <a href="drawing-tips.html">Drawing Tips</a>
+      <a href="parents.html">For Parents</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+    <p>Doodle Heroes — draw a hero, then play as it. Free, offline-capable, and nothing you draw ever leaves your device.</p>
+  </div>
+</footer>
+
+</body>
+</html>

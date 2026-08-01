@@ -1,8 +1,14 @@
 /* Doodle Heroes — service worker */
-const CACHE = 'doodle-heroes-v1';
+const CACHE = 'doodle-heroes-v2';
 const ASSETS = [
   './',
   './index.html',
+  './guide.html',
+  './drawing-tips.html',
+  './parents.html',
+  './about.html',
+  './privacy.html',
+  './assets/site.css',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -31,14 +37,40 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
 
+  const url = new URL(e.request.url);
+  const sameOrigin = url.origin === self.location.origin;
+  const isGFonts = /fonts\.(googleapis|gstatic)\.com$/.test(url.hostname);
+
+  /* Ad traffic must always go straight to the network, never through us. */
+  if (!sameOrigin && !isGFonts) return;
+
+  /* Pages: network first, so a published fix reaches people on their next
+     visit instead of waiting for a cached copy to turn over. Falls back to
+     the cache when offline. */
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .then((resp) => {
+          if (resp && resp.ok) {
+            const clone = resp.clone();
+            caches.open(CACHE).then((c) => c.put(e.request, clone));
+          }
+          return resp;
+        })
+        .catch(() =>
+          caches.match(e.request).then((c) => c || caches.match('./index.html'))
+        )
+    );
+    return;
+  }
+
+  /* Everything else (css, icons, fonts): cache first, refreshed in the
+     background for next time. */
   e.respondWith(
     caches.match(e.request).then((cached) => {
       const network = fetch(e.request)
         .then((resp) => {
-          const url = new URL(e.request.url);
-          const sameOrigin = url.origin === self.location.origin;
-          const isGFonts = /fonts\.(googleapis|gstatic)\.com$/.test(url.hostname);
-          if (resp && resp.ok && (sameOrigin || isGFonts)) {
+          if (resp && resp.ok) {
             const clone = resp.clone();
             caches.open(CACHE).then((c) => c.put(e.request, clone));
           }

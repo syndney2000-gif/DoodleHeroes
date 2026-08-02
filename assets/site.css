@@ -261,6 +261,17 @@ th{ font-weight:700; }
 .step .fill-ink{ fill:var(--ink); stroke:none; }
 .step .fill-new{ fill:var(--red); stroke:none; }
 
+.steplist{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:16px;
+  box-shadow:5px 6px 0 var(--shadow);
+  padding:20px 22px 20px 42px;
+  margin:24px 0 26px;
+}
+.steplist li{ margin-bottom:12px; }
+.steplist li:last-child{ margin-bottom:0; }
+
 .tut-list{ list-style:none; margin-left:0; }
 .tut-list li{
   border-bottom:2px solid var(--rule);

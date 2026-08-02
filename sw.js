@@ -1,5 +1,5 @@
 /* Doodle Heroes — service worker */
-const CACHE = 'doodle-heroes-v3';
+const CACHE = 'doodle-heroes-v4';
 /* Extensionless paths only. Cloudflare Pages 307s /index.html -> / and
    /guide.html -> /guide, and cache.addAll rejects on a redirected response —
    which would silently take out the whole precache, offline support with it. */
@@ -8,6 +8,12 @@ const ASSETS = [
   './play',
   './guide',
   './drawing-tips',
+  './draw',
+  './how-to-draw-a-cat',
+  './how-to-draw-a-dragon',
+  './how-to-draw-a-rocket',
+  './how-to-draw-a-robot',
+  './how-to-draw-a-dinosaur',
   './parents',
   './about',
   './privacy',

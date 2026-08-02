@@ -224,6 +224,60 @@ th{ font-weight:700; }
   .stage{ aspect-ratio:3/4; max-height:74vh; }
 }
 
+/* ---------- tutorial steps ----------
+   Each step is an inline SVG: everything drawn so far in ink, the stroke
+   you add this step in red. No external images, so they work offline. */
+
+.steps{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:16px;
+  margin:24px 0 26px;
+}
+.step{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:14px;
+  box-shadow:4px 5px 0 var(--shadow);
+  padding:10px 12px 12px;
+}
+.step svg{
+  display:block;
+  width:100%;
+  height:auto;
+  margin-bottom:6px;
+}
+.step figcaption{
+  font-size:14px;
+  line-height:1.45;
+  color:var(--ink-soft);
+}
+.step figcaption strong{ color:var(--ink); }
+
+.step .guide{ fill:none; stroke:var(--ink); stroke-width:2.5;
+  stroke-linecap:round; stroke-linejoin:round; }
+.step .new{ fill:none; stroke:var(--red); stroke-width:3.5;
+  stroke-linecap:round; stroke-linejoin:round; }
+.step .fill-ink{ fill:var(--ink); stroke:none; }
+.step .fill-new{ fill:var(--red); stroke:none; }
+
+.tut-list{ list-style:none; margin-left:0; }
+.tut-list li{
+  border-bottom:2px solid var(--rule);
+  padding-bottom:12px;
+  margin-bottom:12px;
+}
+.tut-list li:last-child{ border-bottom:0; }
+.tut-list a{ font-size:19px; font-weight:600; }
+.tut-list p{ margin:4px 0 0; font-size:15px; color:var(--ink-soft); }
+
+.meta{
+  display:flex; flex-wrap:wrap; gap:6px 18px;
+  font-size:14px; color:var(--ink-soft);
+  margin-bottom:24px;
+}
+.meta span{ white-space:nowrap; }
+
 /* ---------- ads ---------- */
 
 .ad-slot{

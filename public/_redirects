@@ -1,0 +1,8 @@
+# Pages from the old drawing-game site. Each points at the closest page that
+# exists now so old links and bookmarks still land somewhere useful.
+/play                 /island-sketch          301
+/guide                /island-sketch          301
+/draw                 /guides                 301
+/drawing-tips         /guides                 301
+/how-to-draw-*        /guides                 301
+/parents              /about                  301

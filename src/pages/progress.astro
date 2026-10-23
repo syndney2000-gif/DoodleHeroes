@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base
+  title="Your progress"
+  description="See which Doodle Heroes puzzles you've solved and reset your saved progress."
+  ads={false}
+  noindex
+>
+  <h1>Your progress</h1>
+  <p class="lede">Progress is saved only in this browser, on this device. Nothing is sent to us, and clearing your browser’s site data removes it too.</p>
+
+  <div id="summary"><p class="muted">Loading…</p></div>
+
+  <h2>Start over</h2>
+  <p>Reset clears every saved board, star and best time on this device. It can’t be undone.</p>
+  <p><button class="btn secondary" type="button" id="reset">Reset all progress</button></p>
+  <p id="reset-status" role="status" aria-live="polite"></p>
+</Base>
+
+<script>
+  import { clearAll, results } from '../lib/storage';
+  import { allPuzzles } from '../games/nonogram/puzzles';
+  import { formatTime } from '../games/nonogram/board';
+
+  function render() {
+    const done = results();
+    const el = document.getElementById('summary')!;
+    const solved = allPuzzles.filter((p) => done[`island-sketch/${p.id}`]);
+    const stars = solved.reduce((n, p) => n + done[`island-sketch/${p.id}`].stars, 0);
+    el.textContent = '';
+    const h = document.createElement('h2');
+    h.textContent = 'Island Sketch';
+    const p = document.createElement('p');
+    p.textContent = `${solved.length} of ${allPuzzles.length} sketches solved · ${stars} of ${allPuzzles.length * 3} stars`;
+    el.append(h, p);
+    if (!solved.length) return;
+    const table = document.createElement('table');
+    table.innerHTML = '<thead><tr><th>Sketch</th><th>Stars</th><th>Best time</th></tr></thead>';
+    const body = document.createElement('tbody');
+    for (const puzzle of solved) {
+      const r = done[`island-sketch/${puzzle.id}`];
+      const row = document.createElement('tr');
+      for (const text of [puzzle.title, '★'.repeat(r.stars) + '☆'.repeat(3 - r.stars), formatTime(r.seconds)]) {
+        const td = document.createElement('td');
+        td.textContent = text;
+        row.append(td);
+      }
+      body.append(row);
+    }
+    table.append(body);
+    el.append(table);
+  }
+
+  render();
+  document.getElementById('reset')!.addEventListener('click', () => {
+    if (!confirm('Reset all saved progress on this device?')) return;
+    clearAll();
+    render();
+    document.getElementById('reset-status')!.textContent = 'All progress cleared.';
+  });
+</script>

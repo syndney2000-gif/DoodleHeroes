@@ -1,0 +1,94 @@
+---
+import Base from '../../layouts/Base.astro';
+import LineExample from '../../components/LineExample.astro';
+import MiniBoard from '../../components/MiniBoard.astro';
+import { findPuzzle } from '../../games/nonogram/puzzles';
+import { cluesFor } from '../../games/nonogram/solver';
+
+const sun = findPuzzle('sun')!;
+const sc = cluesFor(sun.solution);
+---
+<Base
+  title="Picture logic for beginners: the overlap rule and more"
+  description="Learn to solve picture logic puzzles (nonograms) without guessing. The overlap rule, full lines, finished lines and edges, each shown on a real board."
+  section="guides"
+>
+  <p class="eyebrow">Island Sketch guide · beginner</p>
+  <h1>Picture logic for beginners</h1>
+  <p class="lede">Four techniques solve most small and medium picture logic puzzles. Each one looks at a single row or column, works out what must be true, and hands that information to the lines crossing it.</p>
+
+  <p>If you haven’t played yet, skim <a href="/island-sketch#rules">the rules</a> first. In the diagrams below, a dark square is filled, a small ✕ is a square known to be empty, and a <span class="teal">teal</span> square or cross is something the technique has just worked out.</p>
+
+  <h2 id="overlap">1. The overlap rule</h2>
+  <p>Picture a single block of 7 in a row of 10 squares. Push it as far left as it will go, and it covers squares 1–7. Push it as far right, and it covers squares 4–10. Wherever it really sits, it must cover the squares common to both positions: 4, 5, 6 and 7.</p>
+  <LineExample clue={[7]} before="??????????" label="A clue of 7 in ten squares">
+    A 7 in ten squares: the middle four are filled whatever happens.
+  </LineExample>
+  <p>A quick way to count: subtract the block from the line length to get the <strong>slack</strong> (here 10 − 7 = 3). The block has that much room to move, so it fills <em>block − slack</em> squares in the middle: 7 − 3 = 4. A block that’s no bigger than the slack gives nothing — a 5 in ten squares has slack 5, and 5 − 5 = 0.</p>
+
+  <h3>Overlap with several blocks</h3>
+  <p>The same idea works when a clue has more than one number. Add the blocks plus one gap between each pair to get the shortest space the clue can fit in. For <strong>3 4</strong> that’s 3 + 1 + 4 = 8. In ten squares the slack is 2, so every block bigger than 2 gets some filled squares: the 3 gets one (3 − 2) and the 4 gets two (4 − 2).</p>
+  <LineExample clue={[3, 4]} before="??????????" label="A clue of 3 4 in ten squares">
+    <strong>3 4</strong> in ten squares, slack 2. The 3 fixes square 3; the 4 fixes squares 7 and 8.
+  </LineExample>
+  <p>This is why the first move in almost every puzzle is to look for the line with the biggest clue compared to its length.</p>
+
+  <h2 id="full">2. Full lines</h2>
+  <p>When the slack is zero the clue fits in exactly one way, so the whole line can be filled in at once, gaps included.</p>
+  <LineExample clue={[2, 2]} before="?????" label="A clue of 2 2 in five squares">
+    2 + 1 + 2 = 5: the clue exactly fills the line.
+  </LineExample>
+  <LineExample clue={[1, 1, 1]} before="?????" label="A clue of 1 1 1 in five squares">
+    1 + 1 + 1 + 1 + 1 = 5: alternating filled and empty.
+  </LineExample>
+  <p>A clue of <strong>0</strong> is a full line too — a full line of crosses.</p>
+
+  <h2 id="finished">3. Cross off finished lines</h2>
+  <p>Once a line contains every block its clue asks for, every other square in it must be empty. Crossing them straight away matters: those crosses are information for the columns that run through them.</p>
+  <LineExample clue={[2]} before="???##?????" label="A clue of 2 with both squares already filled">
+    The 2 is already in place, so the other eight squares are crossed.
+  </LineExample>
+
+  <h2 id="edges">4. Work from the edges</h2>
+  <p>The edge of the board is a wall. If the first square of a line is filled, it has to be the start of the first block — there’s nowhere further left for that block to begin. So the whole block can be drawn in, and the square after it crossed.</p>
+  <LineExample clue={[3]} before="#?????????" label="A clue of 3 with the first square filled">
+    The filled edge square starts the 3. Draw it, and the rest of the line is empty.
+  </LineExample>
+  <LineExample clue={[2, 3]} before="#?????????" label="A clue of 2 3 with the first square filled">
+    With <strong>2 3</strong>, the edge square starts the 2, so square 3 is the gap. The 3 is still free to move in the rest.
+  </LineExample>
+  <p>A filled square <em>near</em> the edge helps too. If square 2 is filled in a <strong>3</strong>, the block covers square 2, so it can’t reach past square 4. That fills square 3 and crosses everything from 5 on.</p>
+  <LineExample clue={[3]} before="?#????????" label="A clue of 3 with the second square filled">
+    The 3 must include square 2, so it lies somewhere in squares 1–4.
+  </LineExample>
+
+  <h2 id="flow">Putting it together: back and forth</h2>
+  <p>None of these techniques solves a puzzle alone. The real engine is that every square belongs to one row <em>and</em> one column: something you prove in a row becomes a fresh clue for a column, which proves something for another row, and so on.</p>
+  <p>Take the first sketch, “Morning Sun”. Three of its rows are full lines: rows 1 and 5 (<strong>1 1 1</strong>) and row 3 (<strong>5</strong>). Fill them in, gaps and all.</p>
+  <div class="figs">
+    <figure>
+      <MiniBoard rows={sc.rows} cols={sc.cols} state={['#x#x#', '?????', '#####', '?????', '#x#x#']} fresh={['*****', '', '*****', '', '*****']} label="Morning Sun with rows 1, 3 and 5 filled in" cell={30} />
+      <figcaption>Step 1: three full lines, including the crosses between the 1s.</figcaption>
+    </figure>
+    <figure>
+      <MiniBoard rows={sc.rows} cols={sc.cols} state={['#x#x#', 'x###x', '#####', 'x###x', '#x#x#']} fresh={['', '*****', '', '*****']} highlight={{ kind: 'col', index: 1 }} label="Morning Sun solved from the columns" cell={30} />
+      <figcaption>Step 2: now read the columns. Column 2 (<strong>3</strong>) has crosses in rows 1 and 5, so its 3 can only be rows 2–4. Column 1 (<strong>1 1 1</strong>) already has its three 1s, so rows 2 and 4 are crossed.</figcaption>
+    </figure>
+  </div>
+  <p>The same reasoning finishes columns 3, 4 and 5, and the sun is done. The rows handed information to the columns — in particular, the crosses did. Try it yourself: <a href="/island-sketch/play?p=sun">play Morning Sun</a>.</p>
+
+  <h2 id="routine">A routine for any new puzzle</h2>
+  <ol>
+    <li>Scan every row and column for full lines and big overlaps. Fill what you can.</li>
+    <li>Cross off any line that’s now finished.</li>
+    <li>Look at lines that touch your new squares, especially ones with a filled square at or near an edge.</li>
+    <li>Repeat. When a pass finds nothing new, it’s time for the <a href="/guides/nonogram-advanced">advanced techniques</a>.</li>
+  </ol>
+  <p class="note">Every Island Sketch puzzle can be finished with these steps plus the advanced ones. If you ever feel you must guess, there’s a deduction you haven’t spotted yet — that’s exactly what the Hint button finds for you.</p>
+
+  <p>Next: <a href="/guides/nonogram-advanced">Advanced picture logic</a> · <a href="/walkthroughs/the-lighthouse">Walkthrough: The Lighthouse</a></p>
+</Base>
+
+<style>
+  .teal{ color:var(--teal); font-weight:600; }
+</style>

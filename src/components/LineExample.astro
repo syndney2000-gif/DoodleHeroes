@@ -1,0 +1,31 @@
+---
+/* One line before and after a deduction. The "after" row is computed by the
+   real line solver at build time, so a guide can never show a wrong step. */
+import MiniBoard from './MiniBoard.astro';
+import { EMPTY, FILLED, UNKNOWN, solveLine, type Cell } from '../games/nonogram/solver';
+
+interface Props {
+  clue: number[];
+  /** '#' filled, 'x' crossed, '?' unknown. */
+  before: string;
+  label: string;
+}
+
+const { clue, before, label } = Astro.props;
+const toCells = (s: string): Cell[] => [...s].map((ch) => (ch === '#' ? FILLED : ch === 'x' ? EMPTY : UNKNOWN));
+const solved = solveLine(clue, toCells(before));
+if (!solved) throw new Error(`LineExample: clue ${clue} cannot fit ${before}`);
+const after = solved.map((v) => (v === FILLED ? '#' : v === EMPTY ? 'x' : '?')).join('');
+const fresh = [...after].map((ch, i) => (ch !== before[i] ? '*' : '.')).join('');
+---
+<figure class="line-example">
+  <div class="le-row"><span class="le-tag">Before</span><MiniBoard rows={[clue]} state={[before]} label={`${label}, before`} /></div>
+  <div class="le-row"><span class="le-tag">After</span><MiniBoard rows={[clue]} state={[after]} fresh={[fresh]} label={`${label}, after`} /></div>
+  <figcaption><slot /></figcaption>
+</figure>
+
+<style>
+  .line-example{ background:var(--paper); border:2px solid var(--rule); border-radius:12px; padding:12px 14px; }
+  .le-row{ display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .le-tag{ width:52px; flex:none; font-size:14px; color:var(--ink-soft); }
+</style>

@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import LineExample from '../../components/LineExample.astro';
+---
+<Base
+  title="Advanced picture logic: reach, gaps and matching blocks"
+  description="Techniques for harder picture logic puzzles (nonograms): out-of-reach squares, gaps too small for a block, splitting lines with crosses, and working out which block a filled square belongs to."
+  section="guides"
+>
+  <p class="eyebrow">Island Sketch guide · advanced</p>
+  <h1>Advanced picture logic</h1>
+  <p class="lede">On bigger boards the overlap rule runs dry quickly. What keeps you going is reasoning about squares you’ve <em>already</em> marked: how far a block can reach from them, where it can’t fit, and which block each one belongs to.</p>
+
+  <p>This guide builds on <a href="/guides/nonogram-basics">the beginner’s guide</a>. As before, <span class="teal">teal</span> marks show what each technique has just worked out, and every example line was checked by the same solver that powers the Hint button.</p>
+
+  <h2 id="reach">1. Out of reach</h2>
+  <p>A block that must cover a known filled square can only stretch so far from it. With a clue of <strong>2</strong> and square 4 filled, the 2 is either squares 3–4 or 4–5. Squares 1, 2, 6 and 7 are out of its reach, and since there’s no other block, they’re empty.</p>
+  <LineExample clue={[2]} before="???#???" label="A clue of 2 with the fourth square filled">
+    The 2 must touch square 4, so it lives inside squares 3–5.
+  </LineExample>
+  <p>The same works for longer blocks: a 3 covering square 3 can reach no further right than square 5.</p>
+  <LineExample clue={[3]} before="??#???????" label="A clue of 3 with the third square filled">
+    The 3 includes square 3, so squares 6–10 are out of reach.
+  </LineExample>
+
+  <h2 id="gaps">2. Gaps too small to use</h2>
+  <p>Crosses chop a line into separate gaps. A block can’t span a cross, so any gap shorter than the smallest block that could go there must be empty.</p>
+  <LineExample clue={[3]} before="x??x??????" label="A clue of 3 with crosses at squares 1 and 4">
+    Squares 2–3 form a gap of two. A 3 can’t fit, so they’re crossed.
+  </LineExample>
+
+  <h2 id="split">3. Split the line, then overlap again</h2>
+  <p>Once you know which gap a block must go in, treat that gap as a short line of its own and apply the overlap rule inside it. Here the crosses leave gaps of 2, 5 and 1 squares. Only the gap of five can hold a 4, so the other two are crossed — and a 4 in a space of five has slack 1, so three of its squares are certain.</p>
+  <LineExample clue={[4]} before="??x?????x?" label="A clue of 4 with crosses at squares 3 and 9">
+    The 4 must sit in squares 4–8. Overlap inside that gap fills 5, 6 and 7.
+  </LineExample>
+  <p>This is the move that breaks most “stuck” positions on 15 × 15 boards: a single cross from a column can turn a hopeless row into a short line with a big overlap.</p>
+
+  <h2 id="which-block">4. Which block is this?</h2>
+  <p>When a line has several blocks, the most powerful question you can ask about a filled square is “which block does it belong to?” Often only one answer works.</p>
+
+  <h3>Runs that are too long</h3>
+  <p>Two filled squares side by side can’t be part of a block of 1. In a <strong>3 1</strong> line with squares 5 and 6 filled, they must belong to the 3. The 3 comes first, so nothing can sit to the left of it — and as it must include 5 and 6, it starts at square 4 at the earliest.</p>
+  <LineExample clue={[3, 1]} before="????##????" label="A clue of 3 1 with squares 5 and 6 filled">
+    The pair belongs to the 3, which begins at square 4 or 5. Squares 1–3 are empty.
+  </LineExample>
+
+  <h3>Squares too far apart</h3>
+  <p>Two filled squares more than a block’s length apart can’t be in the same block. In a <strong>1 3</strong> line with squares 3 and 9 filled, they’re six apart, so they must be different blocks. The first must be the 1 and the second part of the 3 — the other way round would leave the 3 before the 1.</p>
+  <LineExample clue={[1, 3]} before="??#?????#?" label="A clue of 1 3 with squares 3 and 9 filled">
+    Square 3 is the 1, so its neighbours and everything before it are empty. The 3 includes square 9, which also fixes square 8 and rules out 5 and 6.
+  </LineExample>
+
+  <h3>Putting both together</h3>
+  <p>With <strong>1 2</strong> and squares 2, 8 and 9 filled, the pair 8–9 can only be the 2. That fixes the 2 exactly, so squares 7 and 10 are its borders. Square 2 is then the 1, and every other square is empty.</p>
+  <LineExample clue={[1, 2]} before="?#?????##?" label="A clue of 1 2 with squares 2, 8 and 9 filled">
+    Every block is accounted for, so the line is finished.
+  </LineExample>
+
+  <h2 id="general">The rule behind every technique</h2>
+  <p>All of these are shortcuts for one idea: <strong>imagine every way the clue could be placed in the line, keeping the squares you already know.</strong> A square that’s filled in all of those arrangements is filled; a square that’s empty in all of them is empty. The overlap rule is that idea for an empty line; “out of reach” and “which block” are that idea once some squares are known.</p>
+  <p>The Island Sketch solver uses exactly this, one line at a time. That’s also how we know every published sketch can be finished without guessing: the solver reaches the end without ever having to try a square and see.</p>
+
+  <h2 id="stuck">When you’re stuck</h2>
+  <ol>
+    <li><strong>Re-read clues next to fresh crosses.</strong> Most missed deductions are in a line that just gained a cross from the other direction.</li>
+    <li><strong>Hunt for short gaps</strong> between crosses or between a cross and the edge.</li>
+    <li><strong>Ask “which block?”</strong> for every filled square in a line with two or more numbers.</li>
+    <li><strong>Press Check</strong> (it’s free) before anything else. A single wrong square can make a line look impossible.</li>
+    <li>If you’re still stuck, a <strong>Hint</strong> points to the line with the next deduction — then you can work out <em>why</em> before pressing again.</li>
+  </ol>
+
+  <p>See all of this in a full solve: <a href="/walkthroughs/the-lighthouse">Walkthrough: The Lighthouse</a>.</p>
+</Base>
+
+<style>
+  .teal{ color:var(--teal); font-weight:600; }
+</style>

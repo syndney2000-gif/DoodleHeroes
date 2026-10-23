@@ -1,0 +1,141 @@
+---
+import Base from '../layouts/Base.astro';
+import MiniBoard from '../components/MiniBoard.astro';
+import { chapters, findPuzzle } from '../games/nonogram/puzzles';
+import { cluesFor } from '../games/nonogram/solver';
+
+const sun = findPuzzle('sun')!;
+const sunClues = cluesFor(sun.solution);
+const blank = (n: number) => Array.from({ length: n }, () => '?'.repeat(n));
+const solvedState = (s: string[]) => s.map((row) => row.replaceAll('.', 'x'));
+---
+<Base
+  title="Island Sketch — picture logic puzzles"
+  description="Island Sketch is a free picture logic puzzle (also called a nonogram). Read the rules with worked examples, learn how hints and stars work, and play 12 hand-drawn island sketches plus a daily challenge."
+  section="island-sketch"
+>
+  <p class="eyebrow">Puzzle 1 of the island</p>
+  <h1>Island Sketch</h1>
+  <p class="lede">Number clues tell you how many squares to fill in each row and column. Work out which ones, and a hand-drawn sketch of the island appears. Every puzzle here can be solved by logic alone — you never need to guess.</p>
+
+  <p class="hero-actions">
+    <a class="btn" href="/island-sketch/play?p=sun">Start with the first sketch ▶</a>
+    <a class="btn secondary" href="/island-sketch/play?p=daily">Today’s daily sketch</a>
+  </p>
+
+  <h2 id="rules">How the puzzle works</h2>
+  <p>The board is a grid of blank squares. Next to each row, and above each column, is a clue made of one or more numbers. Each number is a <strong>block</strong>: a run of filled squares side by side. The clue <strong>3 1</strong> means “a block of three, then later a block of one”, in that order, with at least one empty square between them.</p>
+  <p>Your job is to fill exactly the squares that make every row and every column match its clue at the same time. When they all match, the picture is finished.</p>
+
+  <div class="figs">
+    <figure>
+      <MiniBoard rows={sunClues.rows} cols={sunClues.cols} state={blank(5)} label="An empty five by five board with its clues" cell={30} />
+      <figcaption>The first sketch, “Morning Sun”, before you start. Row 3’s clue is <strong>5</strong>; column 1’s clue is <strong>1 1 1</strong>.</figcaption>
+    </figure>
+    <figure>
+      <MiniBoard rows={sunClues.rows} cols={sunClues.cols} state={solvedState(sun.solution)} label="The same board solved, showing a sun shape" cell={30} />
+      <figcaption>Solved. Check any line: row 1 reads filled, gap, filled, gap, filled — three blocks of one, matching <strong>1 1 1</strong>.</figcaption>
+    </figure>
+  </div>
+
+  <h3>What a clue does and doesn’t tell you</h3>
+  <p>A clue gives the size and order of the blocks, but not where they sit. In a row of six squares, the clue <strong>3 1</strong> fits in three different ways:</p>
+  <figure>
+    <MiniBoard rows={[[3, 1], [3, 1], [3, 1]]} state={['###x#x', '###xx#', 'x###x#']} label="Three rows of six squares, each showing a different placement of a 3 block and a 1 block" cell={28} />
+    <figcaption>All three placements of <strong>3 1</strong> in six squares. Notice the middle two squares of the 3 are filled in every one — that’s the idea behind the most useful technique, the <a href="/guides/nonogram-basics#overlap">overlap rule</a>.</figcaption>
+  </figure>
+  <p>A clue of <strong>0</strong> means the whole line is empty. Blocks never wrap round from one line to the next.</p>
+
+  <h3>Crosses</h3>
+  <p>Marking a square with a cross means “I’ve proved this one is empty.” Crosses aren’t required to finish — the puzzle is solved as soon as the filled squares are right — but they are how you keep track of what you know. Most of the reasoning in harder puzzles comes from crosses: a block can’t sit on top of one, so every cross narrows down where blocks can go.</p>
+
+  <h2 id="puzzles">The sketches</h2>
+  <p>The island map is drawn in three chapters. The squares get smaller and the clues get longer as you go. Solved sketches show your best star rating.</p>
+  {chapters.map((chapter) => (
+    <section class="chapter">
+      <h3>{chapter.title} <small>· {chapter.puzzles[0].solution.length} × {chapter.puzzles[0].solution.length}</small></h3>
+      <p class="muted">{chapter.blurb}</p>
+      <ul class="puzzle-list">
+        {chapter.puzzles.map((p) => (
+          <li>
+            <a href={`/island-sketch/play?p=${p.id}`} data-puzzle={p.id}>
+              <span class="pl-title">{p.title}</span>
+              <span class="pl-stars" aria-label="Not solved yet">☆☆☆</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+  <p><a href="/island-sketch/play?p=daily">The daily sketch</a> is a fresh 10 × 10 puzzle each day, the same for everyone. Daily sketches are random patterns rather than pictures, but every one is checked to make sure it can be solved without guessing.</p>
+
+  <h2 id="controls">Controls</h2>
+  <table>
+    <thead><tr><th>To…</th><th>Touch</th><th>Mouse</th><th>Keyboard</th></tr></thead>
+    <tbody>
+      <tr><td>Fill a square</td><td>Tap (in ■ Fill mode)</td><td>Left-click</td><td><kbd>Space</kbd> or <kbd>F</kbd></td></tr>
+      <tr><td>Cross a square</td><td>Tap (in ✕ Cross mode)</td><td>Right-click or <kbd>Shift</kbd>+click</td><td><kbd>X</kbd></td></tr>
+      <tr><td>Fill or cross a line</td><td>Drag along it</td><td>Drag along it</td><td>—</td></tr>
+      <tr><td>Clear a square</td><td>Tap it again</td><td>Click it again</td><td><kbd>Delete</kbd></td></tr>
+      <tr><td>Move</td><td>—</td><td>—</td><td>Arrow keys</td></tr>
+      <tr><td>Undo</td><td>↶ Undo</td><td>↶ Undo</td><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td></tr>
+    </tbody>
+  </table>
+  <p>A drag only changes squares that are in the same state as the one you started on, so dragging to fill a row won’t wipe out crosses you placed earlier. A clue fades once its line has exactly the right blocks.</p>
+
+  <h2 id="scoring">Check, hints and stars</h2>
+  <p>Each finished sketch earns up to three stars. Your progress is saved in your browser after every move, so you can close the page and come back.</p>
+  <ul>
+    <li><strong>Check</strong> is free. It marks in red any square that disagrees with the solution — a filled square that should be empty, or a cross on a square that should be filled. It never tells you anything new, only whether what you’ve done so far is right.</li>
+    <li><strong>Hint</strong> costs one star per press. The first press points at a row or column where something new can be worked out from its clue and the squares you already have, and says how many squares. Press it again to have those squares filled in. If the board has a mistake, the hint shows the mistake instead, because nothing worked out on top of a wrong square can be trusted.</li>
+    <li><strong>Stars:</strong> three with no hints, two with one hint, one with two or more. The timer is shown for interest only and doesn’t affect stars.</li>
+  </ul>
+  <p>The hint uses exactly the reasoning taught in the guides: it looks at one line at a time and finds squares that are the same in every arrangement of the clue. So if you’re stuck, a hint shows you where a technique applies rather than just handing over the answer.</p>
+
+  <h2 id="difficulty">Difficulty</h2>
+  <table>
+    <thead><tr><th>Chapter</th><th>Board</th><th>What it teaches</th></tr></thead>
+    <tbody>
+      <tr><td>The Shore</td><td>5 × 5</td><td>Reading clues, full lines, the overlap rule, crossing finished lines.</td></tr>
+      <tr><td>Harbour Village</td><td>10 × 10</td><td>Clues with three or four blocks; working from the edges; using crosses to split a line.</td></tr>
+      <tr><td>Cloud Peaks</td><td>15 × 15</td><td>Long chains of deductions that bounce between rows and columns; telling which block a filled square belongs to.</td></tr>
+    </tbody>
+  </table>
+  <p>None of the puzzles need guessing or trial and error. Before a sketch is published it’s run through a solver that only uses one-line reasoning; if that solver can’t finish it, the picture gets redrawn.</p>
+
+  <h2 id="learn">Learn more</h2>
+  <ul>
+    <li><a href="/guides/nonogram-basics">Picture logic for beginners</a> — the overlap rule, full lines and edges, with examples.</li>
+    <li><a href="/guides/nonogram-advanced">Advanced picture logic</a> — reaching from the edge, splitting lines with crosses, and matching filled squares to blocks.</li>
+    <li><a href="/walkthroughs/the-lighthouse">Walkthrough: The Lighthouse</a> — a full 10 × 10 solve, step by step, with every deduction explained.</li>
+  </ul>
+</Base>
+
+<script>
+  import { results } from '../lib/storage';
+  const done = results();
+  for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-puzzle]')) {
+    const r = done[`island-sketch/${link.dataset.puzzle}`];
+    if (!r) continue;
+    const stars = link.querySelector('.pl-stars')!;
+    stars.textContent = '★'.repeat(r.stars) + '☆'.repeat(3 - r.stars);
+    stars.setAttribute('aria-label', `Solved, ${r.stars} of 3 stars`);
+    link.classList.add('solved');
+  }
+</script>
+
+<style>
+  .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+  .chapter h3 small{ font-weight:500; color:var(--ink-soft); }
+  .chapter > p{ margin-bottom:8px; }
+  .puzzle-list{ list-style:none; padding:0; display:grid; gap:10px; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); }
+  .puzzle-list li{ margin:0; }
+  .puzzle-list a{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:10px 14px; min-height:48px; text-decoration:none; color:var(--ink);
+    background:var(--paper); border:2px solid var(--ink); border-radius:12px;
+  }
+  .puzzle-list a:hover{ background:#FFF1C2; }
+  .pl-stars{ color:var(--ink-soft); letter-spacing:2px; white-space:nowrap; }
+  .puzzle-list a.solved .pl-stars{ color:var(--orange); }
+</style>

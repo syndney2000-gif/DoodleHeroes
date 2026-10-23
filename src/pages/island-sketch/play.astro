@@ -1,0 +1,154 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../games/nonogram/board.css';
+---
+<Base
+  title="Play Island Sketch"
+  description="Play Island Sketch, a picture logic puzzle: use the number clues to work out which squares to fill and reveal a hand-drawn island sketch."
+  ads={false}
+  section="island-sketch"
+  wide
+>
+  <p class="eyebrow" id="ns-chapter">Island Sketch</p>
+  <h1 id="ns-title">Island Sketch</h1>
+
+  <noscript>
+    <p class="note">The puzzle needs JavaScript to run. The <a href="/island-sketch">rules and guides</a> work without it.</p>
+  </noscript>
+
+  <div class="ns-play" id="ns-play" hidden>
+    <div class="ns-toolbar" role="toolbar" aria-label="Puzzle tools">
+      <div class="ns-mode" role="group" aria-label="What a tap does">
+        <button class="btn" type="button" data-mode="fill" aria-pressed="true">■ Fill</button>
+        <button class="btn secondary" type="button" data-mode="cross" aria-pressed="false">✕ Cross</button>
+      </div>
+      <div class="ns-actions">
+        <button class="btn secondary" type="button" id="ns-undo">↶ Undo</button>
+        <button class="btn secondary" type="button" id="ns-check">Check</button>
+        <button class="btn secondary" type="button" id="ns-hint">Hint</button>
+        <button class="btn secondary" type="button" id="ns-restart">Restart</button>
+      </div>
+    </div>
+
+    <p class="ns-meta"><span id="ns-time">0:00</span> · <span id="ns-hints">no hints used</span></p>
+
+    <div id="ns-board"></div>
+
+    <p class="ns-status" id="ns-status" role="status" aria-live="polite"></p>
+
+    <section class="card ns-done" id="ns-done" hidden>
+      <h2 id="ns-done-title">Sketch complete!</h2>
+      <p class="ns-stars" id="ns-stars" aria-label=""></p>
+      <p id="ns-done-text"></p>
+      <p id="ns-note" class="muted"></p>
+      <p class="ns-done-actions">
+        <a class="btn" id="ns-next" href="/island-sketch">Next sketch →</a>
+        <a class="btn secondary" href="/island-sketch#puzzles">All sketches</a>
+      </p>
+    </section>
+  </div>
+
+  <div class="card" id="ns-missing" hidden>
+    <h2>That sketch isn’t on the map</h2>
+    <p>The link may be mistyped, or the puzzle may have been renamed. Pick one from the <a href="/island-sketch#puzzles">full list of sketches</a>.</p>
+  </div>
+
+  <section class="ns-help">
+    <h2>Quick controls</h2>
+    <ul>
+      <li><strong>Tap or click</strong> a square to fill it. Drag along a row or column to fill several at once.</li>
+      <li><strong>Cross</strong> squares you know are empty: switch to ✕ Cross, right-click, or hold <kbd>Shift</kbd> while clicking.</li>
+      <li><strong>Keyboard:</strong> arrow keys move, <kbd>Space</kbd> fills, <kbd>X</kbd> crosses, <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes.</li>
+      <li><strong>Check</strong> marks any wrong squares and costs nothing. Each <strong>Hint</strong> costs one star.</li>
+    </ul>
+    <p>New to picture logic? Read <a href="/island-sketch">the rules with worked examples</a>, then <a href="/guides/nonogram-basics">the beginner’s guide</a>.</p>
+  </section>
+</Base>
+
+<script>
+  import { NonogramBoard, formatTime } from '../../games/nonogram/board';
+  import { allPuzzles, chapters, findPuzzle, type Puzzle } from '../../games/nonogram/puzzles';
+  import { dailyPuzzle } from '../../games/nonogram/daily';
+  import { localDateKey } from '../../lib/rng';
+
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const params = new URLSearchParams(location.search);
+  const id = params.get('p') ?? 'sun';
+  const isDaily = id === 'daily';
+  const puzzle: Puzzle | undefined = isDaily ? dailyPuzzle(localDateKey()) : findPuzzle(id);
+
+  if (!puzzle) {
+    $('ns-missing').hidden = false;
+  } else {
+    const chapter = chapters.find((c) => c.puzzles.includes(puzzle));
+    $('ns-chapter').textContent = isDaily ? 'Daily challenge' : `Island Sketch · ${chapter?.title}`;
+    $('ns-title').textContent = puzzle.title;
+    document.title = `${puzzle.title} · Island Sketch · Doodle Heroes`;
+    $('ns-play').hidden = false;
+
+    const status = $('ns-status');
+    const hintsEl = $('ns-hints');
+    const showHints = (n: number) => {
+      hintsEl.textContent = n === 0 ? 'no hints used' : n === 1 ? '1 hint used' : `${n} hints used`;
+    };
+
+    const board = new NonogramBoard($('ns-board'), puzzle, {
+      onStatus(message) { status.textContent = message; showHints(board?.hintCount ?? 0); },
+      onTick(seconds) { $('ns-time').textContent = formatTime(seconds); },
+      onSolved({ stars, seconds, hints }) {
+        showHints(hints);
+        $('ns-time').textContent = formatTime(seconds);
+        $('ns-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+        $('ns-stars').setAttribute('aria-label', `${stars} of 3 stars`);
+        $('ns-done-text').textContent =
+          `Solved in ${formatTime(seconds)} with ${hints === 0 ? 'no hints' : hints === 1 ? '1 hint' : `${hints} hints`}.`;
+        $('ns-note').textContent = puzzle.note;
+        const next = isDaily ? undefined : allPuzzles[allPuzzles.indexOf(puzzle) + 1];
+        const nextLink = $<HTMLAnchorElement>('ns-next');
+        if (next) nextLink.href = `/island-sketch/play?p=${next.id}`;
+        else { nextLink.href = '/island-sketch#puzzles'; nextLink.textContent = 'Back to the map →'; }
+        $('ns-done').hidden = false;
+        status.textContent = `Solved! ${stars} of 3 stars.`;
+        for (const b of document.querySelectorAll<HTMLButtonElement>('.ns-toolbar button')) b.disabled = true;
+      },
+    });
+    showHints(board.hintCount);
+
+    const modeButtons = document.querySelectorAll<HTMLButtonElement>('[data-mode]');
+    for (const btn of modeButtons) {
+      btn.addEventListener('click', () => {
+        board.setMode(btn.dataset.mode as 'fill' | 'cross');
+        for (const b of modeButtons) {
+          const on = b === btn;
+          b.setAttribute('aria-pressed', String(on));
+          b.classList.toggle('secondary', !on);
+        }
+      });
+    }
+    $('ns-undo').addEventListener('click', () => board.undo());
+    $('ns-check').addEventListener('click', () => board.check());
+    $('ns-hint').addEventListener('click', () => board.hint());
+    $('ns-restart').addEventListener('click', () => {
+      if (confirm('Clear the whole board and start this sketch again?')) {
+        board.restart();
+        $('ns-done').hidden = true;
+        for (const b of document.querySelectorAll<HTMLButtonElement>('.ns-toolbar button')) b.disabled = false;
+        showHints(0);
+      }
+    });
+  }
+</script>
+
+<style>
+  .ns-toolbar{ display:flex; flex-wrap:wrap; gap:10px 16px; justify-content:center; margin:6px 0 10px; }
+  .ns-mode, .ns-actions{ display:flex; flex-wrap:wrap; gap:8px; }
+  .ns-toolbar .btn{ font-size:15px; padding:8px 12px; }
+  .ns-toolbar .btn:disabled{ opacity:.45; cursor:default; transform:none; }
+  .ns-meta{ text-align:center; color:var(--ink-soft); font-size:15px; margin-bottom:12px; font-variant-numeric:tabular-nums; }
+  .ns-status{ text-align:center; min-height:1.65em; margin:14px auto; max-width:620px; }
+  .ns-done{ max-width:560px; margin:18px auto; text-align:center; }
+  .ns-done h2{ margin-top:0; }
+  .ns-stars{ font-size:34px; color:var(--orange); letter-spacing:4px; margin:0; }
+  .ns-done-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:12px 0 0; }
+  .ns-help{ max-width:780px; margin:40px auto 0; }
+</style>

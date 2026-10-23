@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import { CONTACT_EMAIL, POLICY_UPDATED } from '../lib/site';
+---
+<Base
+  title="Privacy policy"
+  description="What Doodle Heroes stores, what it doesn't, and how advertising from Google AdSense works on this site."
+>
+  <h1>Privacy policy</h1>
+  <p class="lede">The short version: no accounts, no server-side database, and your puzzle progress never leaves your browser. Pages with written content carry Google AdSense advertising, which involves Google — the details are below.</p>
+  <p class="muted">Last updated {POLICY_UPDATED} · Applies to doodleheros.com</p>
+
+  <h2>1. Who runs this site</h2>
+  <p>Doodle Heroes is an independent puzzle website at doodleheros.com. Questions about this policy or requests about your data can be sent to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+
+  <h2>2. What we collect ourselves</h2>
+  <p>Nothing that identifies you. The site has no accounts, no login, no contact forms, no comments and no server-side database, and we don’t run an analytics package of our own.</p>
+  <p>The site is hosted on Cloudflare Pages. Like any web host, Cloudflare processes the technical information your browser sends to load a page — such as your IP address and browser type — and may keep it briefly in logs for security and abuse prevention. We don’t use that information to identify or profile visitors.</p>
+
+  <h2>3. Progress saved in your browser</h2>
+  <p>To remember your puzzles, the site saves a small amount of data in your browser’s local storage: boards you’ve started, the stars you’ve earned, your best times and how many hints you used. This data stays on your device. It is never sent to us or anyone else, and it contains no personal information.</p>
+  <p>You can view and delete it on the <a href="/progress">progress page</a>, or by clearing site data for doodleheros.com in your browser settings.</p>
+
+  <h2>4. Advertising</h2>
+  <p>Pages with written content — the home page, game overview pages, guides, walkthroughs and pages like this one — show advertising from Google AdSense. The puzzle play screens show no ads.</p>
+  <p>Google, as a third-party vendor, uses cookies and similar technologies to serve ads on this site. Google’s use of advertising cookies enables it and its partners to serve ads based on your visits to this and other websites. When an ad is requested, Google receives information your browser sends, such as your IP address, browser type and the page you’re viewing, and uses it to serve and measure ads and to prevent fraud.</p>
+  <ul>
+    <li>You can turn off personalised advertising in Google’s <a href="https://myadcenter.google.com/" rel="noopener">My Ad Center</a>.</li>
+    <li>You can read how Google uses information from sites that use its services at <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">policies.google.com/technologies/partner-sites</a>.</li>
+    <li>You can opt out of some third-party vendors’ use of cookies for personalised advertising at <a href="https://www.aboutads.info/choices/" rel="noopener">aboutads.info</a>.</li>
+  </ul>
+  <p>If you visit from the European Economic Area, the United Kingdom or Switzerland, you’ll be asked for consent before personalised ads or advertising cookies are used, through Google’s consent message. You can change your choice at any time from the privacy link that message provides.</p>
+
+  <h2>5. Fonts</h2>
+  <p>Pages load the Fredoka and Caveat typefaces from Google Fonts. To deliver them, your browser contacts Google’s servers, which reveals your IP address and browser type to Google. Google states that Google Fonts doesn’t set cookies or use these requests for advertising.</p>
+
+  <h2>6. Children</h2>
+  <p>Doodle Heroes is a general-audience site and is not directed at children under 13. We don’t knowingly collect personal information from anyone of any age. If you believe a child has provided personal information to us, contact <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we’ll deal with it promptly.</p>
+
+  <h2>7. Your rights</h2>
+  <p>Depending on where you live, you may have rights to access, correct or delete personal data, to object to or restrict its processing, and to opt out of its sale or sharing. We hold no personal data about you, so there is nothing for us to export or delete, and we don’t sell or share personal information. Rights concerning data Google processes for advertising are exercised with Google using the links in section 4.</p>
+
+  <h2>8. Links to other sites</h2>
+  <p>Advertisements and some links lead to websites we don’t operate. This policy doesn’t cover them; check their own privacy policies.</p>
+
+  <h2>9. Changes</h2>
+  <p>If this policy changes, the new version will be posted here with a new date at the top. Material changes, such as starting to collect any information, would be described plainly.</p>
+
+  <h2>10. Contact</h2>
+  <p>Questions or concerns: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+</Base>

@@ -1,0 +1,68 @@
+/* Island Sketch board. Cell size scales with the viewport so a 15 × 15 board
+   still fits a phone with a 16px gutter each side. */
+
+.ns-board{
+  --line: rgba(31,27,45,0.22);
+  --clue-w: calc(var(--rc) * var(--cell) * 0.62 + 8px);
+  --cell: min(40px, calc((min(100vw, 1000px) - 40px - var(--rc) * 0.62 * 30px) / var(--n)));
+  display:grid;
+  grid-template-columns: var(--clue-w) repeat(var(--n), var(--cell));
+  width:max-content; max-width:100%;
+  margin:0 auto;
+  user-select:none; -webkit-user-select:none;
+  /* One finger paints; two still pinch-zoom, which tiny 15 × 15 cells on a
+     phone need. */
+  touch-action:pinch-zoom;
+  font-size:max(11px, calc(var(--cell) * 0.46));
+  font-weight:600;
+}
+.ns-row{ display:contents; }
+
+.ns-clue{ color:var(--ink); transition:opacity .2s; }
+.ns-clue.done{ opacity:.3; }
+.ns-clue.hint-line{ background:#FFE58A; border-radius:6px; }
+.ns-col-clue{
+  display:flex; flex-direction:column; justify-content:flex-end; align-items:center;
+  line-height:1.1; padding-bottom:4px;
+}
+.ns-row-clue{
+  display:flex; justify-content:flex-end; align-items:center; gap:.4em;
+  padding-right:7px; white-space:nowrap;
+}
+
+.ns-cell{
+  width:var(--cell); height:var(--cell);
+  background:#fff;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  cursor:pointer; position:relative;
+}
+.ns-cell.edge-t{ border-top:2px solid var(--ink); }
+.ns-cell.edge-l{ border-left:2px solid var(--ink); }
+.ns-row:last-child .ns-cell{ border-bottom:2px solid var(--ink); }
+.ns-cell:last-child{ border-right:2px solid var(--ink); }
+.ns-cell.thick-r{ border-right:2px solid var(--ink); }
+.ns-cell.thick-b{ border-bottom:2px solid var(--ink); }
+
+@media (hover:hover){
+  .ns-board:not(.solved) .ns-cell:not(.filled):hover{ background:#FFF1C2; }
+}
+.ns-cell.hint-line:not(.filled){ background:#FFF1C2; }
+.ns-cell.filled{ background:var(--ink); }
+.ns-cell.crossed::after{
+  content:""; position:absolute; inset:24%;
+  background:
+    linear-gradient(45deg, transparent 43%, var(--ink-soft) 43% 57%, transparent 57%),
+    linear-gradient(-45deg, transparent 43%, var(--ink-soft) 43% 57%, transparent 57%);
+  opacity:.75;
+}
+.ns-cell.wrong{ box-shadow:inset 0 0 0 3px var(--red); }
+.ns-cell.hint-cell{ box-shadow:inset 0 0 0 3px var(--teal); }
+.ns-cell:focus{ outline:none; }
+.ns-cell:focus-visible{ outline:3px solid var(--blue); outline-offset:-3px; z-index:1; }
+
+/* Solved: grid lines and crosses fall away and the sketch is left on paper. */
+.ns-board.solved .ns-cell{ cursor:default; border-color:transparent; background:var(--paper); }
+.ns-board.solved .ns-cell.filled{ background:var(--ink); }
+.ns-board.solved .ns-cell.crossed::after{ display:none; }
+.ns-board.solved .ns-clue{ opacity:.3; }

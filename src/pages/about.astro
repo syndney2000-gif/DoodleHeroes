@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base
+  title="About Doodle Heroes"
+  description="Who makes Doodle Heroes, how the puzzles are drawn and checked, and why every puzzle can be solved without guessing."
+  section="about"
+>
+  <h1>About Doodle Heroes</h1>
+  <p class="lede">A small, independent site of logic puzzles set on a hand-drawn island. The aim is simple: puzzles that are fair, that teach you something, and that you can play anywhere without signing up.</p>
+
+  <h2>Fair puzzles only</h2>
+  <p>The worst moment in a logic puzzle is realising the only way forward is to guess. We don’t publish puzzles like that. Each Island Sketch picture is drawn by hand on a grid and then handed to a solver that is only allowed the kind of reasoning a person can do — looking at one row or column at a time and working out what must be true. If that solver can’t finish the puzzle, the picture goes back to the drawing board.</p>
+  <p>The same check runs on every daily puzzle, and on every puzzle in our automated tests before the site is published. That’s also what makes the hints useful: when you ask for one, the game shows you a real deduction you could have made, not a random square.</p>
+
+  <h2>Teaching, not just playing</h2>
+  <p>We think logic puzzles get better as you understand them, so a lot of this site is written explanation: <a href="/island-sketch#rules">the rules with examples</a>, <a href="/guides">guides to the techniques</a>, and <a href="/walkthroughs/the-lighthouse">walkthroughs that solve a whole puzzle</a> one deduction at a time. Every example board in those pages is generated from the same solver as the game, so the diagrams can’t drift out of step with the rules.</p>
+
+  <h2>What’s here, and what’s coming</h2>
+  <p><a href="/island-sketch">Island Sketch</a>, a picture logic puzzle, is the first part of the island. Two more puzzle types are being built in the same spirit — one about connecting islands with bridges, one about rewiring the island’s lighthouse — along with an expedition mode that links all three into chapters.</p>
+
+  <h2>How the site works</h2>
+  <p>Doodle Heroes is a static website. There is no account system and no server-side database. Your progress — boards in progress, stars and best times — is saved in your own browser and never sent to us; you can see or clear it on the <a href="/progress">progress page</a>.</p>
+  <p>Pages with written content carry advertising from Google AdSense, which pays for the domain and hosting. The puzzle screens themselves never show ads, so there’s nothing to mis-tap while you play. See the <a href="/privacy">privacy policy</a> for details.</p>
+
+  <h2>Credits</h2>
+  <p>All puzzles, pictures, guides and code on this site are original work made for Doodle Heroes. Picture logic puzzles (also known as nonograms) are a traditional puzzle form invented in Japan in the late 1980s; the rules are common to many publishers, and our puzzles and presentation are our own. Text is set in Fredoka and Caveat from Google Fonts, used under the SIL Open Font License.</p>
+
+  <h2>Get in touch</h2>
+  <p>Found a bug, a mistake in a guide, or a puzzle that seems to need a guess? We’d like to know — see the <a href="/contact">contact page</a>.</p>
+</Base>

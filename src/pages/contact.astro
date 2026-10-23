@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import { CONTACT_EMAIL } from '../lib/site';
+---
+<Base
+  title="Contact"
+  description="How to contact Doodle Heroes about bugs, puzzle mistakes, accessibility problems or privacy questions."
+  section="about"
+>
+  <h1>Contact</h1>
+  <p class="lede">Questions, bug reports and corrections are all welcome.</p>
+
+  <div class="card">
+    <p><strong>Email:</strong> <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+    <p class="muted" style="margin-bottom:0">We read everything and reply to most messages within a few days.</p>
+  </div>
+
+  <h2>Helpful details to include</h2>
+  <ul>
+    <li><strong>A bug:</strong> which puzzle, what you did, and your device and browser (for example “iPhone, Safari” or “Windows laptop, Chrome”).</li>
+    <li><strong>A puzzle that seems to need a guess:</strong> the puzzle name and, if you can, a screenshot of the board where you got stuck. Every puzzle is checked by a solver, so this is usually a missed deduction — but if we’re wrong, we’ll fix it.</li>
+    <li><strong>A mistake in a guide:</strong> the page and the section heading.</li>
+    <li><strong>An ad that looks out of place</strong> or appears near the puzzle controls: the page address and roughly what the ad showed.</li>
+    <li><strong>Privacy questions:</strong> see the <a href="/privacy">privacy policy</a> first; anything it doesn’t answer, ask here.</li>
+  </ul>
+</Base>

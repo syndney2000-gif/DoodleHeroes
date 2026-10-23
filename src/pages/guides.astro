@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+
+const groups = [
+  {
+    game: 'Island Sketch',
+    href: '/island-sketch',
+    items: [
+      { href: '/guides/nonogram-basics', title: 'Picture logic for beginners', text: 'The overlap rule, full lines, finished lines and working from the edges.' },
+      { href: '/guides/nonogram-advanced', title: 'Advanced picture logic', text: 'Out-of-reach squares, gaps too small for a block, and working out which block a square belongs to.' },
+      { href: '/walkthroughs/the-lighthouse', title: 'Walkthrough: The Lighthouse', text: 'A complete 10 × 10 solve in six stages, every deduction shown on the board.' },
+    ],
+  },
+];
+---
+<Base
+  title="Puzzle guides and walkthroughs"
+  description="Illustrated guides to solving logic puzzles without guessing, plus complete step-by-step walkthroughs of real puzzles."
+  section="guides"
+>
+  <h1>Guides &amp; walkthroughs</h1>
+  <p class="lede">Every technique here is shown on real board positions. Guides teach one idea at a time; walkthroughs put them together on a full puzzle.</p>
+
+  {groups.map((g) => (
+    <section>
+      <h2><a href={g.href}>{g.game}</a></h2>
+      <div class="grid-cards">
+        {g.items.map((item) => (
+          <article class="card">
+            <h3><a href={item.href}>{item.title}</a></h3>
+            <p>{item.text}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  ))}
+</Base>

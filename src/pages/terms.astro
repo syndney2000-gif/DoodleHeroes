@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import { CONTACT_EMAIL, POLICY_UPDATED } from '../lib/site';
+---
+<Base
+  title="Terms of use"
+  description="The terms for using the Doodle Heroes puzzle website."
+>
+  <h1>Terms of use</h1>
+  <p class="muted">Last updated {POLICY_UPDATED}</p>
+
+  <h2>Using the site</h2>
+  <p>Doodle Heroes is free to use for personal, non-commercial play. You don’t need an account. By using the site you agree to these terms; if you don’t agree, please don’t use it.</p>
+
+  <h2>Our content</h2>
+  <p>The puzzles, pictures, guides, walkthroughs, page designs and code on this site are original work owned by Doodle Heroes. You’re welcome to link to any page, to share screenshots of your own solves, and to print a guide for personal or classroom use. Please don’t republish our puzzles, guides or pictures elsewhere, in whole or in large part, without asking first.</p>
+  <p>The rules of picture logic puzzles (nonograms) are a traditional puzzle form and aren’t owned by anyone; these terms cover only our own puzzles and presentation.</p>
+
+  <h2>Acceptable use</h2>
+  <p>Don’t try to disrupt the site, overload it with automated requests, or interfere with its advertising — for example by clicking ads you aren’t interested in or encouraging others to.</p>
+
+  <h2>No warranty</h2>
+  <p>We work hard to make every puzzle correct and the site reliable, but it’s provided “as is”, without warranties of any kind. Progress is stored in your browser and can be lost if you clear site data, use private browsing, or switch devices.</p>
+
+  <h2>Limitation of liability</h2>
+  <p>To the extent the law allows, Doodle Heroes isn’t liable for any indirect or consequential loss arising from use of the site.</p>
+
+  <h2>Privacy</h2>
+  <p>How the site handles data is described in the <a href="/privacy">privacy policy</a>.</p>
+
+  <h2>Changes and contact</h2>
+  <p>We may update these terms; the date above shows the latest version. Questions: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+</Base>

@@ -1,56 +1,54 @@
-# Doodle Heroes — Mobile App (PWA)
+# Doodle Heroes
 
-A kids' game where you doodle a hero and that exact drawing becomes the playable character in a side-scrolling adventure.
+Hand-made logic puzzles at doodleheros.com. Every puzzle can be solved by
+reasoning alone; a solver checks that before anything ships.
 
-## Files
-- `manifest.webmanifest` — app metadata
-- `sw.js` — service worker (offline support)
-- `icons/*.png` — 6 app icons
-- `generate_icons.py` — regenerate icons (optional, only if you want to customize)
+The previous drawing-game site is preserved at the git tag `drawing-site-final`.
 
-### Pages
-- `index.html` — landing page: the game framed in a stage (iframe of `/play`),
-  ads outside the frame, content below
-- `play.html` — the fullscreen game itself, ad-free. PWA `start_url`.
-- `guide.html` — how to play
-- `drawing-tips.html` — drawing tips
-- `parents.html` — for parents & teachers
-- `about.html` — about & contact
-- `privacy.html` — privacy policy
-- `assets/site.css` — shared styles for the above (the game has its own inline CSS)
-- `ads.txt`, `sitemap.xml`
+## Develop
 
-## Advertising
-
-Every page carries ads **except `play.html`**, which must stay ad-free — a
-fullscreen game canvas running ads is exactly what triggered AdSense's
-"Google-served ads on screens without publisher-content" violation.
-
-`index.html` monetises the landing page compliantly by putting the game in a
-framed stage (an iframe of `/play`) with real content around it and ads outside
-the frame. Do not move an ad inside the stage, and do not add the ad script to
-`play.html`.
-
-Serving different content to Googlebot than to users is cloaking — so if you ever
-make ads conditional, key it off `display-mode`, not user agent.
-
-The site is treated as child-directed throughout. Every page with ads sets, *before*
-the AdSense script loads:
-
-```js
-(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds = 1;
-(adsbygoogle = window.adsbygoogle || []).tagForChildDirectedTreatment = 1;
+```sh
+npm install
+npm run dev       # local dev server
+npm test          # solver + catalogue + daily-puzzle checks
+npm run build     # static site into dist/
 ```
 
-Those page-level tags are not a substitute for the account settings — the site must
-also be marked child-directed in the AdSense UI.
+## Deploy (Cloudflare Pages)
 
-Ad units use Auto ads (no slot IDs). To switch to manual placements later, drop
-`<ins class="adsbygoogle" …>` blocks inside a `<div class="ad-slot">`, which is
-already styled and renders an "Advertisement" label.
+The site is now built with Astro, so the Pages project needs build settings:
 
-Do not add `hello@doodleheros.com` to a page until that mailbox actually exists —
-it appears on `about.html` and `privacy.html`.
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Environment variable `NODE_VERSION`: `22` or newer
 
-## Test on your computer
-PWAs need a real HTTP server. From the project folder:
+`public/_redirects` maps the old drawing-game URLs to their closest new pages.
+`public/sw.js` is a retired service worker that clears the old site's offline
+cache and unregisters itself — keep it deployed for a few months.
+
+## Layout
+
+- `src/games/nonogram/` — Island Sketch: line solver, puzzle catalogue, daily
+  generator, and the interactive board.
+- `src/components/MiniBoard.astro`, `LineExample.astro` — static SVG boards for
+  rules, guides and walkthroughs. Examples are computed by the solver at build
+  time, so diagrams can't disagree with the game.
+- `src/pages/` — every page. Guides live under `guides/`, worked solves under
+  `walkthroughs/`.
+- `tests/` — run `npm test` after changing any puzzle: a picture that needs
+  guessing fails the build.
+
+## Advertising rules
+
+- `Base.astro` loads AdSense only when `ads` is true (the default).
+- Play screens (`/island-sketch/play`), `/progress` and the 404 page pass
+  `ads={false}`. Never put ads on a page that is mostly a game board — that is
+  what got the old site flagged.
+- The site is general-audience. Personalised ads in the EEA/UK/Switzerland need
+  Google's consent message: set it up in AdSense → Privacy & messaging.
+
+## Before launch
+
+- `hello@doodleheros.com` (in `src/lib/site.ts`) must be a working mailbox.
+- Change the AdSense account's child-directed setting to match the
+  general-audience site.

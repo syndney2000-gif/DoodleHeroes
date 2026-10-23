@@ -1,0 +1,89 @@
+---
+/* A static nonogram board drawn as SVG at build time, for rules, guides and
+   walkthroughs. State rows use '#' filled, 'x' crossed, '?' or '.' blank. */
+
+interface Props {
+  rows: number[][];
+  /** Omit to draw a lone line (or lines) with no column clues. */
+  cols?: number[][];
+  state: string[];
+  /** Line to tint, to show where the reader should look. */
+  highlight?: { kind: 'row' | 'col'; index: number };
+  /** Same shape as state: '*' marks a cell that was just worked out. */
+  fresh?: string[];
+  label: string;
+  cell?: number;
+}
+
+const { rows, cols, state, highlight, fresh, label, cell = 24 } = Astro.props;
+const h = state.length;
+const w = state[0].length;
+const font = Math.round(cell * 0.56);
+/* Row clues are laid out number by number from the right: SVG collapses
+   runs of spaces, so "1 1" written as one string would read as "11". */
+const numWidth = (n: number) => String(n).length * font * 0.62;
+const gap = font * 0.5;
+const rowLayout = rows.map((clue) => {
+  const nums = clue.length ? clue : [0];
+  let x = 0;
+  const xs = nums.map(() => 0);
+  for (let k = nums.length - 1; k >= 0; k--) {
+    xs[k] = x;
+    x += numWidth(nums[k]) + gap;
+  }
+  return { nums, xs, width: x - gap };
+});
+const maxCol = cols ? Math.max(1, ...cols.map((c) => c.length)) : 0;
+const left = Math.round(Math.max(...rowLayout.map((r) => r.width)) + 12);
+const top = cols ? Math.round(maxCol * font * 1.15 + 6) : 2;
+const width = left + w * cell + 3;
+const height = top + h * cell + 3;
+const at = (r: number, c: number) => state[r][c];
+const isFresh = (r: number, c: number) => fresh?.[r]?.[c] === '*';
+const lit = (r: number, c: number) =>
+  highlight && ((highlight.kind === 'row' && highlight.index === r) || (highlight.kind === 'col' && highlight.index === c));
+const thick = (k: number, n: number) => k === 0 || k === n || k % 5 === 0;
+---
+<svg class="mini-board" viewBox={`0 0 ${width} ${height}`} width={width} height={height} role="img" aria-label={label}
+  font-family="Fredoka, system-ui, sans-serif" font-weight="600" font-size={font}>
+  {highlight && (
+    highlight.kind === 'row'
+      ? <rect x="0" y={top + highlight.index * cell} width={left - 2} height={cell} rx="5" fill="#FFE58A" />
+      : <rect x={left + highlight.index * cell} y="0" width={cell} height={top - 2} rx="5" fill="#FFE58A" />
+  )}
+  {rowLayout.map(({ nums, xs }, r) => nums.map((num, k) => (
+    <text x={left - 7 - xs[k]} y={top + r * cell + cell * 0.7} text-anchor="end" fill="#1F1B2D">{num}</text>
+  )))}
+  {cols && cols.map((clue, c) => (
+    (clue.length ? clue : [0]).map((num, k, all) => (
+      <text x={left + c * cell + cell / 2} y={top - 6 - (all.length - 1 - k) * font * 1.15} text-anchor="middle" fill="#1F1B2D">{num}</text>
+    ))
+  ))}
+  {state.map((row, r) => [...row].map((_, c) => {
+    const x = left + c * cell;
+    const y = top + r * cell;
+    const v = at(r, c);
+    return (
+      <g>
+        <rect x={x} y={y} width={cell} height={cell}
+          fill={v === '#' ? (isFresh(r, c) ? '#2BA59C' : '#1F1B2D') : lit(r, c) ? '#FFF1C2' : '#ffffff'} />
+        {v === 'x' && (
+          <path d={`M${x + cell * 0.27} ${y + cell * 0.27} L${x + cell * 0.73} ${y + cell * 0.73} M${x + cell * 0.73} ${y + cell * 0.27} L${x + cell * 0.27} ${y + cell * 0.73}`}
+            stroke={isFresh(r, c) ? '#2BA59C' : '#4A4459'} stroke-width={isFresh(r, c) ? 2.4 : 1.6} stroke-linecap="round" />
+        )}
+      </g>
+    );
+  }))}
+  {Array.from({ length: w + 1 }, (_, c) => (
+    <line x1={left + c * cell} y1={top} x2={left + c * cell} y2={top + h * cell}
+      stroke={thick(c, w) ? '#1F1B2D' : 'rgba(31,27,45,0.25)'} stroke-width={thick(c, w) ? 2 : 1} />
+  ))}
+  {Array.from({ length: h + 1 }, (_, r) => (
+    <line x1={left} y1={top + r * cell} x2={left + w * cell} y2={top + r * cell}
+      stroke={thick(r, h) ? '#1F1B2D' : 'rgba(31,27,45,0.25)'} stroke-width={thick(r, h) ? 2 : 1} />
+  ))}
+</svg>
+
+<style>
+  .mini-board{ display:block; height:auto; max-width:100%; }
+</style>

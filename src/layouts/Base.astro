@@ -8,7 +8,8 @@ interface Props {
       must never carry ads next to its controls. */
   ads?: boolean;
   /** Which top-level section to mark as current in the nav. */
-  section?: 'home' | 'scribble-siege' | 'expedition' | 'island-sketch' | 'isle-spans' | 'lighthouse-wiring' | 'guides' | 'about';
+  section?: 'home' | 'games' | 'scribble-siege' | 'doodle-guess' | 'merge' | 'draw-party' | 'expedition'
+    | 'island-sketch' | 'isle-spans' | 'lighthouse-wiring' | 'guides' | 'about';
   wide?: boolean;
   noindex?: boolean;
 }
@@ -18,14 +19,14 @@ const canonical = new URL(Astro.url.pathname.replace(/\/index$/, '/').replace(/\
 const fullTitle = title === 'Doodle Heroes' ? title : `${title} · Doodle Heroes`;
 const nav = [
   { href: '/', label: 'Home', key: 'home' },
-  { href: '/scribble-siege', label: 'Siege', key: 'scribble-siege' },
+  { href: '/games', label: 'Games', key: 'games' },
   { href: '/expedition', label: 'Expedition', key: 'expedition' },
-  { href: '/island-sketch', label: 'Sketch', key: 'island-sketch' },
-  { href: '/isle-spans', label: 'Spans', key: 'isle-spans' },
-  { href: '/lighthouse-wiring', label: 'Wiring', key: 'lighthouse-wiring' },
   { href: '/guides', label: 'Guides', key: 'guides' },
   { href: '/about', label: 'About', key: 'about' },
 ];
+// Every individual game's pages light up "Games" in the menu.
+const gameSections = ['scribble-siege', 'doodle-guess', 'merge', 'draw-party', 'island-sketch', 'isle-spans', 'lighthouse-wiring'];
+const navKey = section && gameSections.includes(section) ? 'games' : section;
 ---
 <!doctype html>
 <html lang="en">
@@ -58,7 +59,7 @@ const nav = [
       <a class="brand" href="/">Doodle <span>Heroes</span></a>
       <nav aria-label="Main">
         {nav.map((item) => (
-          <a href={item.href} aria-current={section === item.key ? 'page' : undefined}>{item.label}</a>
+          <a href={item.href} aria-current={navKey === item.key ? 'page' : undefined}>{item.label}</a>
         ))}
       </nav>
     </div>

@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import { drawings, categoryHint } from '../games/doodle-guess/drawings';
+import { HINT_AFTER, MAX_GUESSES, REVEAL } from '../games/doodle-guess/game';
+
+const categories = Object.entries(categoryHint);
+const pct = (f: number) => `${Math.round(f * 100)}%`;
+---
+<Base
+  title="Doodle Guess — a daily drawing puzzle"
+  description="Doodle Guess is a free daily puzzle: a doodle draws itself line by line, and you name it in as few guesses as you can. How to play, scoring, tips and the categories."
+  section="doodle-guess"
+>
+  <p class="eyebrow">Daily puzzle</p>
+  <h1>Doodle Guess</h1>
+  <p class="lede">Every day, one doodle. It draws itself a few lines at a time — can you tell what it is before it’s finished? Six guesses, one picture, the same for everyone.</p>
+  <p class="hero-actions">
+    <a class="btn" href="/doodle-guess/play">Play today’s doodle ▶</a>
+    <a class="btn secondary" href="/doodle-guess/play?mode=practice">Practice doodle</a>
+  </p>
+
+  <h2 id="how">How to play</h2>
+  <ol>
+    <li>The doodle starts with about {pct(REVEAL[0])} of its lines drawn.</li>
+    <li>Type what you think it is. Each wrong guess draws more: {REVEAL.slice(1, -1).map(pct).join(', ')} and finally the whole picture.</li>
+    <li>After {HINT_AFTER} wrong guesses you get a hint about what kind of thing it is.</li>
+    <li>You have {MAX_GUESSES} guesses in all.</li>
+  </ol>
+  <p>Guesses are picked from a word list, so a typo or a word the game doesn’t know never uses up a turn — you’ll just be asked to try another word. Common alternatives count too: “kitten” is as good as “cat”, and “bike” as good as “bicycle”.</p>
+
+  <h2 id="scoring">Scoring and streaks</h2>
+  <table>
+    <thead><tr><th>Solved in</th><th>Stamp</th><th>Stars</th></tr></thead>
+    <tbody>
+      <tr><td>1–2 guesses</td><td>S</td><td>★★★</td></tr>
+      <tr><td>3–4 guesses</td><td>A</td><td>★★☆</td></tr>
+      <tr><td>5–6 guesses</td><td>B</td><td>★☆☆</td></tr>
+    </tbody>
+  </table>
+  <p>A solved doodle counts towards your site-wide <a href="/progress">daily streak</a>, alongside the daily puzzles in the other games. After you finish, <strong>Copy my result</strong> gives you a spoiler-free summary to share — pencils for misses, a tick for the right answer.</p>
+
+  <h2 id="tips">Tips</h2>
+  <ul>
+    <li><strong>Read the order.</strong> Doodles are drawn the way a person would: small details first, the outline last. Whiskers before a face, windows before a house.</li>
+    <li><strong>Count the shapes.</strong> Two circles side by side could be eyes, wheels or lenses — what’s between them usually decides it.</li>
+    <li><strong>Use your early guesses to narrow it down.</strong> A wrong guess still buys you more of the drawing.</li>
+    <li><strong>Think simple.</strong> These are quick doodles of everyday things, not detailed sketches.</li>
+  </ul>
+
+  <h2 id="categories">What the hints mean</h2>
+  <p>After {HINT_AFTER} misses, you’re told which of these kinds of thing today’s doodle is:</p>
+  <ul>{categories.map(([k, v]) => <li><strong>{k[0].toUpperCase() + k.slice(1)}:</strong> {v}</li>)}</ul>
+
+  <h2 id="drawings">About the doodles</h2>
+  <p>There are {drawings.length} doodles in the set, each drawn by hand stroke by stroke for this game. Every doodle appears once before any repeats, and each time round they come in a new order. The new day starts at midnight in your own timezone.</p>
+
+  <p>Like the other daily puzzles here, Doodle Guess keeps your guesses and stats in your browser only.</p>
+</Base>
+
+<style>
+  .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+</style>

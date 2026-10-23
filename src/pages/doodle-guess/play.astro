@@ -1,0 +1,238 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="Play Doodle Guess"
+  description="Today's Doodle Guess: a doodle draws itself line by line — name it in as few guesses as you can."
+  ads={false}
+  section="doodle-guess"
+>
+  <p class="eyebrow" id="dg-eyebrow">Daily doodle</p>
+  <h1>Doodle Guess</h1>
+  <noscript><p class="note">Doodle Guess needs JavaScript. <a href="/doodle-guess">How to play</a> works without it.</p></noscript>
+
+  <div class="dg" id="dg" hidden>
+    <div class="dg-page card">
+      <canvas id="dg-canvas" width="640" height="640" aria-label="The doodle so far"></canvas>
+    </div>
+
+    <ol class="dg-guesses" id="dg-guesses" aria-label="Your guesses"></ol>
+    <p class="dg-hint" id="dg-hint" hidden></p>
+
+    <form class="dg-form" id="dg-form" autocomplete="off">
+      <label class="sr-only" for="dg-input">Your guess</label>
+      <input id="dg-input" list="dg-words" placeholder="What is it?" enterkeyhint="go" autocapitalize="none">
+      <datalist id="dg-words"></datalist>
+      <button class="btn" type="submit">Guess</button>
+    </form>
+    <p class="dg-status" id="dg-status" role="status" aria-live="polite"></p>
+
+    <section class="card dg-done" id="dg-done" hidden>
+      <p class="dg-report">Report card</p>
+      <span class="dg-stamp" id="dg-stamp" aria-hidden="true"></span>
+      <h2 id="dg-result"></h2>
+      <p class="dg-answer" id="dg-answer"></p>
+      <p class="dg-share-row">
+        <button class="btn" type="button" id="dg-share">Copy my result</button>
+        <a class="btn secondary" href="/doodle-guess/play?mode=practice" id="dg-practice">Practice doodle</a>
+      </p>
+      <div class="dg-stats" id="dg-stats"></div>
+      <p class="muted" id="dg-next"></p>
+    </section>
+  </div>
+
+  <section class="dg-help">
+    <h2>How to play</h2>
+    <ul>
+      <li>The doodle draws itself a little at a time. Type what you think it is and press <strong>Guess</strong>.</li>
+      <li>Every wrong guess draws more of the picture. After three, you get a hint about what kind of thing it is.</li>
+      <li>You have six guesses. Guesses come from a word list, so a typo never costs you a turn.</li>
+      <li>Everyone gets the same doodle each day, and a new one appears at midnight where you are.</li>
+    </ul>
+    <p>More tips on the <a href="/doodle-guess">Doodle Guess page</a>.</p>
+  </section>
+</Base>
+
+<script>
+  import { drawings } from '../../games/doodle-guess/drawings';
+  import { categoryHint } from '../../games/doodle-guess/drawings';
+  import {
+    MAX_GUESSES, dailyDrawing, guess, guessWords, isKnownWord, isRight, over, revealFor, shareText, showHint, starsFor,
+    type Round,
+  } from '../../games/doodle-guess/game';
+  import { drawInk } from '../../games/doodle-guess/render';
+  import { keys, load, recordResult, save } from '../../lib/storage';
+  import { localDateKey } from '../../lib/rng';
+
+  const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+  const practice = new URLSearchParams(location.search).get('mode') === 'practice';
+  const today = localDateKey();
+  const todays = dailyDrawing(today);
+  const drawing = practice
+    ? (() => { const pool = drawings.filter((d) => d.id !== todays.id); return pool[Math.floor(Math.random() * pool.length)]; })()
+    : todays;
+  const saveKey = `doodle-guess:day:${today}`;
+  const round: Round = { drawing, guesses: practice ? [] : (load<string[]>(saveKey) ?? []), solved: false };
+  round.solved = round.guesses.some((g) => isRight(drawing, g));
+
+  $('dg-eyebrow').textContent = practice ? 'Practice doodle — not today’s puzzle' : `Daily doodle · ${today}`;
+  $('dg').hidden = false;
+  const words = $('dg-words');
+  for (const w of guessWords) { const o = document.createElement('option'); o.value = w; words.append(o); }
+
+  /* ---------- drawing, with the new ink sketched in ---------- */
+
+  const canvas = $<HTMLCanvasElement>('dg-canvas');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let shown = 0;
+  function sketchTo(target: number) {
+    const from = shown;
+    shown = target;
+    if (reduced || target <= from) { drawInk(canvas, drawing, target); return; }
+    const t0 = performance.now();
+    const step = (now: number) => {
+      const k = Math.min(1, (now - t0) / 900);
+      drawInk(canvas, drawing, from + (target - from) * k);
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- the rest of the page ---------- */
+
+  function render() {
+    const list = $('dg-guesses');
+    list.textContent = '';
+    for (let k = 0; k < MAX_GUESSES; k++) {
+      const li = document.createElement('li');
+      const g = round.guesses[k];
+      if (g) {
+        const right = isRight(drawing, g);
+        li.className = right ? 'right' : 'wrong';
+        li.textContent = `${right ? '✅' : '✏️'} ${g}`;
+      } else li.textContent = ' ';
+      list.append(li);
+    }
+    const hint = $('dg-hint');
+    hint.hidden = !showHint(round);
+    hint.textContent = `Hint: ${categoryHint[drawing.category]}`;
+    $('dg-form').hidden = over(round);
+    sketchTo(revealFor(round));
+    if (over(round)) finish();
+  }
+
+  function stats() {
+    const days = keys().filter((k) => k.startsWith('doodle-guess:day:')).sort();
+    const rounds = days.map((k) => {
+      const date = k.slice('doodle-guess:day:'.length);
+      const gs = load<string[]>(k) ?? [];
+      const d = dailyDrawing(date);
+      const solvedAt = gs.findIndex((g) => isRight(d, g));
+      return { date, gs, solvedAt };
+    }).filter((r) => r.solvedAt >= 0 || r.gs.length >= MAX_GUESSES);
+    const won = rounds.filter((r) => r.solvedAt >= 0);
+    // Current streak: consecutive solved days ending today or yesterday.
+    const solvedDates = new Set(won.map((r) => r.date));
+    let streak = 0;
+    const d = new Date();
+    if (!solvedDates.has(localDateKey(d))) d.setDate(d.getDate() - 1);
+    while (solvedDates.has(localDateKey(d))) { streak++; d.setDate(d.getDate() - 1); }
+    const dist = Array.from({ length: MAX_GUESSES }, (_, k) => won.filter((r) => r.solvedAt === k).length);
+    return { played: rounds.length, won: won.length, streak, dist };
+  }
+
+  function finish() {
+    const stars = starsFor(round);
+    $('dg-done').hidden = false;
+    $('dg-stamp').textContent = round.solved ? (['', 'B', 'A', 'S'][stars]) : '✗';
+    $('dg-result').textContent = round.solved
+      ? `Got it in ${round.guesses.length}!`
+      : 'So close — better luck tomorrow';
+    $('dg-answer').textContent = `It was ${/^[aeiou]/.test(drawing.answer) ? 'an' : 'a'} ${drawing.answer}.`;
+    if (practice) {
+      $('dg-share').hidden = true;
+      $('dg-next').textContent = 'Practice doodles don’t count towards your stats or streak.';
+      $('dg-stats').textContent = '';
+      $<HTMLAnchorElement>('dg-practice').textContent = 'Another practice doodle';
+      return;
+    }
+    const s = stats();
+    const max = Math.max(1, ...s.dist);
+    $('dg-stats').innerHTML = `
+      <p class="dg-stat-row"><span><b>${s.played}</b> played</span><span><b>${s.played ? Math.round((s.won / s.played) * 100) : 0}%</b> solved</span><span><b>${s.streak}</b> day streak</span></p>
+      <div class="dg-dist" aria-label="How many guesses your solves took">${s.dist.map((n, k) =>
+        `<div class="dg-bar"><span>${k + 1}</span><i style="width:${Math.max(6, (n / max) * 100)}%"${round.solved && round.guesses.length === k + 1 ? ' class="now"' : ''}>${n}</i></div>`).join('')}</div>`;
+    $('dg-next').textContent = 'A new doodle appears at midnight. Meanwhile, today’s other dailies are on the Games page.';
+  }
+
+  $('dg-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = $<HTMLInputElement>('dg-input');
+    const word = input.value;
+    const status = $('dg-status');
+    if (!word.trim()) return;
+    if (!isKnownWord(word)) { status.textContent = `“${word.trim()}” isn’t in the word list — try another word for it.`; return; }
+    if (!guess(round, word)) { status.textContent = 'You’ve already tried that one.'; return; }
+    input.value = '';
+    if (!practice) {
+      save(saveKey, round.guesses);
+      if (round.solved) recordResult('doodle-guess', `daily-${today}`, { stars: starsFor(round), seconds: 0, date: new Date().toISOString() });
+    }
+    status.textContent = round.solved ? 'Yes! That’s it.' : over(round) ? 'Out of guesses.' : 'Not quite — here’s a bit more of the drawing.';
+    render();
+  });
+
+  $('dg-share').addEventListener('click', async () => {
+    const text = shareText(round, today);
+    try {
+      await navigator.clipboard.writeText(text);
+      $('dg-share').textContent = 'Copied!';
+    } catch {
+      $('dg-status').textContent = text;
+    }
+  });
+
+  render();
+</script>
+
+<style>
+  .dg-page{ max-width:420px; margin:12px auto 10px; padding:10px; }
+  .dg-page canvas{
+    display:block; width:100%; height:auto; aspect-ratio:1; border-radius:6px;
+    background:#fff repeating-linear-gradient(to bottom, transparent 0 31px, rgba(47,99,200,.13) 31px 32px);
+  }
+  .dg-guesses{
+    list-style:none; padding:0; margin:0 auto 8px; max-width:420px;
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:6px;
+  }
+  .dg-guesses li{
+    margin:0; min-height:40px; padding:6px 10px; font-family:var(--hand); font-size:20px;
+    border:2px dashed var(--rule); border-radius:var(--wobble-soft); background:var(--paper);
+  }
+  .dg-guesses li.wrong{ border-style:solid; border-color:var(--ink-soft); color:var(--ink-soft); text-decoration:line-through; text-decoration-color:var(--red); }
+  .dg-guesses li.right{ border-style:solid; border-color:var(--green); background:#E6F4E9; }
+  .dg-hint{ text-align:center; font-family:var(--hand); font-size:21px; background:var(--highlight); max-width:420px; margin:0 auto 8px; border-radius:var(--wobble-soft); }
+  .dg-form{ display:flex; gap:8px; max-width:420px; margin:0 auto; }
+  .dg-form input{
+    flex:1; min-width:0; font:inherit; font-size:18px; padding:8px 12px; min-height:48px;
+    border:2px solid var(--ink); border-radius:var(--wobble-soft); background:var(--paper); color:var(--ink);
+  }
+  .dg-status{ text-align:center; min-height:1.6em; margin:10px auto; max-width:460px; }
+  .dg-done{ max-width:460px; margin:18px auto; text-align:center; }
+  .dg-report{ font-family:var(--hand); font-size:18px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.1em; margin:0; }
+  .dg-done h2{ margin-top:4px; }
+  .dg-stamp{
+    position:absolute; top:12px; right:16px; width:62px; height:62px; display:grid; place-items:center; transform:rotate(-12deg);
+    font-family:var(--hand); font-size:40px; color:var(--red); border:3.5px solid var(--red); border-radius:50%; opacity:.85;
+  }
+  .dg-answer{ font-family:var(--hand); font-size:24px; }
+  .dg-share-row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .dg-stat-row{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:15px; }
+  .dg-stat-row b{ font-family:var(--hand); font-size:24px; font-weight:400; }
+  .dg-dist{ display:grid; gap:4px; text-align:left; margin:6px 0 10px; }
+  .dg-bar{ display:flex; align-items:center; gap:6px; font-size:14px; }
+  .dg-bar span{ width:14px; }
+  .dg-bar i{ display:block; font-style:normal; text-align:right; padding:0 6px; background:#E3DED0; border-radius:4px; }
+  .dg-bar i.now{ background:var(--yellow); }
+  .dg-help{ max-width:780px; margin:34px auto 0; }
+</style>

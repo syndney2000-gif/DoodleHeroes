@@ -4,7 +4,7 @@ import {
   BASE, BOSS_AT, MAX_LEVEL, MAX_PASSIVES, MAX_WEAPONS, RUN_SECONDS,
   enemies, heroes, passives, twists, upgrades, weapons,
 } from '../games/survivor/data';
-import { unlockText } from '../games/survivor/meta';
+import { JAR_HOURS, unlockText } from '../games/survivor/meta';
 
 const minutes = RUN_SECONDS / 60;
 const bossMinute = `${Math.floor(BOSS_AT / 60)}:${String(BOSS_AT % 60).padStart(2, '0')}`;
@@ -96,6 +96,9 @@ const enemyList = Object.values(enemies);
     <thead><tr><th>Upgrade</th><th>Effect</th><th>Levels</th><th>First level costs</th></tr></thead>
     <tbody>{upgrades.map((u) => <tr><td>{u.icon} {u.name}</td><td>{u.effect}</td><td>{u.max}</td><td>{u.cost(0)} coins</td></tr>)}</tbody>
   </table>
+
+  <h3 id="coin-jar">The coin jar</h3>
+  <p>The coin jar on the main menu keeps filling while you’re away — even with the game closed. It starts at 7 coins an hour, and fills faster for every hero you unlock, every level of Greed, and your first few full-length survivals. It stops filling after {JAR_HOURS} hours, so the best habit is to drop by once or twice a day and collect it.</p>
 
   <h2 id="daily">The daily siege</h2>
   <p>Every day there’s a new daily siege. Everyone gets the same hero, the same waves and the same twist, so it’s a fair test from one player to the next. Your best daily result is kept on the Records screen, and a daily siege counts towards your site-wide <a href="/progress">daily streak</a>. The twists are:</p>

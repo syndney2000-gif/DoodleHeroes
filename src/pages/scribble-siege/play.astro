@@ -20,6 +20,11 @@ import '../../games/survivor/siege.css';
       <canvas class="sg-menu-hero" id="sg-menu-hero" width="220" height="220" aria-hidden="true"></canvas>
       <p class="sg-hero-name" id="sg-menu-hero-name"></p>
       <button class="sg-play" type="button" id="sg-play">PLAY</button>
+      <div class="sg-jar" id="sg-jar">
+        <span class="sg-jar-ic" aria-hidden="true">🫙</span>
+        <div class="sg-jar-text"><b><span id="jar-coins">0</span> 🪙 in the coin jar</b><small id="jar-info"></small></div>
+        <button class="btn" type="button" id="jar-collect">Collect</button>
+      </div>
       <nav class="sg-side" aria-label="Game menu">
         <button type="button" data-go="heroes"><span aria-hidden="true">🧍</span> Heroes</button>
         <button type="button" data-go="upgrades"><span aria-hidden="true">🎒</span> Upgrades</button>

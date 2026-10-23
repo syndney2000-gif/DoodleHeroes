@@ -33,6 +33,17 @@ body.game-page{ min-height:100dvh; overflow-x:hidden; }
 }
 .sg-play:hover{ transform:rotate(-1deg) scale(1.03); }
 .sg-play:active{ transform:rotate(2deg) scale(.95, .9); }
+/* The coin jar fills while you're away. */
+.sg-jar{
+  display:flex; align-items:center; gap:10px; width:100%; max-width:440px; margin:22px 0 0; padding:10px 12px;
+  background:var(--paper); border:2px dashed var(--ink); border-radius:var(--wobble-soft); text-align:left;
+}
+.sg-jar-ic{ font-size:34px; line-height:1; }
+.sg-jar-text{ flex:1; display:flex; flex-direction:column; line-height:1.3; }
+.sg-jar-text b{ font-family:var(--hand); font-weight:400; font-size:21px; }
+.sg-jar-text small{ font-size:13px; color:var(--ink-soft); }
+.sg-jar .btn{ font-size:19px; padding:6px 14px; min-height:44px; }
+.sg-jar .btn:disabled{ opacity:.5; cursor:default; }
 .sg-side{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; width:100%; margin:24px 0 10px; }
 .sg-side button{
   font-family:var(--hand); font-size:21px; padding:10px 12px; min-height:52px; cursor:pointer;

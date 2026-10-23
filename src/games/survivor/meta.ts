@@ -20,6 +20,8 @@ export interface Profile {
   custom?: { image: string; weapon: WeaponId; name: string };
   /** Best daily result per date: seconds survived and kills. */
   daily: Record<string, { seconds: number; kills: number }>;
+  /** When the coin jar was last emptied (ms since epoch). */
+  jarSince?: number;
 }
 
 const empty = (): Profile => ({ coins: 0, upgrades: {}, totalKills: 0, runs: 0, wins: 0, bestTime: {}, daily: {} });
@@ -108,4 +110,41 @@ export function recordRun(p: Profile, r: RunSummary): HeroDef[] {
   }
   saveProfile(p);
   return heroes.filter((h) => isUnlocked(p, h) && !before.includes(h));
+}
+
+/* ---------- the coin jar (idle earnings) ---------- */
+
+/** The jar stops filling after this long, so it rewards coming back daily. */
+export const JAR_HOURS = 12;
+
+/** Coins per hour while you're away: more heroes and Greed fill it faster. */
+export function jarRate(p: Profile): number {
+  const unlocked = heroes.filter((h) => isUnlocked(p, h)).length;
+  return 4 + 3 * unlocked + 2 * (p.upgrades.greed ?? 0) + Math.min(10, p.wins * 2);
+}
+
+/** Coins waiting in the jar at time `now`. */
+export function jarCoins(p: Profile, now = Date.now()): number {
+  if (p.jarSince == null) return 0;
+  // A clock set backwards shouldn't drain the jar or mint coins.
+  const hours = Math.min(JAR_HOURS, Math.max(0, (now - p.jarSince) / 3_600_000));
+  return Math.floor(hours * jarRate(p));
+}
+
+/** Hours until the jar is full, 0 when it already is. */
+export function jarHoursLeft(p: Profile, now = Date.now()): number {
+  if (p.jarSince == null) return JAR_HOURS;
+  return Math.max(0, JAR_HOURS - (now - p.jarSince) / 3_600_000);
+}
+
+/** Empties the jar into the coin purse. The first call just starts it. */
+export function collectJar(p: Profile, now = Date.now()): number {
+  const coins = jarCoins(p, now);
+  if (p.jarSince != null && coins === 0 && now >= p.jarSince) {
+    return 0; // nothing whole to collect yet; keep the partial hour filling
+  }
+  p.coins += coins;
+  p.jarSince = now;
+  saveProfile(p);
+  return coins;
 }

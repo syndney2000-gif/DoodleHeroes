@@ -10,7 +10,8 @@ import { bump, draw, makeView, resize, type View } from './render';
 import { makeControls } from './input';
 import * as audio from './audio';
 import {
-  buyUpgrade, isUnlocked, loadProfile, nextGoal, recordRun, saveProfile, unlockProgress, unlockText,
+  JAR_HOURS, buyUpgrade, collectJar, isUnlocked, jarCoins, jarHoursLeft, jarRate, loadProfile, nextGoal,
+  recordRun, saveProfile, unlockProgress, unlockText,
 } from './meta';
 import { hashString, localDateKey } from '../../lib/rng';
 import { load, save } from '../../lib/storage';
@@ -79,10 +80,34 @@ export async function start(root: HTMLElement) {
     return window.setInterval(paint, every);
   }
 
+  let jarTimer: number | undefined;
+
+  function renderJar() {
+    if (profile.jarSince == null) collectJar(profile); // the very first visit starts the jar
+    const coins = jarCoins(profile);
+    const left = jarHoursLeft(profile);
+    $('jar-coins').textContent = String(coins);
+    $('jar-info').textContent = left <= 0
+      ? `Full! Collect it so it can fill again. (${jarRate(profile)} coins an hour, up to ${JAR_HOURS} hours)`
+      : `Fills at ${jarRate(profile)} coins an hour while you’re away — full in ${left >= 1 ? `${Math.ceil(left)} h` : `${Math.ceil(left * 60)} min`}.`;
+    $<HTMLButtonElement>('jar-collect').disabled = coins === 0;
+  }
+  $('jar-collect').addEventListener('click', () => {
+    const got = collectJar(profile);
+    if (got) {
+      $('sg-coins').textContent = String(profile.coins);
+      audio.play(['coin']);
+    }
+    renderJar();
+  });
+
   function renderMenu() {
     const hero = heroById(selected);
     $('sg-menu-hero-name').textContent = `Playing as ${hero.name}`;
     menuTimer = animateHero($<HTMLCanvasElement>('sg-menu-hero'), spriteFor(selected));
+    renderJar();
+    clearInterval(jarTimer);
+    jarTimer = window.setInterval(() => { if (current === 'menu') renderJar(); }, 30_000);
   }
   $('sg-play').addEventListener('click', () => startRun({}));
 

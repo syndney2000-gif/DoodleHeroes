@@ -8,7 +8,7 @@ interface Props {
       must never carry ads next to its controls. */
   ads?: boolean;
   /** Which top-level section to mark as current in the nav. */
-  section?: 'home' | 'expedition' | 'island-sketch' | 'isle-spans' | 'lighthouse-wiring' | 'guides' | 'about';
+  section?: 'home' | 'scribble-siege' | 'expedition' | 'island-sketch' | 'isle-spans' | 'lighthouse-wiring' | 'guides' | 'about';
   wide?: boolean;
   noindex?: boolean;
 }
@@ -18,9 +18,10 @@ const canonical = new URL(Astro.url.pathname.replace(/\/index$/, '/').replace(/\
 const fullTitle = title === 'Doodle Heroes' ? title : `${title} · Doodle Heroes`;
 const nav = [
   { href: '/', label: 'Home', key: 'home' },
+  { href: '/scribble-siege', label: 'Siege', key: 'scribble-siege' },
   { href: '/expedition', label: 'Expedition', key: 'expedition' },
-  { href: '/island-sketch', label: 'Island Sketch', key: 'island-sketch' },
-  { href: '/isle-spans', label: 'Isle Spans', key: 'isle-spans' },
+  { href: '/island-sketch', label: 'Sketch', key: 'island-sketch' },
+  { href: '/isle-spans', label: 'Spans', key: 'isle-spans' },
   { href: '/lighthouse-wiring', label: 'Wiring', key: 'lighthouse-wiring' },
   { href: '/guides', label: 'Guides', key: 'guides' },
   { href: '/about', label: 'About', key: 'about' },

@@ -1,0 +1,68 @@
+---
+import Base from '../../layouts/Base.astro';
+import { BASE, BOSS_AT, enemies, weapons } from '../../games/survivor/data';
+
+const boss = enemies.eraser;
+const bossTime = `${Math.floor(BOSS_AT / 60)}:${String(BOSS_AT % 60).padStart(2, '0')}`;
+---
+<Base
+  title="Scribble Siege survival guide"
+  description="How to last ten minutes in Scribble Siege: moving through crowds, collecting experience, choosing level-up cards, dealing with elites and beating the Big Eraser."
+  section="guides"
+>
+  <p class="eyebrow">Scribble Siege guide</p>
+  <h1>Scribble Siege survival guide</h1>
+  <p class="lede">In Scribble Siege you only control one thing — where your hero walks — and it decides almost everything. This guide covers how to move, what to pick when you level up, and how to get through the last two minutes.</p>
+  <p>New to the game? The <a href="/scribble-siege">game page</a> lists every hero, weapon and item with exact numbers.</p>
+
+  <h2 id="moving">1. Keep moving, in big loops</h2>
+  <p>Scribbles walk straight at you from every side. Stand still and they close in from all directions at once; walk and they bunch up into a trail behind you, where your weapons can work through them.</p>
+  <ul>
+    <li><strong>Circle, don’t zigzag.</strong> Wide, steady loops keep the crowd behind you in one clump. Sharp turns walk you into the scribbles you were escaping.</li>
+    <li><strong>Lead the crowd past your weapons.</strong> Erasers, ink puddles and splashes all hit what’s around you, so let the trail follow you through them.</li>
+    <li><strong>Getting hit isn’t the end.</strong> After each hit you’re safe for {BASE.invulnerable} seconds. If you’re boxed in, push straight through the thinnest part of the crowd rather than waiting.</li>
+  </ul>
+
+  <h2 id="collecting">2. Collect, then fight</h2>
+  <p>Defeated scribbles drop pencil shavings — blue ones are small, green are worth more, orange are big piles. They only fly to you once you’re within reach (about {BASE.pickup} paces at the start), so a lot of early experience lies wherever your darts dropped their targets.</p>
+  <ul>
+    <li>Swing your loops back through the places where scribbles fell. The first few levels come much faster.</li>
+    <li>The <strong>Fridge Magnet</strong> item and the <strong>Magnetism</strong> upgrade widen your reach. Both pay off in every run.</li>
+    <li>Coins drop rarely from scribbles and always from elites and the boss — they’re worth a detour.</li>
+  </ul>
+
+  <h2 id="cards">3. Choosing cards</h2>
+  <p>Every level offers three cards. A few rules of thumb:</p>
+  <ul>
+    <li><strong>Get a second weapon early.</strong> Your starting weapon covers one kind of threat. {weapons.orbit.icon} Eraser Orbit and {weapons.ink.icon} Ink Puddles protect your sides; {weapons.darts.icon} Pencil Darts and {weapons.planes.icon} Paper Planes reach far away.</li>
+    <li><strong>Mix close and far.</strong> A build with only short-range weapons gets swamped; one with only long-range weapons gets nibbled to pieces when the crowd arrives.</li>
+    <li><strong>Sharpener and Cold Coffee boost everything.</strong> More damage and faster cooldowns help every weapon you carry, so they’re rarely a bad pick.</li>
+    <li><strong>Reroll for a weapon you need.</strong> You start with one reroll per run (more with the Rerolls upgrade). Skipping is worth 3 coins — handy late on when nothing helps.</li>
+  </ul>
+  <p>You can carry four weapons and four items. Once a slot is full, cards only offer upgrades for what you already have, so choose the last slots carefully.</p>
+
+  <h2 id="elites">4. Elites</h2>
+  <p>Every two minutes an elite stickman appears, ringed in red. It has six times the health of a normal stickman and hits harder, but it drops a free level-up and a handful of coins. Kite it in a wide circle while your weapons wear it down; don’t let it pin you against a crowd.</p>
+
+  <h2 id="boss">5. The Big Eraser</h2>
+  <p>At {bossTime}, the Big Eraser arrives: {boss.health.toLocaleString()} health, a big body and a heavy hit ({boss.damage} per touch). While it’s out, fewer other scribbles spawn, so this is the time to focus.</p>
+  <ul>
+    <li><strong>Keep it behind you</strong> and circle wide. It’s slower than you ({boss.speed} against your {BASE.speed}), so it can only catch you if you get cornered by the crowd.</li>
+    <li><strong>You don’t have to beat it to win</strong> — surviving the full ten minutes is enough. But it drops a pile of coins, so take it down if your weapons can.</li>
+  </ul>
+
+  <h2 id="between-runs">6. Between runs</h2>
+  <p>Coins buy permanent upgrades. A good order for a new player:</p>
+  <ol>
+    <li><strong>Toughness</strong> — more health is the simplest way to survive longer.</li>
+    <li><strong>Magnetism</strong> — faster levels, every run.</li>
+    <li><strong>Might</strong> — more damage for every weapon.</li>
+    <li><strong>Greed</strong> — once you’re surviving a few minutes, more coins per run speeds everything else up.</li>
+  </ol>
+  <p>Unlocking new heroes changes your starting weapon. Eraser Ed’s orbit is the most forgiving if you’re still learning to move; Ruler Rae hits hardest but rewards facing your enemies.</p>
+
+  <h2 id="drawn">7. Drawing your own hero</h2>
+  <p>A drawn hero plays exactly like the crew — normal health and speed — but you choose the starting weapon from those you’ve unlocked. The drawing only changes how you look, so draw something you’ll enjoy seeing for ten minutes.</p>
+
+  <p>Ready? <a href="/scribble-siege/play">Play Scribble Siege</a>.</p>
+</Base>

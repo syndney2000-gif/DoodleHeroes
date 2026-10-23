@@ -28,7 +28,7 @@ import { stickers } from '../lib/achievements';
   <div id="summary"><p class="muted">Loading…</p></div>
 
   <h2>Start over</h2>
-  <p>Reset clears every saved board, star and best time on this device, for all three games and the expedition. It can’t be undone.</p>
+  <p>Reset clears everything saved on this device — puzzle boards, stars and best times, the expedition, and Scribble Siege coins, upgrades, records and your drawn hero. It can’t be undone.</p>
   <p><button class="btn secondary" type="button" id="reset">Reset all progress</button></p>
   <p id="reset-status" role="status" aria-live="polite"></p>
 </Base>
@@ -41,6 +41,7 @@ import { stickers } from '../lib/achievements';
   import { allPuzzles as grids } from '../games/net/puzzles';
   import { expedition } from '../content/expedition';
   import { earnedIds } from '../lib/achievements';
+  import { loadProfile } from '../games/survivor/meta';
 
   const games = [
     { key: 'island-sketch', name: 'Island Sketch', noun: 'sketches', puzzles: sketches },
@@ -58,6 +59,15 @@ import { stickers } from '../lib/achievements';
     const done = results();
     const root = document.getElementById('summary')!;
     root.textContent = '';
+
+    const siege = loadProfile();
+    const longest = Math.max(0, ...Object.values(siege.bestTime).map((t) => t ?? 0));
+    root.append(
+      el('h2', 'Scribble Siege'),
+      el('p', siege.runs
+        ? `${siege.runs} runs · ${siege.wins} sieges survived · longest run ${formatTime(longest)} · ${siege.totalKills.toLocaleString()} scribbles defeated · ${siege.coins} coins in the bank`
+        : 'No runs yet.'),
+    );
 
     const chaptersDone = expedition.filter((c) => c.tasks.every((t) => done[`${t.game}/${t.puzzleId}`])).length;
     root.append(el('h2', 'Lantern Isles expedition'), el('p', `${chaptersDone} of ${expedition.length} chapters complete.`));

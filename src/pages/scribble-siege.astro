@@ -1,0 +1,125 @@
+---
+import Base from '../layouts/Base.astro';
+import {
+  BASE, BOSS_AT, MAX_LEVEL, MAX_PASSIVES, MAX_WEAPONS, RUN_SECONDS,
+  enemies, heroes, passives, twists, upgrades, weapons,
+} from '../games/survivor/data';
+import { unlockText } from '../games/survivor/meta';
+
+const minutes = RUN_SECONDS / 60;
+const bossMinute = `${Math.floor(BOSS_AT / 60)}:${String(BOSS_AT % 60).padStart(2, '0')}`;
+const weaponList = Object.values(weapons);
+const enemyList = Object.values(enemies);
+---
+<Base
+  title="Scribble Siege — a doodle survivor game"
+  description="Scribble Siege is a free doodle survivor game: survive ten minutes against swarms of scribble monsters while your weapons fight on their own. Heroes, weapons, upgrades and strategy explained."
+  section="scribble-siege"
+>
+  <p class="eyebrow">Action game</p>
+  <h1>Scribble Siege</h1>
+  <p class="lede">The margins have come alive. Scribbles, squiggles and angry stickmen are swarming across the page, and you have {minutes} minutes to survive them. Steer your hero; their weapons fight on their own. Level up, pick upgrades, and see how long you last.</p>
+
+  <p class="hero-actions">
+    <a class="btn" href="/scribble-siege/play">Play Scribble Siege ▶</a>
+    <a class="btn secondary" href="/guides/scribble-siege-survival">Survival guide</a>
+  </p>
+
+  <h2 id="how">How a run works</h2>
+  <ol>
+    <li><strong>Move.</strong> That’s the only thing you control in battle. Your weapons aim and fire by themselves.</li>
+    <li><strong>Collect pencil shavings.</strong> Defeated scribbles drop shavings worth experience. Walk near them and they fly to you.</li>
+    <li><strong>Level up.</strong> Each level, the game pauses and offers three upgrade cards: a new weapon, a new item, or a stronger version of one you have. You can carry up to {MAX_WEAPONS} weapons and {MAX_PASSIVES} items, each up to level {MAX_LEVEL}.</li>
+    <li><strong>Survive.</strong> The scribbles get faster, tougher and more numerous. An elite stickman arrives every two minutes, and the Big Eraser — the boss — turns up at {bossMinute}. Last the full {minutes} minutes to win.</li>
+    <li><strong>Spend your coins.</strong> Coins from every run buy permanent upgrades, so the next run starts a little stronger.</li>
+  </ol>
+
+  <h2 id="controls">Controls</h2>
+  <table>
+    <thead><tr><th>Device</th><th>Move</th><th>Pause</th><th>Pick a card</th></tr></thead>
+    <tbody>
+      <tr><td>Keyboard</td><td><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrow keys</td><td><kbd>Esc</kbd> or <kbd>P</kbd></td><td><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> or click</td></tr>
+      <tr><td>Touch</td><td>Put a thumb down anywhere and drag — a joystick appears under it</td><td>⏸ button</td><td>Tap</td></tr>
+      <tr><td>Mouse</td><td>Press anywhere and drag, like the touch joystick</td><td>⏸ button</td><td>Click</td></tr>
+    </tbody>
+  </table>
+  <p>The game pauses on its own if you switch tabs or apps. There’s no penalty for pausing.</p>
+
+  <h2 id="heroes">Heroes</h2>
+  <p>Each hero starts with a different weapon. Pip is ready from the start; the others unlock as you play. You can also <strong>draw your own hero</strong> — whatever you sketch becomes the character you play, with any starting weapon you’ve unlocked.</p>
+  <table>
+    <thead><tr><th>Hero</th><th>Starts with</th><th>Health</th><th>Speed</th><th>How to unlock</th></tr></thead>
+    <tbody>
+      {heroes.map((h) => (
+        <tr><td>{h.name}</td><td>{weapons[h.weapon].icon} {weapons[h.weapon].name}</td><td>{Math.round(BASE.health * h.health)}</td><td>×{h.speed}</td><td>{unlockText(h)}</td></tr>
+      ))}
+    </tbody>
+  </table>
+
+  <h2 id="weapons">Weapons</h2>
+  <p>All damage figures are before bonuses. Every hit also has a 10% chance to be a critical hit for double damage — critical numbers appear larger, in red and underlined.</p>
+  {weaponList.map((w) => (
+    <section class="weapon">
+      <h3>{w.icon} {w.name}</h3>
+      <p>{w.blurb}</p>
+      <table>
+        <thead><tr><th>Level</th><th>Damage</th><th>Every</th><th>{w.id === 'orbit' ? 'Erasers' : w.id === 'splash' || w.id === 'ruler' ? 'Swings' : w.id === 'ink' ? 'Puddles' : 'Shots'}</th><th>What’s new</th></tr></thead>
+        <tbody>
+          {w.levels.map((l, k) => (
+            <tr><td>{k + 1}</td><td>{l.damage}</td><td>{w.id === 'orbit' ? `hits each enemy every ${l.cooldown}s` : `${l.cooldown}s`}</td><td>{l.count}</td><td>{w.changes[k]}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  ))}
+
+  <h2 id="items">Items</h2>
+  <p>Items don’t attack; they make you and your weapons better. Each goes up to level {MAX_LEVEL}.</p>
+  <table>
+    <thead><tr><th>Item</th><th>Effect</th></tr></thead>
+    <tbody>{Object.values(passives).map((p) => <tr><td>{p.icon} {p.name}</td><td>{p.effect}</td></tr>)}</tbody>
+  </table>
+  <p>When every weapon and item you could take is at its maximum, level-ups offer a <strong>Snack Break</strong> (recover 30 health) or <strong>Pocket Money</strong> (+10 coins) instead. Skipping a card is always allowed and is worth 3 coins.</p>
+
+  <h2 id="enemies">The scribbles</h2>
+  <table>
+    <thead><tr><th>Enemy</th><th>Health</th><th>Speed</th><th>Hits for</th><th></th></tr></thead>
+    <tbody>
+      {enemyList.map((e) => <tr><td>{e.name}</td><td>{e.health}</td><td>{e.speed}</td><td>{e.damage}</td><td>{e.blurb}</td></tr>)}
+    </tbody>
+  </table>
+  <p>Health shown is at the start of a run; scribbles get tougher as the minutes pass. After each hit you’re safe for {BASE.invulnerable} seconds, so being touched by a crowd hurts less than it looks — but standing still in one is still the quickest way to lose. Elite stickmen (with a red ring) have six times the health and drop a free level-up and a handful of coins.</p>
+
+  <h2 id="upgrades">Permanent upgrades</h2>
+  <p>Coins you earn are kept between runs. Each run pays out the coins you picked up, plus one coin for every 20 seconds survived, one for every 40 scribbles defeated, and a 60-coin bonus if you survive the full {minutes} minutes.</p>
+  <table>
+    <thead><tr><th>Upgrade</th><th>Effect</th><th>Levels</th><th>First level costs</th></tr></thead>
+    <tbody>{upgrades.map((u) => <tr><td>{u.icon} {u.name}</td><td>{u.effect}</td><td>{u.max}</td><td>{u.cost(0)} coins</td></tr>)}</tbody>
+  </table>
+
+  <h2 id="daily">The daily siege</h2>
+  <p>Every day there’s a new daily siege. Everyone gets the same hero, the same waves and the same twist, so it’s a fair test from one player to the next. Your best daily result is kept on the Records screen, and a daily siege counts towards your site-wide <a href="/progress">daily streak</a>. The twists are:</p>
+  <ul>{twists.map((t) => <li><strong>{t.name}:</strong> {t.text}</li>)}</ul>
+
+  <h2 id="grades">Report card grades</h2>
+  <table>
+    <thead><tr><th>Grade</th><th>You…</th></tr></thead>
+    <tbody>
+      <tr><td>S</td><td>survived all {minutes} minutes</td></tr>
+      <tr><td>A</td><td>lasted at least 7 minutes</td></tr>
+      <tr><td>B</td><td>lasted at least 4 minutes</td></tr>
+      <tr><td>C</td><td>lasted less than 4 minutes</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="learn">Learn more</h2>
+  <ul>
+    <li><a href="/guides/scribble-siege-survival">Scribble Siege survival guide</a> — moving, collecting, choosing cards, beating the Big Eraser.</li>
+  </ul>
+  <p>Scribble Siege keeps everything in your browser: no account, and your coins, upgrades and drawings stay on this device.</p>
+</Base>
+
+<style>
+  .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+  .weapon table{ font-size:15px; }
+</style>

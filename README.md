@@ -1,7 +1,8 @@
 # Doodle Heroes
 
-Hand-made logic puzzles at doodleheros.com. Every puzzle can be solved by
-reasoning alone; a solver checks that before anything ships.
+Hand-made logic puzzles and a doodle survivor game at doodleheros.com, all on
+notebook paper. Every puzzle can be solved by reasoning alone; a solver
+checks that before anything ships.
 
 The previous drawing-game site is preserved at the git tag `drawing-site-final`.
 
@@ -43,11 +44,27 @@ Three games, each in `src/games/<name>/` with the same parts:
 - `daily.ts`: the daily puzzle, seeded from the date.
 - `board.ts` / `board.css`: the interactive board.
 
+Scribble Siege, the action game, lives in `src/games/survivor/`:
+
+- `data.ts`: every number the game uses (weapons, items, heroes, enemies,
+  waves, upgrades, daily twists). The guide pages print their tables from it.
+- `engine.ts`: the rules, with no DOM. It uses a fixed step and seeded
+  randomness, so `tests/survivor.test.ts` can play whole runs with bots.
+- `sprites.ts` (procedural doodle art), `render.ts` (canvas), `input.ts`
+  (keys and a floating joystick), `audio.ts` (synthesised sounds),
+  `meta.ts` (coins, upgrades, unlocks, drawn hero), `app.ts` (menus and
+  loop).
+- The play screen uses `GameLayout.astro`: full screen, no site chrome, and
+  never ads.
+
 Shared pieces:
 
 - `src/components/PlayShell.astro` + `src/lib/play-ui.ts`: the ad-free play
   screen (toolbar, timer, hints, solved panel) used by all three games.
 - `src/lib/storage.ts`, `scoring.ts`: saved progress and stars.
+- `src/lib/achievements.ts`: stickers and the daily streak, both worked out
+  from saved results.
+- `src/styles/site.css`: the notebook look. All the texture is CSS.
 - `src/content/expedition.ts`: the Lantern Isles chapters.
 - `src/content/bridges-examples.ts`: Isle Spans guide examples. Each claim is
   tested.
@@ -62,8 +79,8 @@ exactly one solution. Run it after changing any puzzle.
 ## Advertising rules
 
 - `Base.astro` loads AdSense only when `ads` is true (the default).
-- Play screens (`/<game>/play`, all built on `PlayShell`), `/progress` and the
-  404 page pass `ads={false}`. Never put ads on a page that is mostly a game board — that is
+- Play screens (`/<game>/play`: the puzzles use `PlayShell`, Scribble Siege
+  uses `GameLayout`), `/progress` and the 404 page carry no ads. Never put ads on a page that is mostly a game board — that is
   what got the old site flagged.
 - The site is general-audience. Personalised ads in the EEA/UK/Switzerland need
   Google's consent message: set it up in AdSense → Privacy & messaging.

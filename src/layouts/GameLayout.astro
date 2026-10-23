@@ -1,0 +1,32 @@
+---
+/* A bare full-screen page for action games: no site header, no footer and
+   never any ads — the whole screen is the game. */
+import '../styles/site.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname.replace(/\.html$/, ''), Astro.site);
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{title} · Doodle Heroes</title>
+  <meta name="description" content={description}>
+  <link rel="canonical" href={canonical.href}>
+  <meta name="theme-color" content="#FBF7EC">
+  <link rel="icon" type="image/png" sizes="64x64" href="/icons/favicon-64.png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&family=Patrick+Hand&display=swap" rel="stylesheet">
+</head>
+<body class="game-page">
+  <slot />
+</body>
+</html>

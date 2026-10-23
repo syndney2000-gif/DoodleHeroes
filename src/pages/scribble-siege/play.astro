@@ -1,0 +1,155 @@
+---
+import GameLayout from '../../layouts/GameLayout.astro';
+import '../../games/survivor/siege.css';
+---
+<GameLayout
+  title="Play Scribble Siege"
+  description="Play Scribble Siege, a doodle survivor game: steer your hero through swarms of scribble monsters for ten minutes while your weapons fight on their own."
+>
+  <div class="siege" id="siege">
+    <header class="sg-top">
+      <a class="sg-home" href="/scribble-siege">← Guide &amp; tips</a>
+      <span class="sg-coins" title="Coins"><span aria-hidden="true">🪙</span> <b id="sg-coins">0</b><span class="sr-only"> coins</span></span>
+    </header>
+
+    <noscript><p class="note">Scribble Siege needs JavaScript. The <a href="/scribble-siege">guide</a> works without it.</p></noscript>
+
+    <!-- Main menu -->
+    <section class="sg-screen" id="scr-menu" hidden>
+      <h1 class="sg-title">Scribble <span>Siege</span></h1>
+      <canvas class="sg-menu-hero" id="sg-menu-hero" width="220" height="220" aria-hidden="true"></canvas>
+      <p class="sg-hero-name" id="sg-menu-hero-name"></p>
+      <button class="sg-play" type="button" id="sg-play">PLAY</button>
+      <nav class="sg-side" aria-label="Game menu">
+        <button type="button" data-go="heroes"><span aria-hidden="true">🧍</span> Heroes</button>
+        <button type="button" data-go="upgrades"><span aria-hidden="true">🎒</span> Upgrades</button>
+        <button type="button" data-go="daily"><span aria-hidden="true">📅</span> Daily siege</button>
+        <button type="button" data-go="draw"><span aria-hidden="true">✏️</span> Draw your hero</button>
+        <button type="button" data-go="records"><span aria-hidden="true">🏆</span> Records</button>
+      </nav>
+      <p class="sg-help">Move with <kbd>WASD</kbd> or the arrow keys, or drag anywhere on the screen. Your hero attacks on their own — just survive ten minutes.</p>
+    </section>
+
+    <!-- Heroes -->
+    <section class="sg-screen" id="scr-heroes" hidden>
+      <h2>Heroes</h2>
+      <div class="sg-tabs" role="tablist">
+        <button type="button" role="tab" aria-selected="true" data-tab="crew">The crew</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="mine">Your drawing</button>
+      </div>
+      <div class="sg-hero-grid" id="sg-hero-grid"></div>
+      <div class="sg-hero-detail card" id="sg-hero-detail"></div>
+      <button class="btn secondary sg-back" type="button" data-go="menu">← Back</button>
+    </section>
+
+    <!-- Upgrades -->
+    <section class="sg-screen" id="scr-upgrades" hidden>
+      <h2>Upgrades</h2>
+      <p class="sg-sub">Coins from every run buy upgrades that last forever. Tap a note to buy its next level.</p>
+      <div class="sg-tree" id="sg-tree"></div>
+      <p class="sg-sub" id="sg-up-status" role="status" aria-live="polite"></p>
+      <button class="btn secondary sg-back" type="button" data-go="menu">← Back</button>
+    </section>
+
+    <!-- Daily siege -->
+    <section class="sg-screen" id="scr-daily" hidden>
+      <h2>Daily siege</h2>
+      <div class="card sg-daily" id="sg-daily"></div>
+      <button class="btn secondary sg-back" type="button" data-go="menu">← Back</button>
+    </section>
+
+    <!-- Draw your hero -->
+    <section class="sg-screen" id="scr-draw" hidden>
+      <h2>Draw your hero</h2>
+      <p class="sg-sub">Draw anything — a blob, a cat, a potato with a sword. Whatever you draw is who you play as.</p>
+      <div class="sg-draw-wrap">
+        <canvas class="sg-draw" id="sg-draw" width="480" height="480" aria-label="Drawing area"></canvas>
+      </div>
+      <div class="sg-draw-tools" role="toolbar" aria-label="Drawing tools">
+        <span class="sg-swatches" id="sg-swatches"></span>
+        <button type="button" class="btn secondary" id="sg-size">Thin</button>
+        <button type="button" class="btn secondary" id="sg-undo">↶ Undo</button>
+        <button type="button" class="btn secondary" id="sg-clear">Clear</button>
+      </div>
+      <label class="sg-field">Name <input id="sg-name" maxlength="18" value="My Hero" autocomplete="off"></label>
+      <label class="sg-field">Starting weapon <select id="sg-weapon"></select></label>
+      <p><button class="btn" type="button" id="sg-save">Save my hero</button> <span id="sg-draw-status" role="status" aria-live="polite"></span></p>
+      <button class="btn secondary sg-back" type="button" data-go="menu">← Back</button>
+    </section>
+
+    <!-- Records -->
+    <section class="sg-screen" id="scr-records" hidden>
+      <h2>Records</h2>
+      <div id="sg-records"></div>
+      <p class="sg-sub">Records are kept in this browser only.</p>
+      <button class="btn secondary sg-back" type="button" data-go="menu">← Back</button>
+    </section>
+
+    <!-- The game itself -->
+    <section class="sg-game" id="scr-game" hidden>
+      <canvas class="sg-canvas" id="sg-canvas"></canvas>
+      <div class="sg-hud">
+        <div class="sg-xp">
+          <span class="sg-level" id="hud-level">1</span>
+          <div class="sg-xpbar"><i id="hud-xp"></i></div>
+        </div>
+        <div class="sg-row">
+          <div class="sg-hp"><span aria-hidden="true">❤</span><div class="sg-hpbar"><i id="hud-hp"></i></div><b id="hud-hp-text">100</b></div>
+          <div class="sg-stats"><b id="hud-time">10:00</b> <span aria-hidden="true">☠</span> <b id="hud-kills">0</b><span class="sr-only"> defeated</span>
+            <button type="button" class="sg-pause-btn" id="hud-pause" aria-label="Pause">⏸</button>
+          </div>
+        </div>
+        <div class="sg-boss" id="hud-boss" hidden><span>The Big Eraser</span><div class="sg-bossbar"><i id="hud-boss-hp"></i></div></div>
+        <ul class="sg-loadout" id="hud-loadout" aria-label="Weapons and items"></ul>
+      </div>
+      <div class="sg-stick" id="sg-stick" hidden><div class="sg-knob" id="sg-knob"></div></div>
+
+      <div class="sg-overlay" id="ov-pause" hidden>
+        <div class="card sg-panel">
+          <h2>Paused</h2>
+          <p><button class="btn" type="button" id="pz-resume">Resume</button></p>
+          <p><button class="btn secondary" type="button" id="pz-sound">Sound: on</button></p>
+          <p><button class="btn secondary" type="button" id="pz-quit">Give up and bank coins</button></p>
+        </div>
+      </div>
+
+      <div class="sg-overlay" id="ov-level" hidden>
+        <div class="sg-levelup">
+          <h2>Level up!</h2>
+          <div class="sg-cards" id="lv-cards"></div>
+          <p class="sg-level-actions">
+            <button class="btn secondary" type="button" id="lv-reroll">🎲 Reroll</button>
+            <button class="btn secondary" type="button" id="lv-skip">Skip (+3 🪙)</button>
+          </p>
+        </div>
+      </div>
+
+      <div class="sg-overlay" id="ov-end" hidden>
+        <div class="card sg-panel sg-report">
+          <p class="sg-report-head">Report card</p>
+          <span class="sg-stamp" id="end-grade">S</span>
+          <h2 id="end-title">Survived!</h2>
+          <table class="sg-report-table">
+            <tbody>
+              <tr><th>Time survived</th><td id="end-time"></td></tr>
+              <tr><th>Scribbles defeated</th><td id="end-kills"></td></tr>
+              <tr><th>Level reached</th><td id="end-level"></td></tr>
+              <tr><th>Coins earned</th><td><b id="end-coins">0</b> 🪙</td></tr>
+            </tbody>
+          </table>
+          <p class="sg-unlocked" id="end-unlocked" hidden></p>
+          <div class="sg-goal" id="end-goal"></div>
+          <p class="sg-end-actions">
+            <button class="btn" type="button" id="end-again">Try again</button>
+            <button class="btn secondary" type="button" id="end-menu">Menu</button>
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+</GameLayout>
+
+<script>
+  import { start } from '../../games/survivor/app';
+  start(document.getElementById('siege')!);
+</script>

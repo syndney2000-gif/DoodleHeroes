@@ -29,6 +29,13 @@ const firstLightSolved = solveWiring(parseWiring(firstLight)).options;
   <h1>Bring the island back, one puzzle at a time.</h1>
   <p class="lede">Doodle Heroes is a small collection of logic puzzles set on a hand-drawn island. Every puzzle has exactly one answer, and every one can be reached by reasoning alone — you never have to guess. Free, no account, and your progress stays in your own browser.</p>
 
+  <section class="card siege-promo">
+    <p class="eyebrow">New · action game</p>
+    <h2>Scribble Siege</h2>
+    <p>The margins have come alive. Steer your hero through swarms of scribbles for ten minutes while your weapons fight on their own — then spend your coins, unlock new heroes, or <strong>draw your own</strong>.</p>
+    <p class="actions"><a class="btn" href="/scribble-siege/play">Play Scribble Siege ▶</a> <a class="btn secondary" href="/scribble-siege">How it works</a></p>
+  </section>
+
   <section class="card expedition">
     <p class="eyebrow">Expedition mode</p>
     <h2>Lantern Isles</h2>
@@ -36,7 +43,7 @@ const firstLightSolved = solveWiring(parseWiring(firstLight)).options;
     <p><a class="btn" href="/expedition">Start the expedition ▶</a></p>
   </section>
 
-  <h2>Three puzzles</h2>
+  <h2>Three logic puzzles</h2>
   <div class="games">
     <article class="card game">
       <MiniBoard rows={lc.rows} cols={lc.cols} state={lighthouse.solution.map((r) => r.replaceAll('.', '?'))} label="A solved Island Sketch puzzle showing a lighthouse" cell={14} />
@@ -68,6 +75,7 @@ const firstLightSolved = solveWiring(parseWiring(firstLight)).options;
     <li><strong>Island Sketch:</strong> <a href="/guides/nonogram-basics">beginner</a> · <a href="/guides/nonogram-advanced">advanced</a> · <a href="/walkthroughs/the-lighthouse">walkthrough</a></li>
     <li><strong>Isle Spans:</strong> <a href="/guides/bridges-basics">beginner</a> · <a href="/guides/bridges-advanced">advanced</a> · <a href="/walkthroughs/tide-pools">walkthrough</a></li>
     <li><strong>Lighthouse Wiring:</strong> <a href="/guides/wiring-basics">beginner</a> · <a href="/guides/wiring-advanced">advanced</a> · <a href="/walkthroughs/chapel-green">walkthrough</a></li>
+    <li><strong>Scribble Siege:</strong> <a href="/guides/scribble-siege-survival">survival guide</a> · <a href="/scribble-siege">heroes, weapons &amp; upgrades</a></li>
   </ul>
   <p>The in-game Hint button uses the same reasoning: rather than revealing a random square, it points to where the next deduction is, so you can work it out yourself.</p>
 
@@ -76,7 +84,8 @@ const firstLightSolved = solveWiring(parseWiring(firstLight)).options;
 </Base>
 
 <style>
-  .expedition h2{ margin-top:0; }
+  .expedition h2, .siege-promo h2{ margin-top:0; }
+  .siege-promo .actions{ margin-bottom:0; }
   .expedition p:last-child{ margin-bottom:0; }
   .games{ display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
   .game{ margin:0; display:flex; flex-direction:column; gap:6px; }

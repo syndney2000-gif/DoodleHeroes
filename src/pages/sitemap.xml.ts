@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 /* Pages worth indexing. Play screens are left out on purpose: they're thin
    wrappers around the game, and their overview pages carry the content. */
 const pages = import.meta.glob('./**/*.astro');
-const skip = new Set(['/404', '/progress', '/island-sketch/play', '/isle-spans/play', '/lighthouse-wiring/play', '/scribble-siege/play', '/doodle-guess/play', '/margin-merge/play']);
+const skip = new Set(['/404', '/progress', '/island-sketch/play', '/isle-spans/play', '/lighthouse-wiring/play', '/scribble-siege/play', '/doodle-guess/play', '/margin-merge/play', '/draw-party/play']);
 
 export const GET: APIRoute = ({ site }) => {
   const paths = Object.keys(pages)

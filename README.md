@@ -85,6 +85,31 @@ exactly one solution. Run it after changing any puzzle.
 - The site is general-audience. Personalised ads in the EEA/UK/Switzerland need
   Google's consent message: set it up in AdSense → Privacy & messaging.
 
+## Draw Party server (`party/`)
+
+Draw Party needs a small real-time server: a Cloudflare Worker with one
+Durable Object per room. The room rules live in `src/games/draw-party/room.ts`
+(tested in `tests/draw-party.test.ts`); `party/src/worker.ts` only relays.
+
+Run it locally alongside the site:
+
+```sh
+cd party && npm install && npm run dev   # ws://127.0.0.1:8787
+```
+
+Deploy it once to your Cloudflare account:
+
+```sh
+cd party && npx wrangler login && npm run deploy
+```
+
+Wrangler prints the Worker's address (e.g.
+`https://doodle-heroes-party.<you>.workers.dev`). In the Pages project add an
+environment variable `PUBLIC_PARTY_URL` set to the same address with `wss://`,
+then redeploy the site. Until that's set, the Draw Party page says it isn't
+switched on yet. If you serve the site from another domain, add it to
+`ALLOWED_ORIGINS` in `party/wrangler.toml`.
+
 ## Before launch
 
 - `hello@doodleheros.com` (in `src/lib/site.ts`) must be a working mailbox.

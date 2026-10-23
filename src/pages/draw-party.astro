@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import { BREAK_SECONDS, CHOOSE_SECONDS, DRAW_SECONDS, MAX_PLAYERS, MIN_PLAYERS, ROUNDS } from '../games/draw-party/room';
+import { words } from '../games/draw-party/words';
+---
+<Base
+  title="Draw Party — draw and guess with friends"
+  description="Draw Party is a free draw-and-guess game for friends: make a private room, share the code, and take turns drawing while everyone else guesses."
+  section="draw-party"
+>
+  <p class="eyebrow">Multiplayer</p>
+  <h1>Draw Party</h1>
+  <p class="lede">Grab some friends. One of you draws, everyone else guesses — and the quicker you guess, the more you score. Private rooms, no accounts, nothing to install.</p>
+  <p class="hero-actions"><a class="btn" href="/draw-party/play">Start or join a room ▶</a></p>
+
+  <h2 id="how">How it works</h2>
+  <ol>
+    <li><strong>Make a room.</strong> You get a four-letter code and an invite link. Send it to friends — between {MIN_PLAYERS} and {MAX_PLAYERS} players can play.</li>
+    <li><strong>Take turns.</strong> Each player draws {ROUNDS} times. On your turn, pick one of three words within {CHOOSE_SECONDS} seconds (or one is picked for you), then draw it in {DRAW_SECONDS} seconds.</li>
+    <li><strong>Guess in the chat.</strong> Everyone else types guesses. A right guess is hidden from the others, so no one can copy it; a guess that’s one letter off gets a private “so close!”.</li>
+    <li><strong>Hints.</strong> For longer words, one letter is revealed halfway through and another at three-quarter time.</li>
+    <li><strong>Between turns</strong> the word is shown for {BREAK_SECONDS} seconds, then the next artist is up.</li>
+  </ol>
+
+  <h2 id="scoring">Scoring</h2>
+  <ul>
+    <li>A right guess scores between 60 and 300 points — more the earlier you get it — plus a bonus for being among the first to guess.</li>
+    <li>The artist scores 30 points for every player who guesses right, so drawing clearly pays.</li>
+    <li>When everyone has guessed, the turn ends early.</li>
+  </ul>
+
+  <h2 id="tips">Drawing tips</h2>
+  <ul>
+    <li><strong>Start with the outline.</strong> The overall shape is what most people recognise first.</li>
+    <li><strong>Add the one detail that gives it away</strong> — a trunk for an elephant, a stripe pattern for a zebra.</li>
+    <li><strong>Use colour sparingly.</strong> Yellow for the sun or a lemon can be the whole clue.</li>
+    <li><strong>Draw scenes for tricky words.</strong> A “tornado” is easier with a little house flying past.</li>
+  </ul>
+
+  <h2 id="words">The words</h2>
+  <p>There are {words.length} words in the deck, all things you can sketch in a minute: animals, food, objects and places. Every turn offers three at random.</p>
+
+  <h2 id="safety">Playing safely</h2>
+  <p>Rooms are private: only people with the code can join, and there’s no public list of rooms. Names and chat are short plain text, and a short list of offensive words is automatically blanked out. The artist (and anyone who has already guessed) can’t type the answer into the chat. Nothing is stored after a room empties.</p>
+</Base>
+
+<style>
+  .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+</style>

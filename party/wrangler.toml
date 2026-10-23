@@ -1,0 +1,16 @@
+# Draw Party's real-time server: one Durable Object per room.
+name = "doodle-heroes-party"
+main = "src/worker.ts"
+compatibility_date = "2026-10-01"
+
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "PartyRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["PartyRoom"]
+
+[vars]
+# Pages allowed to open rooms. Localhost is for `npm run dev` on the site.
+ALLOWED_ORIGINS = "https://doodleheros.com,https://www.doodleheros.com,http://localhost:4321,http://127.0.0.1:4321,http://127.0.0.1:4322"

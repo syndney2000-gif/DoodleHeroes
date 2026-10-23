@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import { BOARD_H, BOARD_W, INK_BASE, INK_PER_LEVEL, INK_SECONDS, TOP_TIER, chainIds, chains, orderValue, sellValue } from '../games/merge/data';
+import { INK_POT, SKIP_ORDER_COST } from '../games/merge/engine';
+---
+<Base
+  title="Margin Merge — a doodle merge game"
+  description="Margin Merge is a free merge game: draw doodles from your sketchbook, merge two of a kind into something better, fill orders and discover all 32 doodles."
+  section="merge"
+>
+  <p class="eyebrow">Merge game</p>
+  <h1>Margin Merge</h1>
+  <p class="lede">Something is happening in the margins of your notebook. Draw a doodle, put two of the same together, and they turn into something better: an ink dot becomes a blob, a blob becomes a stick figure, and eight steps later you have a Hero of the Margin.</p>
+  <p class="hero-actions"><a class="btn" href="/margin-merge/play">Play Margin Merge ▶</a></p>
+
+  <h2 id="how">How to play</h2>
+  <ol>
+    <li><strong>Draw.</strong> Tap the sketchbook to put a new doodle on the {BOARD_W} × {BOARD_H} board. Each drawing uses one drop of ink.</li>
+    <li><strong>Merge.</strong> Drag a doodle onto an identical one — same chain, same level — and they combine into the next level up. You can also tap one doodle, then tap where it should go.</li>
+    <li><strong>Fill orders.</strong> Three orders sit above the board, each asking for one or two particular doodles. When the board holds them, tap <strong>Deliver</strong> for coins and experience.</li>
+    <li><strong>Level up.</strong> Experience comes from merging and from orders. New levels unlock new chains, hold more ink, and lead to bigger orders.</li>
+  </ol>
+
+  <h2 id="chains">The four chains</h2>
+  <p>Every chain has {TOP_TIER} levels. Here’s where each one starts and ends — the rest are for you to discover.</p>
+  <table>
+    <thead><tr><th>Chain</th><th>Starts as</th><th>Ends as</th><th>Unlocks at</th></tr></thead>
+    <tbody>
+      {chainIds.map((c) => (
+        <tr><td>{chains[c].name}</td><td>{chains[c].items[0].icon} {chains[c].items[0].name}</td><td>{chains[c].items[TOP_TIER - 1].icon} {chains[c].items[TOP_TIER - 1].name}</td><td>Level {chains[c].unlockLevel}</td></tr>
+      ))}
+    </tbody>
+  </table>
+  <p>Each step doubles the work: one level-3 doodle takes four level-1 doodles, and a top-level doodle takes 128. The collection book on the play screen tracks every doodle you’ve discovered.</p>
+
+  <h2 id="ink">Ink</h2>
+  <p>You start with {INK_BASE} drops of ink, and every level adds {INK_PER_LEVEL} more to your maximum. Ink refills by one drop every {INK_SECONDS} seconds — including while the game is closed — and a level-up tops it up a little too. If you can’t wait, a pot of {INK_POT.ink} drops costs {INK_POT.cost} coins.</p>
+
+  <h2 id="coins">Coins</h2>
+  <table>
+    <thead><tr><th>Doodle level</th>{Array.from({ length: TOP_TIER }, (_, k) => <th>{k + 1}</th>)}</tr></thead>
+    <tbody>
+      <tr><td>In an order</td>{Array.from({ length: TOP_TIER }, (_, k) => <td>{orderValue(k + 1)}</td>)}</tr>
+      <tr><td>Erased</td>{Array.from({ length: TOP_TIER }, (_, k) => <td>{sellValue(k + 1)}</td>)}</tr>
+    </tbody>
+  </table>
+  <p>Orders pay far more than erasing, so only erase to free up space. An order you don’t want can be swapped for a new one for {SKIP_ORDER_COST} coins.</p>
+
+  <h2 id="tips">Tips</h2>
+  <ul>
+    <li><strong>Keep the board tidy.</strong> Group each chain in its own corner. It’s much easier to spot pairs.</li>
+    <li><strong>Don’t merge everything at once.</strong> Look at the orders first — if one wants a Sticky Note, keep a Sticky Note rather than merging it up into a Notebook.</li>
+    <li><strong>Leave a few squares free.</strong> A full board means you can’t draw. When you’re down to two or three empty squares, merge or erase before drawing again.</li>
+    <li><strong>Spend ink, then come back.</strong> Ink keeps refilling while you’re away, so a short session every few hours goes further than one long one.</li>
+  </ul>
+
+  <p>Margin Merge saves your board automatically in this browser.</p>
+</Base>
+
+<style>
+  .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+</style>

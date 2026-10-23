@@ -1,0 +1,330 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="Play Margin Merge"
+  description="Play Margin Merge: draw doodles from your sketchbook, merge matching ones into something better, and fill orders to unlock new chains."
+  ads={false}
+  section="merge"
+  wide
+>
+  <p class="eyebrow">Merge game</p>
+  <h1>Margin Merge</h1>
+  <noscript><p class="note">Margin Merge needs JavaScript. The <a href="/margin-merge">guide</a> works without it.</p></noscript>
+
+  <div class="mm" id="mm" hidden>
+    <div class="mm-bar">
+      <span class="mm-level" id="mm-level" title="Level">1</span>
+      <div class="mm-xp"><i id="mm-xp"></i></div>
+      <span class="mm-pill" title="Ink"><span aria-hidden="true">💧</span> <b id="mm-ink">30</b><small id="mm-ink-next"></small></span>
+      <span class="mm-pill" title="Coins"><span aria-hidden="true">🪙</span> <b id="mm-coins">0</b></span>
+    </div>
+
+    <section class="mm-orders" id="mm-orders" aria-label="Orders"></section>
+
+    <div class="mm-board" id="mm-board" role="grid" aria-label="Merge board"></div>
+
+    <div class="mm-actions">
+      <button class="btn mm-draw" type="button" id="mm-draw">✏️ Draw <small>(1 💧)</small></button>
+      <button class="btn secondary" type="button" id="mm-erase" disabled>🧽 Erase</button>
+      <button class="btn secondary" type="button" id="mm-buy">💧 +10 ink (25 🪙)</button>
+      <button class="btn secondary" type="button" id="mm-book">📖 Collection</button>
+    </div>
+    <p class="mm-status" id="mm-status" role="status" aria-live="polite">Tap the sketchbook to draw your first doodle.</p>
+
+    <dialog class="card mm-dialog" id="mm-collection">
+      <h2>Collection</h2>
+      <div id="mm-collection-body"></div>
+      <form method="dialog"><button class="btn">Close</button></form>
+    </dialog>
+  </div>
+
+  <section class="mm-help">
+    <h2>Quick controls</h2>
+    <ul>
+      <li><strong>Draw</strong> puts a new doodle on the board for one drop of ink. Ink refills over time.</li>
+      <li><strong>Drag</strong> a doodle onto a matching one to merge them — or tap one, then tap where it should go.</li>
+      <li>Fill <strong>orders</strong> for coins and experience. Levelling up unlocks new chains.</li>
+      <li>Board full? Select a doodle and <strong>Erase</strong> it for a few coins.</li>
+    </ul>
+    <p>More tips in the <a href="/margin-merge">Margin Merge guide</a>.</p>
+  </section>
+</Base>
+
+<script>
+  import { BOARD_H, BOARD_W, TOP_TIER, chainIds, chains, xpToNext } from '../../games/merge/data';
+  import {
+    INK_POT, SKIP_ORDER_COST, buyInk, deliver, draw, erase, inkMax, move, newState, nextInkIn, orderCells,
+    refillInk, skipOrder, unlockedChains, type MergeState,
+  } from '../../games/merge/engine';
+  import { load, save } from '../../lib/storage';
+
+  const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+  const SAVE = 'margin-merge:state';
+  const s: MergeState = load<MergeState>(SAVE) ?? newState((Math.random() * 2 ** 32) >>> 0, Date.now());
+  refillInk(s, Date.now());
+  let selected: number | null = null;
+  const persist = () => save(SAVE, s);
+  const status = (m: string) => { $('mm-status').textContent = m; };
+  const itemName = (c: { chain: keyof typeof chains; tier: number }) => chains[c.chain].items[c.tier - 1].name;
+  $('mm').hidden = false;
+
+  /* ---------- board ---------- */
+
+  const board = $('mm-board');
+  board.style.setProperty('--w', String(BOARD_W));
+  const cellEls: HTMLButtonElement[] = [];
+  for (let i = 0; i < BOARD_W * BOARD_H; i++) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mm-cell';
+    b.dataset.i = String(i);
+    b.setAttribute('role', 'gridcell');
+    cellEls.push(b);
+    board.append(b);
+  }
+
+  function paintBoard(flash?: number) {
+    s.cells.forEach((c, i) => {
+      const b = cellEls[i];
+      b.classList.toggle('sel', selected === i);
+      b.classList.toggle('pop', flash === i);
+      if (!c) {
+        b.innerHTML = '';
+        delete b.dataset.chain;
+        b.setAttribute('aria-label', `Empty square ${i + 1}`);
+        return;
+      }
+      const ch = chains[c.chain];
+      b.innerHTML = `<span class="ic" aria-hidden="true">${ch.items[c.tier - 1].icon}</span><span class="tier" aria-hidden="true">${c.tier}</span>`;
+      b.dataset.chain = c.chain;
+      b.setAttribute('aria-label', `${ch.items[c.tier - 1].name}, ${ch.name} level ${c.tier}`);
+    });
+    $<HTMLButtonElement>('mm-erase').disabled = selected == null || !s.cells[selected];
+  }
+
+  function act(from: number, to: number) {
+    const before = s.discovered.length;
+    const level = s.level;
+    const r = move(s, from, to);
+    selected = null;
+    if (r === 'merged') {
+      const it = s.cells[to]!;
+      const fresh = s.discovered.length > before;
+      status(`Merged into ${itemName(it)}!${fresh ? ' ✨ New discovery!' : ''}${it.tier === TOP_TIER ? ' That’s the top of the chain!' : ''}${s.level > level ? ` 🎉 Level ${s.level}!` : ''}`);
+    } else if (r === 'swapped') status('Swapped. Only two of the same doodle can merge.');
+    persist();
+    render(r === 'merged' ? to : undefined);
+  }
+
+  function tap(i: number) {
+    if (selected == null) {
+      if (s.cells[i]) { selected = i; status(`${itemName(s.cells[i]!)} picked up — tap where it should go.`); }
+    } else if (selected === i) {
+      selected = null;
+      status('Put back.');
+    } else {
+      act(selected, i);
+      return;
+    }
+    paintBoard();
+  }
+
+  // Dragging: a ghost follows the pointer; a short press with no movement is a tap.
+  let drag: { from: number; x: number; y: number; ghost: HTMLElement | null; id: number } | null = null;
+  board.addEventListener('pointerdown', (e) => {
+    const cell = (e.target as Element).closest<HTMLButtonElement>('.mm-cell');
+    if (!cell) return;
+    const i = Number(cell.dataset.i);
+    if (!s.cells[i]) return;
+    // No pointer capture yet: capturing now would send the tap's click to
+    // the board instead of the square. It starts once a real drag begins.
+    drag = { from: i, x: e.clientX, y: e.clientY, ghost: null, id: e.pointerId };
+  });
+  board.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    if (!drag.ghost && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 8) {
+      drag.ghost = document.createElement('div');
+      drag.ghost.className = 'mm-ghost';
+      drag.ghost.textContent = chains[s.cells[drag.from]!.chain].items[s.cells[drag.from]!.tier - 1].icon;
+      document.body.append(drag.ghost);
+      cellEls[drag.from].classList.add('lifting');
+      board.setPointerCapture(e.pointerId);
+    }
+    if (drag.ghost) { drag.ghost.style.left = `${e.clientX}px`; drag.ghost.style.top = `${e.clientY}px`; }
+  });
+  const endDrag = (e: PointerEvent) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const d = drag;
+    drag = null;
+    cellEls[d.from].classList.remove('lifting');
+    if (!d.ghost) return; // a plain tap: the click handler deals with it
+    d.ghost.remove();
+    const under = document.elementFromPoint(e.clientX, e.clientY)?.closest<HTMLButtonElement>('.mm-cell');
+    suppressClick = true;
+    if (under) act(d.from, Number(under.dataset.i));
+  };
+  let suppressClick = false;
+  board.addEventListener('pointerup', endDrag);
+  board.addEventListener('pointercancel', endDrag);
+  board.addEventListener('click', (e) => {
+    if (suppressClick) { suppressClick = false; return; }
+    const cell = (e.target as Element).closest<HTMLButtonElement>('.mm-cell');
+    if (cell) tap(Number(cell.dataset.i));
+  });
+
+  /* ---------- orders ---------- */
+
+  function paintOrders() {
+    const box = $('mm-orders');
+    box.textContent = '';
+    for (const o of s.orders) {
+      const ready = !!orderCells(s, o);
+      const card = document.createElement('article');
+      card.className = `mm-order${ready ? ' ready' : ''}`;
+      card.innerHTML = `<div class="wants">${o.wants.map((w) => `<span class="want" title="${chains[w.chain].items[w.tier - 1].name}"><span aria-hidden="true">${chains[w.chain].items[w.tier - 1].icon}</span><small>${chains[w.chain].items[w.tier - 1].name}</small></span>`).join('')}</div>
+        <p class="reward">🪙 ${o.coins} · ⭐ ${o.xp}</p>`;
+      const go = document.createElement('button');
+      go.type = 'button';
+      go.className = 'btn';
+      go.textContent = ready ? 'Deliver' : 'Not yet';
+      go.disabled = !ready;
+      go.addEventListener('click', () => {
+        const level = s.level;
+        if (deliver(s, o.id)) {
+          status(`Order filled: +${o.coins} coins.${s.level > level ? ` 🎉 Level ${s.level}! ${newChainNote(level)}` : ''}`);
+          selected = null;
+          persist();
+          render();
+        }
+      });
+      const swap = document.createElement('button');
+      swap.type = 'button';
+      swap.className = 'btn secondary mm-swap';
+      swap.textContent = `Swap (${SKIP_ORDER_COST} 🪙)`;
+      swap.disabled = s.coins < SKIP_ORDER_COST;
+      swap.addEventListener('click', () => { if (skipOrder(s, o.id)) { persist(); render(); status('New order.'); } });
+      card.append(go, swap);
+      box.append(card);
+    }
+  }
+
+  function newChainNote(oldLevel: number) {
+    const fresh = chainIds.filter((c) => chains[c].unlockLevel > oldLevel && chains[c].unlockLevel <= s.level);
+    return fresh.length ? `The sketchbook can now draw ${fresh.map((c) => chains[c].name).join(' and ')}!` : '';
+  }
+
+  /* ---------- top bar, buttons, collection ---------- */
+
+  function paintBar() {
+    refillInk(s, Date.now());
+    $('mm-level').textContent = String(s.level);
+    $('mm-xp').style.width = `${(s.xp / xpToNext(s.level)) * 100}%`;
+    $('mm-ink').textContent = `${s.ink}/${inkMax(s)}`;
+    const wait = nextInkIn(s, Date.now());
+    $('mm-ink-next').textContent = wait ? ` +1 in ${Math.floor(wait / 60)}:${String(wait % 60).padStart(2, '0')}` : '';
+    $('mm-coins').textContent = String(s.coins);
+    $<HTMLButtonElement>('mm-draw').disabled = s.ink < 1 || !s.cells.includes(null);
+    $<HTMLButtonElement>('mm-buy').disabled = s.coins < INK_POT.cost;
+  }
+
+  function render(flash?: number) { paintBar(); paintOrders(); paintBoard(flash); }
+
+  $('mm-draw').addEventListener('click', () => {
+    const cell = draw(s, Date.now());
+    if (cell == null) {
+      status(s.ink < 1 ? 'Out of ink — wait for a refill, buy a pot, or fill an order.' : 'The board is full. Merge something, or erase a doodle to make room.');
+      return;
+    }
+    status(`Drew a ${itemName(s.cells[cell]!)}.`);
+    persist();
+    render(cell);
+  });
+  $('mm-erase').addEventListener('click', () => {
+    if (selected == null || !s.cells[selected]) return;
+    const name = itemName(s.cells[selected]!);
+    const coins = erase(s, selected);
+    selected = null;
+    status(`Erased the ${name} for ${coins} coin${coins === 1 ? '' : 's'}.`);
+    persist();
+    render();
+  });
+  $('mm-buy').addEventListener('click', () => {
+    if (buyInk(s, Date.now())) { status(`+${INK_POT.ink} ink.`); persist(); render(); }
+  });
+  $('mm-book').addEventListener('click', () => {
+    const body = $('mm-collection-body');
+    const unlocked = unlockedChains(s);
+    body.innerHTML = `<p class="muted">${s.discovered.length} of ${chainIds.length * TOP_TIER} doodles discovered.</p>` + chainIds.map((c) => {
+      const ch = chains[c];
+      const open = unlocked.includes(c);
+      return `<h3>${ch.name}${open ? '' : ` <small>· unlocks at level ${ch.unlockLevel}</small>`}</h3><ol class="mm-book">${ch.items.map((it, k) =>
+        s.discovered.includes(`${c}:${k + 1}`)
+          ? `<li><span aria-hidden="true">${it.icon}</span><small>${it.name}</small></li>`
+          : `<li class="unknown"><span aria-hidden="true">?</span><small>Level ${k + 1}</small></li>`).join('')}</ol>`;
+    }).join('');
+    $<HTMLDialogElement>('mm-collection').showModal();
+  });
+
+  setInterval(paintBar, 1000);
+  render();
+</script>
+
+<!-- Global: the board, orders and collection are built by the script. Every
+     selector is prefixed mm-. -->
+<style is:global>
+  .mm-bar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; max-width:640px; margin:0 auto 12px; }
+  .mm-level{
+    width:40px; height:40px; display:grid; place-items:center; flex:none; font-family:var(--hand); font-size:22px;
+    background:var(--paper); border:2.5px solid var(--ink); border-radius:50%;
+  }
+  .mm-xp{ flex:1; min-width:100px; height:12px; border:2px solid var(--ink); border-radius:var(--wobble); background:var(--paper); overflow:hidden; }
+  .mm-xp i{ display:block; height:100%; background:repeating-linear-gradient(-60deg, #3F7FD8 0 4px, #5B95E6 4px 7px); transition:width .2s; }
+  .mm-pill{ font-family:var(--hand); font-size:20px; padding:2px 10px; background:var(--paper); border:2px solid var(--ink); border-radius:var(--wobble); white-space:nowrap; }
+  .mm-pill small{ font-family:var(--text); font-size:12px; color:var(--ink-soft); }
+  .mm-orders{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; max-width:640px; margin:0 auto 12px; }
+  .mm-order{
+    display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 6px; text-align:center;
+    background:#FFF8D9; border:2px solid var(--ink); border-radius:var(--wobble-soft); box-shadow:2px 3px 0 var(--shadow);
+  }
+  .mm-order.ready{ background:#E6F4E9; border-color:var(--green); }
+  .mm-order .wants{ display:flex; gap:6px; justify-content:center; }
+  .mm-order .want{ display:flex; flex-direction:column; align-items:center; font-size:28px; line-height:1.1; }
+  .mm-order .want small{ font-size:11px; line-height:1.2; max-width:80px; }
+  .mm-order .reward{ margin:0; font-size:13px; font-weight:700; }
+  .mm-order .btn{ font-size:16px; padding:4px 10px; min-height:38px; width:100%; }
+  .mm-order .mm-swap{ font-size:13px; min-height:32px; padding:2px 6px; }
+  .mm-order .btn:disabled{ opacity:.5; cursor:default; }
+  .mm-board{
+    display:grid; grid-template-columns:repeat(var(--w), 1fr); gap:5px; max-width:460px; margin:0 auto;
+    padding:8px; background:#EFE8D6; border:2.5px solid var(--ink); border-radius:var(--wobble-soft);
+    touch-action:none; user-select:none; -webkit-user-select:none;
+  }
+  .mm-cell{
+    position:relative; aspect-ratio:1; display:grid; place-items:center; cursor:pointer; padding:0;
+    background:var(--paper) repeating-linear-gradient(to bottom, transparent 0 9px, rgba(47,99,200,.09) 9px 10px);
+    border:1.5px dashed rgba(45,43,51,.25); border-radius:10px; font:inherit; color:var(--ink);
+  }
+  .mm-cell .ic{ font-size:clamp(22px, 7vw, 34px); line-height:1; }
+  .mm-cell .tier{ position:absolute; right:3px; bottom:1px; font-size:11px; font-weight:800; color:var(--ink-soft); }
+  .mm-cell[data-chain]:not(:empty){ border-style:solid; border-color:var(--ink); background-color:#FFFDF6; }
+  .mm-cell.sel{ outline:3px solid var(--blue); outline-offset:1px; }
+  .mm-cell.lifting{ opacity:.35; }
+  .mm-cell.pop{ animation:mm-pop .3s ease-out; }
+  @keyframes mm-pop{ 40%{ transform:scale(1.18) rotate(-4deg); } }
+  @media (prefers-reduced-motion:reduce){ .mm-cell.pop{ animation:none; } }
+  .mm-ghost{ position:fixed; z-index:50; transform:translate(-50%,-60%); font-size:40px; pointer-events:none; filter:drop-shadow(2px 4px 0 rgba(45,43,51,.25)); }
+  .mm-actions{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:14px auto 6px; max-width:640px; }
+  .mm-actions .btn{ font-size:18px; padding:8px 14px; }
+  .mm-actions .btn:disabled{ opacity:.5; cursor:default; }
+  .mm-draw{ font-size:22px !important; }
+  .mm-status{ text-align:center; min-height:1.6em; max-width:560px; margin:6px auto; }
+  .mm-dialog{ max-width:min(92vw, 620px); max-height:85vh; overflow-y:auto; }
+  .mm-dialog::backdrop{ background:rgba(45,43,51,.35); }
+  .mm-book{ list-style:none; padding:0; display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; }
+  .mm-book li{ margin:0; display:flex; flex-direction:column; align-items:center; font-size:26px; padding:4px; border:1.5px solid var(--ink); border-radius:var(--wobble-soft); background:#FFF8D9; }
+  .mm-book li small{ font-size:11px; text-align:center; }
+  .mm-book li.unknown{ background:#EEE9DC; color:var(--ink-soft); border-style:dashed; }
+  .mm-help{ max-width:780px; margin:34px auto 0; }
+  @media (max-width:480px){ .mm-order .want small{ display:none; } }
+</style>

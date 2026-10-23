@@ -1,0 +1,57 @@
+---
+import Base from '../../layouts/Base.astro';
+import SpansExample from '../../components/SpansExample.astro';
+import { examples } from '../../content/bridges-examples';
+---
+<Base
+  title="Advanced bridge puzzles: never cut a group off"
+  description="Harder bridge-building puzzle techniques: why two 1s can't join, why two 2s can't double up, closed groups, and the group with only one way out."
+  section="guides"
+>
+  <p class="eyebrow">Isle Spans guide · advanced</p>
+  <h1>Advanced bridge puzzles</h1>
+  <p class="lede">Counting will carry you a long way, but bigger maps also lean on the last rule: every island must end up in one connected network. That rule is a weapon — it rules out bridges that counting alone allows.</p>
+
+  <p>This guide follows on from <a href="/guides/bridges-basics">the beginner’s guide</a>. Dashed red lines show bridges the rules forbid (or limit); each example was checked by the same solver that powers the Hint button.</p>
+
+  <h2 id="ones">1. Two 1s never join each other</h2>
+  <p>If two 1s were joined by a bridge, each would be finished — and that pair would be cut off from everything else forever. On any map with more than two islands, that breaks the connection rule. So a 1 must always bridge to something bigger.</p>
+  <SpansExample example={examples.pairOfOnes} label="Two 1s facing each other">
+    The two 1s at the top can see each other, but a bridge between them would leave them stranded from the 2s below. That bridge is ruled out.
+  </SpansExample>
+
+  <h2 id="twos">2. Two 2s never double up</h2>
+  <p>The same trap catches 2s. A double bridge between two 2s finishes both of them and seals them off. They can still share a <em>single</em> bridge — each then needs one more bridge elsewhere, which keeps them connected to the rest.</p>
+  <SpansExample example={examples.pairOfTwos} label="Two 2s facing each other">
+    A double bridge here would strand the top pair. They can have at most a single bridge between them.
+  </SpansExample>
+
+  <h2 id="closed-groups">3. The general rule: no closed groups</h2>
+  <p>Rules 1 and 2 are special cases of one idea. Look at any group of islands that are joined together. If a bridge would leave every island in that group finished, and the group isn’t the whole map, then that bridge is impossible — it would make a sealed-off island chain.</p>
+  <p>On big maps this shows up in disguise: a 3 and a 1 already joined, with a 2 nearby; a chain of three islands that would all be satisfied by one more bridge. Before adding a bridge that finishes several islands at once, ask: <em>can this group still reach the rest of the map?</em></p>
+
+  <h2 id="one-way-out">4. One way out</h2>
+  <p>The flip side of closed groups: if a connected group of islands has only one bridge left that could lead outside it, that bridge <strong>must</strong> be built, or the group would end up cut off. Even when every island’s number seems to allow other options, the connection rule settles it.</p>
+  <p>This is especially useful late in a puzzle, when most islands are finished and a few groups are waiting to be joined: count the possible exits from each group, and any group with just one has found its bridge.</p>
+
+  <h2 id="loops">5. Loops are allowed — don’t assume a tree</h2>
+  <p>Unlike some versions of this puzzle, Isle Spans allows loops: two different routes between the same islands are fine. So never rule a bridge out just because the two islands are already connected another way. The only connection rule is that everything must end up joined.</p>
+
+  <h2 id="combine">6. Combine everything after each change</h2>
+  <p>The fastest solvers work in waves. Every new bridge does three things at once: it lowers the needs of both islands it touches, it blocks any bridge crossing it, and it grows a connected group. After each bridge, check all three:</p>
+  <ol>
+    <li><strong>The two islands it touches</strong> — are they finished? Has a neighbour’s capacity dropped?</li>
+    <li><strong>Its path</strong> — did it block a bridge someone else needed?</li>
+    <li><strong>Its group</strong> — is the group close to sealing itself off, or down to one way out?</li>
+  </ol>
+
+  <h2 id="stuck">When you’re stuck</h2>
+  <ul>
+    <li>Press <strong>Check</strong> first (it’s free). One wrong double bridge can make a whole corner look impossible.</li>
+    <li>Recount capacity for every unfinished island, remembering neighbours that are almost full.</li>
+    <li>List each connected group and count its possible exits.</li>
+    <li>Still stuck? A <strong>Hint</strong> outlines the island to look at — try to work out why before you press again.</li>
+  </ul>
+
+  <p>See all of this in action: <a href="/walkthroughs/tide-pools">Walkthrough: Tide Pools</a>.</p>
+</Base>

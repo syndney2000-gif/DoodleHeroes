@@ -1,0 +1,36 @@
+---
+/* A guide example: the position, then what the rules force. The claims come
+   from content/bridges-examples.ts, where a test checks each one. */
+import SpansDiagram from './SpansDiagram.astro';
+import { exampleBoard, islandAt, spanBetween, type SpansExample } from '../content/bridges-examples';
+
+interface Props {
+  example: SpansExample;
+  label: string;
+}
+
+const { example, label } = Astro.props;
+const { board, counts } = exampleBoard(example);
+const focus = (example.focus ?? []).map((ref) => islandAt(board, ref));
+const fresh = (example.forced ?? []).map(([p, q, n]) => ({ span: spanBetween(board, p, q), n }));
+const capped = (example.capped ?? []).map(([p, q]) => spanBetween(board, p, q));
+---
+<figure class="spans-example">
+  <div class="se-pair">
+    <div>
+      <span class="se-tag">Position</span>
+      <SpansDiagram rows={example.rows} counts={counts} focus={focus} label={`${label}: the position`} unit={30} />
+    </div>
+    <div>
+      <span class="se-tag">What follows</span>
+      <SpansDiagram rows={example.rows} counts={counts} fresh={fresh} capped={capped} focus={focus} label={`${label}: what the rules force`} unit={30} />
+    </div>
+  </div>
+  <figcaption><slot /></figcaption>
+</figure>
+
+<style>
+  .spans-example{ background:var(--paper); border:2px solid var(--rule); border-radius:12px; padding:12px 14px; }
+  .se-pair{ display:flex; flex-wrap:wrap; gap:14px 26px; margin-bottom:8px; }
+  .se-tag{ display:block; font-size:14px; color:var(--ink-soft); margin-bottom:4px; }
+</style>

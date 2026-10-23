@@ -21,7 +21,7 @@ import Base from '../layouts/Base.astro';
 <script>
   import { clearAll, results } from '../lib/storage';
   import { allPuzzles } from '../games/nonogram/puzzles';
-  import { formatTime } from '../games/nonogram/board';
+  import { formatTime } from '../lib/scoring';
 
   function render() {
     const done = results();

@@ -1,0 +1,97 @@
+---
+import Base from '../../layouts/Base.astro';
+import SpansDiagram from '../../components/SpansDiagram.astro';
+import { findPuzzle } from '../../games/bridges/puzzles';
+import { parse } from '../../games/bridges/model';
+import { solve } from '../../games/bridges/solver';
+
+const puzzle = findPuzzle('tide-pools')!;
+const board = parse(puzzle.rows);
+
+/* Each stage ends after a given number of solver steps, so every picture is
+   a real position in the solver's own order. */
+const stageEnds = [0, 2, 5, 7, 8, 13];
+const after = (k: number) => solve(board, undefined, k).min;
+const states = stageEnds.map(after);
+if (!solve(board).solved || solve(board).steps.length !== stageEnds.at(-1)) {
+  throw new Error('Tide Pools walkthrough is out of step with the solver; update stageEnds.');
+}
+const stage = (k: number) => {
+  const prev = states[k - 1], now = states[k];
+  return {
+    counts: prev,
+    fresh: now.flatMap((n, span) => (n > prev[span] ? [{ span, n }] : [])),
+  };
+};
+const between = (r1: number, c1: number, r2: number, c2: number) => {
+  const id = (r: number, c: number) => board.islands.find((i) => i.r === r - 1 && i.c === c - 1)!.id;
+  const a = id(r1, c1), b = id(r2, c2);
+  return board.spans.find((s) => (s.a === a && s.b === b) || (s.a === b && s.b === a))!.id;
+};
+---
+<Base
+  title="Walkthrough: solving Tide Pools"
+  description="A complete step-by-step solve of Tide Pools, a 7 × 7 Isle Spans bridge puzzle, including the isolation step that unlocks it."
+  section="guides"
+>
+  <p class="eyebrow">Isle Spans walkthrough · 7 × 7</p>
+  <h1>Solving Tide Pools</h1>
+  <p class="lede">Tide Pools is the last map of the first chapter, and the first that can’t be finished by counting alone. Most of it falls to the basic techniques, but one step needs the connection rule. Here’s the whole solve in five stages.</p>
+  <p>Want to try first? <a href="/isle-spans/play?p=tide-pools">Play Tide Pools</a>. Rows are numbered 1–7 from the top and columns 1–7 from the left; teal bridges are the ones each stage adds.</p>
+
+  <figure>
+    <SpansDiagram rows={puzzle.rows} label="Tide Pools before any bridges" />
+    <figcaption>The starting map: nine islands.</figcaption>
+  </figure>
+
+  <h2>Stage 1: the lonely 1 and the 4</h2>
+  <p>The 1 in the top-right corner can see only one island: the 4 three squares below it. So that’s its bridge. Now look at the 4 (row 4, column 7). The 1 above can give it just that one bridge; the 3 to its left and the 2 below can give two each. That’s a capacity of 1 + 2 + 2 = 5 — one more than it needs. So the 4 must have at least one bridge to the left and at least one downward.</p>
+  <figure>
+    <SpansDiagram rows={puzzle.rows} {...stage(1)} label="The 1 bridged to the 4, and the 4 bridged left and down" />
+    <figcaption>One-short-of-capacity, straight from the <a href="/guides/bridges-basics#one-short">beginner’s guide</a>.</figcaption>
+  </figure>
+
+  <h2>Stage 2: working along row 4</h2>
+  <p>The 2 at row 6, column 3 sees the 3 above it (up to two bridges) and the 1 to its right (only one). Capacity 3, needs 2 — so it bridges up at least once.</p>
+  <p>That gives the 3 (row 4, column 3) two bridges already: one right to the 4 and one down. It needs only one more, so the bridge to its left can be single at most. And that caps the 2 at row 4, column 1: its neighbours are that 3 (one bridge at most, now) and the 2 below (up to two). Capacity 3, needs 2 — so it must bridge downward.</p>
+  <figure>
+    <SpansDiagram rows={puzzle.rows} {...stage(2)} note={[between(4, 1, 4, 3)]} label="Bridges added down from the 3 and the left-hand 2" />
+    <figcaption>The tinted gap can hold at most one bridge — a small neighbour in disguise.</figcaption>
+  </figure>
+
+  <h2>Stage 3: the other 1</h2>
+  <p>The 1 at row 6, column 6 sees only one island: the 2 to its left. That bridge is certain — and it finishes that 2, which now has one bridge up and one to the right. So the bridge up to the 3 is exactly single.</p>
+  <figure>
+    <SpansDiagram rows={puzzle.rows} {...stage(3)} label="The 1 at row 6 joined to the 2" />
+    <figcaption>A 1 with one neighbour is always the easiest bridge on the map.</figcaption>
+  </figure>
+
+  <h2>Stage 4: the key step — don’t seal the 2s</h2>
+  <p>Look at the two 2s in column 1 (rows 4 and 7). They’re already joined by one bridge. Counting alone would allow a second — but a double bridge would finish both of them, and the pair would be cut off from the rest of the map. That breaks the connection rule, so the bridge between them is <strong>single</strong>.</p>
+  <figure>
+    <SpansDiagram rows={puzzle.rows} counts={states[4]} note={[between(4, 1, 7, 1)]} label="The bridge between the two 2s in column 1, which must stay single" />
+    <figcaption>Nothing new is drawn, but this bridge can no longer be doubled. See <a href="/guides/bridges-advanced#twos">two 2s never double up</a>.</figcaption>
+  </figure>
+
+  <h2>Stage 5: everything falls into place</h2>
+  <p>Now each island has just one way to finish:</p>
+  <ul>
+    <li>The 2 at row 4, column 1 has one bridge down and needs one more — to the right, joining the 3.</li>
+    <li>That finishes the 3’s left side: one left, one down, so its bridge right to the 4 is single.</li>
+    <li>The 4 has one up and one left, so it takes a double bridge down to the 2 in the corner.</li>
+    <li>The 2 at row 7, column 1 has one bridge up and needs one more: right, to the 1.</li>
+    <li>That 1 is finished, so it doesn’t bridge to the corner 2 — which already has its double.</li>
+  </ul>
+  <figure>
+    <SpansDiagram rows={puzzle.rows} {...stage(5)} label="Tide Pools solved" />
+    <figcaption>Solved: every number is met and all nine islands are joined.</figcaption>
+  </figure>
+
+  <h2>What this map teaches</h2>
+  <ul>
+    <li><strong>Start with islands that have one neighbour.</strong> Both 1s here could see only one island each.</li>
+    <li><strong>Capacity changes as you go.</strong> The 3’s left-hand bridge was capped only after its other bridges appeared — and that cap fed the next deduction.</li>
+    <li><strong>The connection rule is a real tool.</strong> Stage 4 was invisible to counting; it took the “no sealed groups” idea to unlock the rest.</li>
+  </ul>
+  <p>More practice: <a href="/isle-spans#puzzles">pick another map</a> or read the <a href="/guides/bridges-advanced">advanced guide</a>.</p>
+</Base>

@@ -1,0 +1,76 @@
+---
+/* A static Isle Spans position drawn as SVG at build time. */
+import { parse } from '../games/bridges/model';
+
+interface Props {
+  rows: string[];
+  /** Bridges already built, by span id (ink). */
+  counts?: number[];
+  /** Bridges just worked out (teal), drawn with this many lines. */
+  fresh?: { span: number; n: number }[];
+  /** Spans proved impossible (or capped), drawn as a dashed red line. */
+  capped?: number[];
+  /** Spans to tint, to show where to look. */
+  note?: number[];
+  /** Islands to outline. */
+  focus?: number[];
+  label: string;
+  unit?: number;
+}
+
+const { rows, counts = [], fresh = [], capped = [], note = [], focus = [], label, unit = 34 } = Astro.props;
+const board = parse(rows);
+const U = unit;
+const R = U * 0.38;
+const cx = (c: number) => c * U + U / 2;
+const cy = (r: number) => r * U + U / 2;
+
+function ends(id: number): [number, number, number, number] {
+  const s = board.spans[id];
+  const a = board.islands[s.a], b = board.islands[s.b];
+  return s.dir === 'h'
+    ? [cx(a.c) + R, cy(a.r), cx(b.c) - R, cy(b.r)]
+    : [cx(a.c), cy(a.r) + R, cx(b.c), cy(b.r) - R];
+}
+
+function lines(id: number, n: number) {
+  const [x1, y1, x2, y2] = ends(id);
+  const h = board.spans[id].dir === 'h';
+  const offs = n === 2 ? [-U * 0.1, U * 0.1] : [0];
+  return offs.map((o) => (h ? [x1, y1 + o, x2, y2 + o] : [x1 + o, y1, x2 + o, y2]));
+}
+
+const ink = board.spans.flatMap((s) => (counts[s.id] ? lines(s.id, counts[s.id]) : []));
+const teal = fresh.flatMap((f) => lines(f.span, f.n));
+// Drawn along the whole path, not as a mark at the midpoint: the midpoint
+// is often exactly where the bridge that blocks it passes.
+const ruledOut = capped.map((id) => ends(id));
+const tints = note.map((id) => {
+  const [x1, y1, x2, y2] = ends(id);
+  const pad = U * 0.28;
+  return board.spans[id].dir === 'h'
+    ? { x: x1, y: y1 - pad, w: x2 - x1, h: pad * 2 }
+    : { x: x1 - pad, y: y1, w: pad * 2, h: y2 - y1 };
+});
+---
+<svg class="spans-diagram" viewBox={`0 0 ${board.w * U} ${board.h * U}`} width={board.w * U} height={board.h * U}
+  role="img" aria-label={label} font-family="Fredoka, system-ui, sans-serif" font-weight="600">
+  <rect x="0" y="0" width={board.w * U} height={board.h * U} rx="10" fill="#DCEFF2" />
+  {tints.map((t) => <rect x={t.x} y={t.y} width={t.w} height={t.h} rx="5" fill="#FFE58A" />)}
+  {ink.map(([x1, y1, x2, y2]) => <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#1F1B2D" stroke-width="3" stroke-linecap="round" />)}
+  {teal.map(([x1, y1, x2, y2]) => <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#2BA59C" stroke-width="3.4" stroke-linecap="round" />)}
+  {ruledOut.map(([x1, y1, x2, y2]) => (
+    <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#E5484D" stroke-width="2.6" stroke-dasharray="4 5" stroke-linecap="round" />
+  ))}
+  {board.islands.map((isl) => (
+    <g>
+      <circle cx={cx(isl.c)} cy={cy(isl.r)} r={R} fill="#FFFBEC"
+        stroke={focus.includes(isl.id) ? '#2BA59C' : '#1F1B2D'} stroke-width={focus.includes(isl.id) ? 3.6 : 2.2} />
+      <text x={cx(isl.c)} y={cy(isl.r) + U * 0.14} text-anchor="middle" font-size={U * 0.44} fill="#1F1B2D">{isl.n}</text>
+    </g>
+  ))}
+</svg>
+
+<style>
+  .spans-diagram{ display:block; height:auto; max-width:100%; }
+</style>

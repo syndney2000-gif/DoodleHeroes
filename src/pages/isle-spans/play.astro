@@ -1,0 +1,47 @@
+---
+import PlayShell from '../../components/PlayShell.astro';
+import '../../games/bridges/board.css';
+---
+<PlayShell
+  game="Isle Spans"
+  description="Play Isle Spans, a bridge-building logic puzzle: connect every island so each has exactly as many bridges as its number."
+  section="isle-spans"
+  listHref="/isle-spans"
+>
+  <h2>Quick controls</h2>
+  <ul>
+    <li><strong>Drag</strong> from an island towards a neighbour, or <strong>tap the water</strong> between two islands, to cycle the bridge: none → single → double → none.</li>
+    <li><strong>Right-click</strong> or hold <kbd>Shift</kbd> to cycle backwards.</li>
+    <li><strong>Keyboard:</strong> arrow keys hop between islands; <kbd>Shift</kbd>+arrow builds towards that side. <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes.</li>
+    <li>An island turns green when it has exactly its number of bridges, and red if it has too many.</li>
+    <li><strong>Check</strong> marks bridges that don’t belong and costs nothing. Each <strong>Hint</strong> costs one star.</li>
+  </ul>
+  <p>New to bridge puzzles? Read <a href="/isle-spans">the rules with worked examples</a>, then <a href="/guides/bridges-basics">the beginner’s guide</a>.</p>
+</PlayShell>
+
+<script>
+  import { SpansBoard } from '../../games/bridges/board';
+  import { allPuzzles, chapters, findPuzzle } from '../../games/bridges/puzzles';
+  import { dailyPuzzle } from '../../games/bridges/daily';
+  import { localDateKey } from '../../lib/rng';
+  import { setupPlay, showMissing } from '../../lib/play-ui';
+
+  const id = new URLSearchParams(location.search).get('p') ?? 'two-coves';
+  const isDaily = id === 'daily';
+  const puzzle = isDaily ? dailyPuzzle(localDateKey()) : findPuzzle(id);
+
+  if (!puzzle) {
+    showMissing();
+  } else {
+    const chapter = chapters.find((c) => c.puzzles.includes(puzzle));
+    const next = isDaily ? undefined : allPuzzles[allPuzzles.indexOf(puzzle) + 1];
+    setupPlay({
+      eyebrow: isDaily ? 'Isle Spans · daily challenge' : `Isle Spans · ${chapter?.title}`,
+      title: puzzle.title,
+      note: puzzle.note,
+      next: next && { href: `/isle-spans/play?p=${next.id}`, label: 'Next map →' },
+      listHref: '/isle-spans',
+      create: (root, callbacks) => new SpansBoard(root, puzzle, callbacks),
+    });
+  }
+</script>

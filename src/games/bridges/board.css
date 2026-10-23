@@ -1,0 +1,30 @@
+/* Isle Spans board. The SVG scales to the screen; a 11 × 11 map still gives
+   islands about 30px across on a phone. */
+
+.sp-board{
+  display:block; margin:0 auto;
+  width:min(100%, calc(var(--w) * 52px)); height:auto;
+  background:#DCEFF2; border:3px solid var(--ink); border-radius:14px;
+  touch-action:pinch-zoom; user-select:none; -webkit-user-select:none;
+  font-family:'Fredoka', system-ui, sans-serif; font-weight:600;
+}
+.sp-dot{ fill:rgba(31,27,45,0.16); }
+.sp-hit{ fill:transparent; cursor:pointer; }
+@media (hover:hover){ .sp-hit:hover{ fill:rgba(255,203,71,0.35); } }
+
+.sp-bridge{ stroke:var(--ink); stroke-width:3.2; stroke-linecap:round; pointer-events:none; }
+.sp-bridge.sp-ghost{ stroke:var(--teal); stroke-dasharray:5 5; }
+.sp-bridge.hint{ stroke:var(--teal); }
+.sp-bridge.wrong{ stroke:var(--red); }
+
+.sp-island{ cursor:grab; outline:none; }
+.sp-island circle{ fill:#FFFBEC; stroke:var(--ink); stroke-width:2.6; transition:fill .15s; }
+.sp-island text{ font-size:19px; fill:var(--ink); pointer-events:none; }
+.sp-island.done circle{ fill:#CDEBD4; }
+.sp-island.over circle{ fill:#FFD9D9; stroke:var(--red); }
+.sp-island.hint circle{ stroke:var(--teal); stroke-width:4; }
+.sp-island:focus-visible circle{ stroke:var(--blue); stroke-width:4.5; }
+
+.sp-board.solved .sp-hit{ cursor:default; fill:transparent; }
+.sp-board.solved .sp-island{ cursor:default; }
+.sp-board.solved .sp-island circle{ fill:#FFE58A; }

@@ -1,0 +1,61 @@
+---
+/* Chapters of puzzles with each one's best star rating, filled in from the
+   browser's saved results after the page loads. */
+
+interface Props {
+  game: string;
+  playHref: string;
+  chapters: { id: string; title: string; blurb: string; size: string; puzzles: { id: string; title: string }[] }[];
+}
+
+const { game, playHref, chapters } = Astro.props;
+---
+<div class="puzzle-chapters" data-game={game}>
+  {chapters.map((chapter) => (
+    <section class="chapter">
+      <h3>{chapter.title} <small>· {chapter.size}</small></h3>
+      <p class="muted">{chapter.blurb}</p>
+      <ul class="puzzle-list">
+        {chapter.puzzles.map((p) => (
+          <li>
+            <a href={`${playHref}?p=${p.id}`} data-puzzle={p.id}>
+              <span>{p.title}</span>
+              <span class="pl-stars" aria-label="Not solved yet">☆☆☆</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</div>
+
+<script>
+  import { results } from '../lib/storage';
+  import { starText } from '../lib/scoring';
+  const done = results();
+  for (const list of document.querySelectorAll<HTMLElement>('.puzzle-chapters')) {
+    for (const link of list.querySelectorAll<HTMLAnchorElement>('[data-puzzle]')) {
+      const r = done[`${list.dataset.game}/${link.dataset.puzzle}`];
+      if (!r) continue;
+      const stars = link.querySelector('.pl-stars')!;
+      stars.textContent = starText(r.stars);
+      stars.setAttribute('aria-label', `Solved, ${r.stars} of 3 stars`);
+      link.classList.add('solved');
+    }
+  }
+</script>
+
+<style>
+  .chapter h3 small{ font-weight:500; color:var(--ink-soft); }
+  .chapter > p{ margin-bottom:8px; }
+  .puzzle-list{ list-style:none; padding:0; display:grid; gap:10px; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); }
+  .puzzle-list li{ margin:0; }
+  .puzzle-list a{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:10px 14px; min-height:48px; text-decoration:none; color:var(--ink);
+    background:var(--paper); border:2px solid var(--ink); border-radius:12px;
+  }
+  .puzzle-list a:hover{ background:#FFF1C2; }
+  .pl-stars{ color:var(--ink-soft); letter-spacing:2px; white-space:nowrap; }
+  .puzzle-list a.solved .pl-stars{ color:var(--orange); }
+</style>

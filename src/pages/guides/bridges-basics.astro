@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import SpansExample from '../../components/SpansExample.astro';
+import { examples } from '../../content/bridges-examples';
+---
+<Base
+  title="Bridge puzzles for beginners: counting neighbours"
+  description="Learn to solve bridge-building logic puzzles without guessing: counting neighbours, full islands, small neighbours and bridges that cross, each shown on a real position."
+  section="guides"
+>
+  <p class="eyebrow">Isle Spans guide · beginner</p>
+  <h1>Bridge puzzles for beginners</h1>
+  <p class="lede">Almost every bridge puzzle starts the same way: compare an island’s number with how many bridges its neighbours could possibly give it. This guide turns that into four techniques you can use on any map.</p>
+
+  <p>If you haven’t played yet, read <a href="/isle-spans#rules">the rules</a> first. In the diagrams, a <span class="teal">teal</span> bridge is one the technique proves must exist, a dashed red line marks a bridge that’s ruled out, and an outlined island is the one being reasoned about.</p>
+
+  <h2 id="capacity">1. Count the capacity</h2>
+  <p>An island can only bridge to the islands it can <em>see</em> — the nearest island straight up, down, left and right, with nothing in between. Each of those neighbours can take at most two bridges from it. So an island with <em>k</em> neighbours can hold at most <strong>2 × <em>k</em></strong> bridges. That number is its <strong>capacity</strong>.</p>
+  <p>When an island’s number equals its capacity, there’s no choice at all: every neighbour gets a double bridge.</p>
+  <SpansExample example={examples.fullDouble} label="A 4 with two neighbours">
+    The 4 sees two islands, so its capacity is 4. It needs all of it: double bridges up and to the right.
+  </SpansExample>
+  <p>The same goes for a 6 with three neighbours and an 8 with four. An 8 is always surrounded by four double bridges.</p>
+
+  <h2 id="one-short">2. One short of capacity</h2>
+  <p>When an island’s number is just <em>one</em> less than its capacity, it can afford to give one neighbour a single instead of a double — but no neighbour can get nothing. If any neighbour got zero, the rest couldn’t make up the number.</p>
+  <SpansExample example={examples.oneShort} label="A 3 with two neighbours">
+    The 3 sees two islands: capacity 4, one more than it needs. So both neighbours get at least one bridge — we don’t yet know which one gets the double.
+  </SpansExample>
+  <p>The pattern: a 1 with one neighbour, a 3 with two, a 5 with three and a 7 with four all must connect to <em>every</em> neighbour at least once.</p>
+
+  <h2 id="small-neighbours">3. Small neighbours lower the capacity</h2>
+  <p>A neighbour can’t take more bridges than its own number. A 1 can only ever take a single bridge, and a 2 that already has one bridge elsewhere can take only one more. Count those limits in, and the capacity often drops to exactly the number.</p>
+  <SpansExample example={examples.smallNeighbour} label="A 3 next to a 1 and a 2">
+    The 3’s neighbours are a 1 (at most one bridge) and a 2 (at most two). Capacity 1 + 2 = 3, exactly what it needs: a single to the 1 and a double down to the 2.
+  </SpansExample>
+  <p>The general rule behind techniques 1–3: <strong>a bridge must carry at least the island’s number minus everything its other neighbours could carry.</strong> Whenever that comes out above zero, you’ve found a bridge.</p>
+
+  <h2 id="crossing">4. Bridges block bridges</h2>
+  <p>Bridges never cross. So as soon as you know a bridge exists, every possible bridge running across its path is gone — and the islands that were counting on it may suddenly have fewer choices.</p>
+  <SpansExample example={examples.crossing} label="A forced bridge crossing a vertical path">
+    The 1 on the left sees only the 3, so that bridge must exist. It runs straight across the gap between the two 1s above and below it, so they can never be joined.
+  </SpansExample>
+
+  <h2 id="routine">A routine for any new map</h2>
+  <ol>
+    <li>Find islands whose number equals their capacity — corners and edges are the usual suspects. Build those doubles.</li>
+    <li>Find islands one short of capacity and give each neighbour a single.</li>
+    <li>Recount islands next to 1s, 2s and finished islands; their capacity has dropped.</li>
+    <li>Whenever you build a bridge, look along it for any bridge it now blocks.</li>
+    <li>Repeat until nothing new appears — then try the <a href="/guides/bridges-advanced">advanced techniques</a>.</li>
+  </ol>
+  <p class="note">Every Isle Spans map is checked by a solver using exactly these steps plus the advanced ones, so there’s always a next deduction. The Hint button will point you to it.</p>
+
+  <p>Next: <a href="/guides/bridges-advanced">Advanced bridge puzzles</a> · <a href="/walkthroughs/tide-pools">Walkthrough: Tide Pools</a></p>
+</Base>
+
+<style>
+  .teal{ color:var(--teal); font-weight:600; }
+</style>

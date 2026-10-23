@@ -5,6 +5,8 @@
 import { EMPTY, FILLED, UNKNOWN, cluesFor, runs, solveGrid, type Cell, type Clues, type Step } from './solver';
 import type { Puzzle } from './puzzles';
 import { load, recordResult, remove, save } from '../../lib/storage';
+import { starsFor } from '../../lib/scoring';
+import type { BoardCallbacks, PlayableBoard } from '../../lib/play-ui';
 
 export const GAME = 'island-sketch';
 
@@ -17,21 +19,10 @@ interface SavedBoard {
 
 interface Change { i: number; from: Cell; to: Cell }
 
-export interface BoardOptions {
-  onStatus(message: string): void;
-  onSolved(result: { stars: number; seconds: number; hints: number }): void;
-  onTick?(seconds: number): void;
-}
-
 const CELL_CHARS = ['?', '#', 'x'] as const;
 const STATE_WORD = ['blank', 'filled', 'crossed'] as const;
 
-/** Stars for a finished puzzle: three, minus one per hint, never below one. */
-export function starsFor(hints: number): number {
-  return Math.max(1, 3 - hints);
-}
-
-export class NonogramBoard {
+export class NonogramBoard implements PlayableBoard {
   readonly n: number;
   readonly clues: Clues;
   private cells: Cell[];
@@ -60,7 +51,7 @@ export class NonogramBoard {
   constructor(
     private readonly root: HTMLElement,
     private readonly puzzle: Puzzle,
-    private readonly opts: BoardOptions,
+    private readonly opts: BoardCallbacks,
   ) {
     this.n = puzzle.solution.length;
     this.clues = cluesFor(puzzle.solution);
@@ -232,7 +223,7 @@ export class NonogramBoard {
     this.clearMarks();
     this.refreshAllClues();
     remove(this.saveKey);
-    this.opts.onTick?.(0);
+    this.opts.onTick(0);
     this.startTimer();
     this.opts.onStatus('Board cleared. Fresh start!');
   }
@@ -332,7 +323,7 @@ export class NonogramBoard {
     const batch: Change[] = [];
     this.set(i, to, batch);
     this.commit(batch);
-    this.opts.onStatus(`Row ${r + 1}, column ${c + 1}: ${STATE_WORD[to]}.`);
+    if (!this.solved) this.opts.onStatus(`Row ${r + 1}, column ${c + 1}: ${STATE_WORD[to]}.`);
   }
 
   /* ---------- help ---------- */
@@ -450,10 +441,10 @@ export class NonogramBoard {
     if (this.timer || this.solved) return;
     this.timer = window.setInterval(() => {
       this.seconds++;
-      this.opts.onTick?.(this.seconds);
+      this.opts.onTick(this.seconds);
       if (this.seconds % 15 === 0) this.persist();
     }, 1000);
-    this.opts.onTick?.(this.seconds);
+    this.opts.onTick(this.seconds);
   }
 
   private stopTimer() {
@@ -491,10 +482,4 @@ function clueWords(clue: number[]) {
 
 function lineName(step: Step) {
   return `${step.line.kind === 'row' ? 'row' : 'column'} ${step.line.index + 1}`;
-}
-
-export function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${String(s).padStart(2, '0')}`;
 }

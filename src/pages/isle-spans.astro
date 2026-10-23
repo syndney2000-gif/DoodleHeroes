@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+import SpansDiagram from '../components/SpansDiagram.astro';
+import PuzzleList from '../components/PuzzleList.astro';
+import { chapters, findPuzzle } from '../games/bridges/puzzles';
+import { parse } from '../games/bridges/model';
+import { solution } from '../games/bridges/solver';
+
+const first = findPuzzle('two-coves')!;
+const solved = solution(parse(first.rows))!;
+---
+<Base
+  title="Isle Spans — bridge-building logic puzzles"
+  description="Isle Spans is a free bridge-building logic puzzle. Read the rules with examples, learn how hints and stars work, and play 12 island maps plus a daily challenge."
+  section="isle-spans"
+>
+  <p class="eyebrow">Puzzle 2 of the island</p>
+  <h1>Isle Spans</h1>
+  <p class="lede">Each circle is an island, and its number says how many bridges it needs. Join every island into one network with straight bridges that never cross. Every map has exactly one solution, and you can reach it by reasoning alone.</p>
+
+  <p class="hero-actions">
+    <a class="btn" href="/isle-spans/play?p=two-coves">Start with the first map ▶</a>
+    <a class="btn secondary" href="/isle-spans/play?p=daily">Today’s daily map</a>
+  </p>
+
+  <h2 id="rules">The rules</h2>
+  <ol>
+    <li><strong>Bridges run straight</strong> — across or down — between two islands, over open water only.</li>
+    <li><strong>One or two bridges</strong> can join the same pair of islands. Never three.</li>
+    <li><strong>Bridges never cross</strong> each other, and never pass over an island.</li>
+    <li><strong>Each island’s number</strong> is the total of bridges touching it. A double bridge counts as two.</li>
+    <li><strong>Everything is connected</strong>: when you’re done, you can walk from any island to any other.</li>
+  </ol>
+  <p>Loops are allowed — there can be two different routes between islands, as long as every number is right.</p>
+
+  <div class="figs">
+    <figure>
+      <SpansDiagram rows={first.rows} label="The first map, Two Coves, before any bridges are built" />
+      <figcaption>“Two Coves” at the start. The 1 near the top-left can see two islands — the 2 to its right and the 2 below — so its single bridge goes to one of them.</figcaption>
+    </figure>
+    <figure>
+      <SpansDiagram rows={first.rows} counts={solved} label="Two Coves solved" />
+      <figcaption>Solved. Check the 6: double bridges up, left and down, 2 + 2 + 2 = 6.</figcaption>
+    </figure>
+  </div>
+
+  <h3>What the numbers tell you</h3>
+  <p>Counting is the heart of the puzzle. An island with <em>k</em> neighbours in sight can take at most 2 × <em>k</em> bridges, so a 4 with exactly two neighbours must have a double bridge to both, and a 3 with two neighbours must have at least one bridge to each. The <a href="/guides/bridges-basics">beginner’s guide</a> builds that into a full method.</p>
+
+  <h2 id="puzzles">The maps</h2>
+  <p>Three chapters, getting larger and trickier. Solved maps show your best star rating.</p>
+  <PuzzleList
+    game="isle-spans"
+    playHref="/isle-spans/play"
+    chapters={chapters.map((c) => ({ ...c, size: `${c.puzzles[0].rows.length} × ${c.puzzles[0].rows.length}` }))}
+  />
+  <p><a href="/isle-spans/play?p=daily">The daily map</a> is a fresh 9 × 9 puzzle each day, the same for everyone. It’s generated from the date and only published if the solver can finish it without guessing.</p>
+
+  <h2 id="controls">Controls</h2>
+  <table>
+    <thead><tr><th>To…</th><th>Touch or mouse</th><th>Keyboard</th></tr></thead>
+    <tbody>
+      <tr><td>Build or change a bridge</td><td>Drag from an island towards its neighbour, or tap the water between them</td><td>Select an island, then <kbd>Shift</kbd>+arrow</td></tr>
+      <tr><td>Cycle backwards</td><td>Right-click, or <kbd>Shift</kbd>+tap</td><td>—</td></tr>
+      <tr><td>Move between islands</td><td>—</td><td>Arrow keys</td></tr>
+      <tr><td>Undo</td><td>↶ Undo</td><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td></tr>
+    </tbody>
+  </table>
+  <p>Each tap cycles a bridge: none → single → double → none. The game won’t let you build a bridge across another one. Islands turn green when they have exactly their number of bridges and red when they have too many.</p>
+
+  <h2 id="scoring">Check, hints and stars</h2>
+  <ul>
+    <li><strong>Check</strong> is free. It marks in red any bridge that isn’t part of the solution, or that has one bridge too many.</li>
+    <li><strong>Hint</strong> costs one star per press. The first press outlines an island and shows, in teal, a bridge you can prove must exist — and says why. Press it again to build it. If there’s a wrong bridge on the map, the hint shows that first.</li>
+    <li><strong>Stars:</strong> three with no hints, two with one, one with two or more. Progress saves in your browser as you go.</li>
+  </ul>
+
+  <h2 id="difficulty">Difficulty</h2>
+  <table>
+    <thead><tr><th>Chapter</th><th>Map</th><th>What it teaches</th></tr></thead>
+    <tbody>
+      <tr><td>The Shallows</td><td>7 × 7</td><td>Counting neighbours, full islands, small neighbours.</td></tr>
+      <tr><td>Harbour Reach</td><td>9 × 9</td><td>Bridges that block each other; finished islands closing off options.</td></tr>
+      <tr><td>Open Sea</td><td>11 × 11</td><td>Avoiding cut-off groups; long chains where each deduction unlocks the next.</td></tr>
+    </tbody>
+  </table>
+  <p>Every map is checked twice before publishing: once by a solver that only uses the reasoning taught in our guides, and once by a full search that confirms there is exactly one solution.</p>
+
+  <h2 id="learn">Learn more</h2>
+  <ul>
+    <li><a href="/guides/bridges-basics">Bridge puzzles for beginners</a> — counting neighbours, full islands, small neighbours and crossings.</li>
+    <li><a href="/guides/bridges-advanced">Advanced bridge puzzles</a> — never cut a group off, and what to do when a group has one way out.</li>
+    <li><a href="/walkthroughs/tide-pools">Walkthrough: Tide Pools</a> — a full 7 × 7 solve, including the key isolation step.</li>
+  </ul>
+</Base>
+
+<style>
+  .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+</style>

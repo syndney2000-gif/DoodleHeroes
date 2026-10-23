@@ -1,0 +1,75 @@
+---
+/* The play screen every game shares. Ad-free by design: the page is mostly a
+   board and its controls. Pair with setupPlay() from lib/play-ui. */
+import Base from '../layouts/Base.astro';
+
+interface Props {
+  game: string;
+  description: string;
+  section: 'island-sketch' | 'isle-spans' | 'lighthouse-wiring';
+  listHref: string;
+}
+
+const { game, description, section, listHref } = Astro.props;
+---
+<Base title={`Play ${game}`} description={description} ads={false} section={section} wide>
+  <p class="eyebrow" id="pl-eyebrow">{game}</p>
+  <h1 id="pl-title">{game}</h1>
+
+  <noscript>
+    <p class="note">The puzzle needs JavaScript to run. The <a href={listHref}>rules and guides</a> work without it.</p>
+  </noscript>
+
+  <div id="pl-play" hidden>
+    <div class="pl-toolbar" role="toolbar" aria-label="Puzzle tools">
+      <slot name="modes" />
+      <div class="pl-actions">
+        <button class="btn secondary" type="button" id="pl-undo">↶ Undo</button>
+        <button class="btn secondary" type="button" id="pl-check">Check</button>
+        <button class="btn secondary" type="button" id="pl-hint">Hint</button>
+        <button class="btn secondary" type="button" id="pl-restart">Restart</button>
+      </div>
+    </div>
+
+    <p class="pl-meta"><span id="pl-time">0:00</span> · <span id="pl-hints">no hints used</span></p>
+
+    <div id="pl-board"></div>
+
+    <p class="pl-status" id="pl-status" role="status" aria-live="polite"></p>
+
+    <section class="card pl-done" id="pl-done" hidden>
+      <h2>Solved!</h2>
+      <p class="pl-stars" id="pl-stars"></p>
+      <p id="pl-done-text"></p>
+      <p id="pl-note" class="muted"></p>
+      <p class="pl-done-actions">
+        <a class="btn" id="pl-next" href={listHref}>Next →</a>
+        <a class="btn secondary" href={`${listHref}#puzzles`}>All puzzles</a>
+        <a class="btn secondary" href="/expedition">Expedition</a>
+      </p>
+    </section>
+  </div>
+
+  <div class="card" id="pl-missing" hidden>
+    <h2>That puzzle isn’t on the map</h2>
+    <p>The link may be mistyped, or the puzzle may have been renamed. Pick one from the <a href={`${listHref}#puzzles`}>full list</a>.</p>
+  </div>
+
+  <section class="pl-help">
+    <slot />
+  </section>
+</Base>
+
+<style is:global>
+  .pl-toolbar{ display:flex; flex-wrap:wrap; gap:10px 16px; justify-content:center; margin:6px 0 10px; }
+  .pl-modes, .pl-actions{ display:flex; flex-wrap:wrap; gap:8px; }
+  .pl-toolbar .btn{ font-size:15px; padding:8px 12px; }
+  .pl-toolbar .btn:disabled{ opacity:.45; cursor:default; transform:none; }
+  .pl-meta{ text-align:center; color:var(--ink-soft); font-size:15px; margin-bottom:12px; font-variant-numeric:tabular-nums; }
+  .pl-status{ text-align:center; min-height:1.65em; margin:14px auto; max-width:620px; }
+  .pl-done{ max-width:560px; margin:18px auto; text-align:center; }
+  .pl-done h2{ margin-top:0; }
+  .pl-stars{ font-size:34px; color:var(--orange); letter-spacing:4px; margin:0; }
+  .pl-done-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:12px 0 0; }
+  .pl-help{ max-width:780px; margin:40px auto 0; }
+</style>

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import MiniBoard from '../components/MiniBoard.astro';
+import PuzzleList from '../components/PuzzleList.astro';
 import { chapters, findPuzzle } from '../games/nonogram/puzzles';
 import { cluesFor } from '../games/nonogram/solver';
 
@@ -51,22 +52,11 @@ const solvedState = (s: string[]) => s.map((row) => row.replaceAll('.', 'x'));
 
   <h2 id="puzzles">The sketches</h2>
   <p>The island map is drawn in three chapters. The squares get smaller and the clues get longer as you go. Solved sketches show your best star rating.</p>
-  {chapters.map((chapter) => (
-    <section class="chapter">
-      <h3>{chapter.title} <small>· {chapter.puzzles[0].solution.length} × {chapter.puzzles[0].solution.length}</small></h3>
-      <p class="muted">{chapter.blurb}</p>
-      <ul class="puzzle-list">
-        {chapter.puzzles.map((p) => (
-          <li>
-            <a href={`/island-sketch/play?p=${p.id}`} data-puzzle={p.id}>
-              <span class="pl-title">{p.title}</span>
-              <span class="pl-stars" aria-label="Not solved yet">☆☆☆</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  ))}
+  <PuzzleList
+    game="island-sketch"
+    playHref="/island-sketch/play"
+    chapters={chapters.map((c) => ({ ...c, size: `${c.puzzles[0].solution.length} × ${c.puzzles[0].solution.length}` }))}
+  />
   <p><a href="/island-sketch/play?p=daily">The daily sketch</a> is a fresh 10 × 10 puzzle each day, the same for everyone. Daily sketches are random patterns rather than pictures, but every one is checked to make sure it can be solved without guessing.</p>
 
   <h2 id="controls">Controls</h2>
@@ -111,31 +101,7 @@ const solvedState = (s: string[]) => s.map((row) => row.replaceAll('.', 'x'));
   </ul>
 </Base>
 
-<script>
-  import { results } from '../lib/storage';
-  const done = results();
-  for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-puzzle]')) {
-    const r = done[`island-sketch/${link.dataset.puzzle}`];
-    if (!r) continue;
-    const stars = link.querySelector('.pl-stars')!;
-    stars.textContent = '★'.repeat(r.stars) + '☆'.repeat(3 - r.stars);
-    stars.setAttribute('aria-label', `Solved, ${r.stars} of 3 stars`);
-    link.classList.add('solved');
-  }
-</script>
 
 <style>
   .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; }
-  .chapter h3 small{ font-weight:500; color:var(--ink-soft); }
-  .chapter > p{ margin-bottom:8px; }
-  .puzzle-list{ list-style:none; padding:0; display:grid; gap:10px; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); }
-  .puzzle-list li{ margin:0; }
-  .puzzle-list a{
-    display:flex; justify-content:space-between; align-items:center; gap:10px;
-    padding:10px 14px; min-height:48px; text-decoration:none; color:var(--ink);
-    background:var(--paper); border:2px solid var(--ink); border-radius:12px;
-  }
-  .puzzle-list a:hover{ background:#FFF1C2; }
-  .pl-stars{ color:var(--ink-soft); letter-spacing:2px; white-space:nowrap; }
-  .puzzle-list a.solved .pl-stars{ color:var(--orange); }
 </style>

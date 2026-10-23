@@ -1,0 +1,40 @@
+/* Lighthouse Wiring board. Unpowered wire is ink; powered wire is lamp
+   orange, so progress is visible at a glance. */
+
+.nw-board{
+  display:block; margin:0 auto;
+  width:min(100%, calc(var(--w) * 58px)); height:auto;
+  background:#2E2A3D; border:3px solid var(--ink); border-radius:14px;
+  touch-action:manipulation; user-select:none; -webkit-user-select:none;
+}
+.nw-tile{ cursor:pointer; outline:none; }
+.nw-bg{ fill:#F6EFD9; }
+@media (hover:hover){ .nw-tile:hover .nw-bg{ fill:#FFF1C2; } }
+
+.nw-spin{
+  transform-box:view-box;
+  transform-origin:20px 20px;
+  transition:transform .18s ease-out;
+}
+@media (prefers-reduced-motion:reduce){ .nw-spin{ transition:none; } }
+
+.nw-wire{ stroke:#5B556B; stroke-width:5; stroke-linecap:round; }
+.nw-hub{ fill:#5B556B; }
+.nw-house{ fill:#F6EFD9; stroke:#5B556B; stroke-width:2.2; stroke-linejoin:round; }
+.nw-source{ fill:#FFCB47; stroke:var(--ink); stroke-width:2.5; }
+
+.nw-tile.lit .nw-wire{ stroke:#F08A24; }
+.nw-tile.lit .nw-hub{ fill:#F08A24; }
+.nw-tile.lit .nw-house{ fill:#FFE58A; stroke:#C96A12; }
+
+.nw-lock{ fill:transparent; }
+.nw-tile.locked .nw-bg{ fill:#E3D9BC; }
+.nw-tile.locked .nw-lock{ fill:var(--ink); }
+
+.nw-tile.wrong .nw-bg{ fill:#FFD0D0; }
+.nw-tile.hint .nw-bg{ fill:#BFE8E2; }
+.nw-tile:focus-visible .nw-bg{ stroke:var(--blue); stroke-width:3; }
+
+.nw-board.solved .nw-tile{ cursor:default; }
+.nw-board.solved .nw-bg{ fill:#FFF6D8; }
+.nw-board.solved .nw-lock{ fill:transparent; }

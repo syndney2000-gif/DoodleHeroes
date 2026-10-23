@@ -1,0 +1,53 @@
+---
+import PlayShell from '../../components/PlayShell.astro';
+import '../../games/net/board.css';
+---
+<PlayShell
+  game="Lighthouse Wiring"
+  description="Play Lighthouse Wiring, a rotating-tile logic puzzle: turn the tiles so power flows from the lighthouse to every cottage, with no loose ends and no loops."
+  section="lighthouse-wiring"
+  listHref="/lighthouse-wiring"
+>
+  <div class="pl-modes" role="group" aria-label="What a tap does" slot="modes">
+    <button class="btn" type="button" data-mode="rotate" aria-pressed="true">↻ Turn</button>
+    <button class="btn secondary" type="button" data-mode="lock" aria-pressed="false">■ Lock</button>
+  </div>
+
+  <h2>Quick controls</h2>
+  <ul>
+    <li><strong>Tap or click</strong> a tile to turn it clockwise. <strong>Right-click</strong> or hold <kbd>Shift</kbd> to turn it the other way.</li>
+    <li><strong>Lock</strong> a tile you’re sure of — switch to ■ Lock and tap it, or press <kbd>L</kbd>. Locked tiles can’t be turned by accident.</li>
+    <li><strong>Keyboard:</strong> arrow keys move, <kbd>Space</kbd> turns, <kbd>L</kbd> locks, <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes.</li>
+    <li>Wires glow orange once they’re connected back to the lighthouse.</li>
+    <li><strong>Check</strong> tells you if any locked tile is wrong, for free. Each <strong>Hint</strong> costs one star.</li>
+  </ul>
+  <p>New to wiring puzzles? Read <a href="/lighthouse-wiring">the rules with worked examples</a>, then <a href="/guides/wiring-basics">the beginner’s guide</a>.</p>
+</PlayShell>
+
+<script>
+  import { WiringBoard } from '../../games/net/board';
+  import { allPuzzles, chapters, findPuzzle } from '../../games/net/puzzles';
+  import { dailyPuzzle } from '../../games/net/daily';
+  import { localDateKey } from '../../lib/rng';
+  import { setupModes, setupPlay, showMissing } from '../../lib/play-ui';
+
+  const id = new URLSearchParams(location.search).get('p') ?? 'first-light';
+  const isDaily = id === 'daily';
+  const puzzle = isDaily ? dailyPuzzle(localDateKey()) : findPuzzle(id);
+
+  if (!puzzle) {
+    showMissing();
+  } else {
+    const chapter = chapters.find((c) => c.puzzles.includes(puzzle));
+    const next = isDaily ? undefined : allPuzzles[allPuzzles.indexOf(puzzle) + 1];
+    const board = setupPlay({
+      eyebrow: isDaily ? 'Lighthouse Wiring · daily challenge' : `Lighthouse Wiring · ${chapter?.title}`,
+      title: puzzle.title,
+      note: puzzle.note,
+      next: next && { href: `/lighthouse-wiring/play?p=${next.id}`, label: 'Next grid →' },
+      listHref: '/lighthouse-wiring',
+      create: (root, callbacks) => new WiringBoard(root, puzzle, callbacks),
+    });
+    setupModes((mode) => board.setMode(mode as 'rotate' | 'lock'));
+  }
+</script>

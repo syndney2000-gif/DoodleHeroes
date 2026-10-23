@@ -1,0 +1,58 @@
+---
+import Base from '../../layouts/Base.astro';
+import WiringStep from '../../components/WiringStep.astro';
+---
+<Base
+  title="Wiring puzzles for beginners: edges and neighbours"
+  description="Learn to solve rotating-tile wiring puzzles without guessing: what edges and corners rule out, and how a settled tile decides its neighbours. Every step shown on a real grid."
+  section="guides"
+>
+  <p class="eyebrow">Lighthouse Wiring guide · beginner</p>
+  <h1>Wiring puzzles for beginners</h1>
+  <p class="lede">A scrambled grid looks hopeless, but most tiles can only face one way once you look at what’s around them. Two ideas do nearly all the work: the board’s edge is a wall, and neighbours must agree.</p>
+
+  <p>Read <a href="/lighthouse-wiring#rules">the rules</a> first if you haven’t played. Every example below is a real step from solving the first grid, “First Light”. In the <em>before</em> picture the tile being reasoned about is tinted yellow; faded tiles marked “?” aren’t settled yet. In the <em>after</em> picture, teal shows what was just worked out.</p>
+
+  <h2 id="edges">1. The edge is a wall</h2>
+  <p>No wire may point off the board. That alone settles a lot of edge tiles, because most shapes only have one or two turns that keep every wire on the board.</p>
+
+  <h3>A T-junction on an edge faces away from it</h3>
+  <p>A T-junction has wires on three sides. On the top edge, the only turn with no wire pointing up is the one that points left, right and down.</p>
+  <WiringStep puzzleId="first-light" step={4} rule="edge" label="A T-junction on the top edge">
+    The T-junction in row 1, column 4 must face down: any other turn points a wire off the top of the board.
+  </WiringStep>
+
+  <h3>A straight on an edge runs along it</h3>
+  <p>A straight has just two turns: across or up-and-down. On the left or right edge, “across” points off the board, so it must run up and down. On the top or bottom edge, it must run across.</p>
+  <WiringStep puzzleId="first-light" step={6} rule="edge" label="A straight on the left edge">
+    The straight in row 2, column 1 can’t point left, so it runs up and down.
+  </WiringStep>
+  <p>Bends and cottages in corners are similar: a bend in a corner has only one legal turn, and a cottage in a corner has two.</p>
+
+  <h2 id="neighbours">2. Neighbours must agree</h2>
+  <p>Wires join edge to edge. If a settled tile has a wire pointing into its neighbour, that neighbour must have a wire pointing back — and if it definitely doesn’t, the neighbour mustn’t either.</p>
+  <WiringStep puzzleId="first-light" step={5} rule="edge" label="A cottage in the corner next to a T-junction">
+    The T-junction we just settled points right, into the corner cottage. So the cottage must point left to meet it.
+  </WiringStep>
+  <p>You don’t even need a neighbour to be fully settled. It’s enough that <em>every</em> turn it has left points the same way.</p>
+  <WiringStep puzzleId="first-light" step={8} rule="edge" label="A cottage below a bend">
+    The bend in row 1, column 3 could still turn two ways — but both of them point down. So the cottage below it must point up.
+  </WiringStep>
+
+  <h2 id="combine">3. Combine the two</h2>
+  <p>Most deductions use the wall and a neighbour together: the edge rules out some turns, and a neighbour rules out the rest.</p>
+  <WiringStep puzzleId="first-light" step={10} rule="edge" label="A bend on the right edge">
+    The bend in row 2, column 5 can’t point right (the edge). The cottage above it points left, not down, so the bend can’t point up either. Only one turn is left: down and left.
+  </WiringStep>
+
+  <h2 id="routine">A routine for any grid</h2>
+  <ol>
+    <li>Go round the edge. Settle every T-junction, straight and corner bend you can, and lock them.</li>
+    <li>Look at the neighbours of each tile you just locked: does a wire point in, or not?</li>
+    <li>Work inwards. Tiles next to settled tiles get easier with every lock.</li>
+    <li>When nothing more falls, read the <a href="/guides/wiring-advanced">advanced guide</a>: loops and sealed sections usually unlock the rest.</li>
+  </ol>
+  <p class="note">Lock tiles as soon as you’re sure of them. It stops accidental turns, and it’s what Check and Hint use to know what you’ve worked out.</p>
+
+  <p>Next: <a href="/guides/wiring-advanced">Advanced wiring puzzles</a> · <a href="/walkthroughs/chapel-green">Walkthrough: Chapel Green</a></p>
+</Base>

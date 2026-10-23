@@ -1,0 +1,90 @@
+---
+import Base from '../../layouts/Base.astro';
+import WiringDiagram from '../../components/WiringDiagram.astro';
+import { findPuzzle } from '../../games/net/puzzles';
+import { parse } from '../../games/net/model';
+import { solve } from '../../games/net/solver';
+
+const puzzle = findPuzzle('chapel-green')!;
+const board = parse(puzzle);
+
+/* Stage boundaries follow the solver's own step order, so every picture is
+   a real position. The build fails if the solve changes length. */
+const stageEnds = [0, 11, 22, 30, 31, 34, 38];
+const full = solve(board);
+if (!full.solved || full.steps.length !== stageEnds.at(-1)) {
+  throw new Error('Chapel Green walkthrough is out of step with the solver; update stageEnds.');
+}
+const states = stageEnds.map((k) => solve(board, undefined, k).options);
+const stage = (k: number) => ({
+  options: states[k],
+  fresh: states[k].flatMap((o, i) => (o.length === 1 && states[k - 1][i].length > 1 ? [i] : [])),
+});
+const at = (r: number, c: number) => (r - 1) * board.w + (c - 1);
+---
+<Base
+  title="Walkthrough: solving Chapel Green"
+  description="A complete step-by-step solve of Chapel Green, a 5 × 5 Lighthouse Wiring puzzle, from the edges inwards to two loop deductions."
+  section="guides"
+>
+  <p class="eyebrow">Lighthouse Wiring walkthrough · 5 × 5</p>
+  <h1>Solving Chapel Green</h1>
+  <p class="lede">Chapel Green ends the first chapter. Most of it yields to edges and neighbours, but the middle needs the no-loops rule — twice. Here it is in six stages.</p>
+  <p>Try it first if you like: <a href="/lighthouse-wiring/play?p=chapel-green">play Chapel Green</a>. Rows run 1–5 from the top, columns 1–5 from the left. Faded tiles with a “?” aren’t settled yet; teal tiles are the ones each stage settles.</p>
+
+  <figure>
+    <WiringDiagram unit={52} puzzle={puzzle} options={states[0]} label="Chapel Green at the start" />
+    <figcaption>The start. Notice the crossing in row 3, column 2 — it has only one turn, so it’s right already.</figcaption>
+  </figure>
+
+  <h2>Stage 1: the top two rows</h2>
+  <p>Start along the top edge. The straight in column 2 must run across. The T-junction in column 3 must face down, and the straight in column 4 runs across too. The cottage in the top-right corner can only point left or down — and the straight beside it points right into it, so it points left.</p>
+  <p>That settles row 2 as well: the T-junction above column 3 points down, so the straight below it runs up and down; the straight above column 4 doesn’t point down, so the bend below it can’t point up — and the new up-and-down straight to its left doesn’t point at it, so it can’t point left either. That leaves right-and-down. The cottage in row 2, column 5 meets that bend by pointing left. Finally the crossing points left into the cottage in row 3, column 1, so that cottage points right.</p>
+  <figure>
+    <WiringDiagram unit={52} puzzle={puzzle} {...stage(1)} label="The top two rows mostly settled" />
+    <figcaption>Edges and matching neighbours, exactly as in the <a href="/guides/wiring-basics">beginner’s guide</a>.</figcaption>
+  </figure>
+
+  <h2>Stage 2: the bottom edge</h2>
+  <p>On the bottom edge, the straight in column 2 must run across. It points right into the bend in column 3, which can’t point down (the edge), so the bend turns up and left.</p>
+  <figure>
+    <WiringDiagram unit={52} puzzle={puzzle} {...stage(2)} label="The bottom edge settled in columns 2 and 3" />
+    <figcaption>Many other tiles have narrowed down without settling yet — that will pay off shortly.</figcaption>
+  </figure>
+
+  <h2>Stage 3: cottages down the left edge</h2>
+  <p>The left column is all cottages. The top one meets the straight beside it by pointing right, and so does the bottom one, next to the bottom straight. The two in between can’t point left (the edge), and the cottages above and below them point right, not at them — so they point right too. The bend in row 2, column 2 must reach back to its cottage, so it turns down and left, and the T-junction in row 4, column 2 settles facing up, left and right.</p>
+  <figure>
+    <WiringDiagram unit={52} puzzle={puzzle} {...stage(3)} label="The left two columns settled" />
+    <figcaption>Five cottages, all pointing inwards.</figcaption>
+  </figure>
+
+  <h2>Stage 4: the first loop</h2>
+  <p>Look at the two T-junctions in column 3, rows 3 and 4. The upper one connects left to the crossing; the crossing connects down to the T-junction in row 4, column 2; and that connects right to the lower T-junction. So the two are already joined, the long way round. A direct link between them would close a loop — so neither points at the other. The upper one faces up, left and right; the lower one faces left, right and down.</p>
+  <figure>
+    <WiringDiagram unit={52} puzzle={puzzle} {...stage(4)} note={[at(3, 2), at(4, 2)]} label="The two T-junctions in column 3 turned away from each other" />
+    <figcaption>The tinted tiles are the long way round. See <a href="/guides/wiring-advanced#loops">never close a loop</a>.</figcaption>
+  </figure>
+
+  <h2>Stage 5: the same trick again</h2>
+  <p>Now the T-junctions one column to the right, in column 4, are in the same position: each connects left to a T-junction we just settled, and those two are joined. Linking them directly would close a second loop, so they turn away from each other in the same way.</p>
+  <figure>
+    <WiringDiagram unit={52} puzzle={puzzle} {...stage(5)} label="The T-junctions in column 4 settled" />
+    <figcaption>One loop deduction often sets up the next.</figcaption>
+  </figure>
+
+  <h2>Stage 6: the right-hand side</h2>
+  <p>Everything left follows from neighbours. The cottage in row 3, column 5 meets the T-junction beside it by pointing left; the bend below it reaches left and down; and the two cottages at the bottom right point up to meet their neighbours.</p>
+  <figure>
+    <WiringDiagram unit={52} puzzle={puzzle} {...stage(6)} label="Chapel Green solved" />
+    <figcaption>Solved: every tile is reached from the lighthouse by exactly one route.</figcaption>
+  </figure>
+
+  <h2>What this grid teaches</h2>
+  <ul>
+    <li><strong>Edges first.</strong> Two full stages came from the top and bottom edges alone.</li>
+    <li><strong>Narrowing counts.</strong> Stage 2 settled only two tiles, but it trimmed the options of many others, which settled in a rush in stage 3.</li>
+    <li><strong>Loops are visible once groups grow.</strong> The middle of the grid was only solvable by noticing tiles already joined the long way round.</li>
+  </ul>
+  <p>More practice: <a href="/lighthouse-wiring#puzzles">pick another grid</a> or read the <a href="/guides/wiring-advanced">advanced guide</a>.</p>
+</Base>

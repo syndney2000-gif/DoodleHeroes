@@ -1,0 +1,48 @@
+---
+import Base from '../../layouts/Base.astro';
+import WiringStep from '../../components/WiringStep.astro';
+---
+<Base
+  title="Advanced wiring puzzles: loops and sealed sections"
+  description="Harder rotating-tile wiring techniques: wires that would close a loop, sections that would be sealed off from the lighthouse, and the section with only one way out."
+  section="guides"
+>
+  <p class="eyebrow">Lighthouse Wiring guide · advanced</p>
+  <h1>Advanced wiring puzzles</h1>
+  <p class="lede">Edges and neighbours settle most tiles, but bigger grids also need the network rules: one route from the lighthouse to everything, and nothing left on its own. Those rules forbid links that look perfectly fine locally.</p>
+
+  <p>This guide follows on from <a href="/guides/wiring-basics">the beginner’s guide</a>. Every example is a real step taken by the same solver that checks each grid and powers the Hint button.</p>
+
+  <h2 id="loops">1. Never close a loop</h2>
+  <p>The finished network is a tree: one route from the lighthouse to every tile. So if two neighbouring tiles are <em>already</em> joined by a chain of settled wires, a direct link between them would make a second route — a loop. That link can’t exist, and both tiles must turn away from each other.</p>
+  <WiringStep puzzleId="chapel-green" step={31} rule="loop" label="Two T-junctions already joined another way">
+    The T-junctions at rows 3 and 4 of column 3 are already connected the long way round — left through the crossing, down, and back. Linking them directly would close a loop, so the upper one faces up, left and right, and the lower one faces left, right and down.
+  </WiringStep>
+  <p>Look for this whenever you settle a tile next to a crossing or T-junction: these shapes join lots of tiles together quickly, which makes loops easy to spot.</p>
+
+  <h2 id="sealed">2. Never seal a section off</h2>
+  <p>The opposite mistake is just as illegal: a group of tiles whose wires all join each other, with no route back to the lighthouse. If making a link would finish such a closed section, that link is impossible.</p>
+  <p>The simplest case is two cottages facing each other. Linked together, each is complete — and the pair is stranded. <strong>A cottage never connects straight to another cottage.</strong></p>
+  <p>The same trap can hide in longer chains. Here, on the 9 × 9 grid “Old Mill”, everything to the right is already settled:</p>
+  <WiringStep puzzleId="old-mill" step={118} rule="sealed" label="A cottage that must not join a closed section">
+    If the cottage in row 3, column 8 pointed down, the bend below would have to turn up and right, into the settled T-junction on the edge. Follow those wires and they end at two more cottages: a closed section of seven tiles with no route to the lighthouse. So the cottage points left instead, and the bend turns right and down.
+  </WiringStep>
+
+  <h2 id="one-way-out">3. One way out</h2>
+  <p>Turn the sealed-section idea round. If a group of tiles you’ve connected has only <em>one</em> place left where a wire could leave it, that wire must be there — otherwise the group would end up stranded. It doesn’t matter that the tile could turn other ways; the network rule decides.</p>
+  <p>This often finishes a grid: late on, the last few unsettled tiles sit between two big connected groups, and the single remaining gap between them is the link.</p>
+
+  <h2 id="locks">4. Lock as you go</h2>
+  <p>On a 9 × 9 grid you’ll hold dozens of facts at once. Locking every tile the moment it’s certain keeps them visible: locked tiles shade darker, and the orange glow shows which parts already reach the lighthouse. A long orange chain that suddenly stops is a good place to look next.</p>
+
+  <h2 id="stuck">When you’re stuck</h2>
+  <ul>
+    <li>Press <strong>Check</strong> first (it’s free). A single locked tile turned the wrong way can make the whole area look impossible.</li>
+    <li>Trace each connected group of settled tiles. Does any group have only one possible way out?</li>
+    <li>Next to every crossing and T-junction, ask: would this link close a loop?</li>
+    <li>Look for cottages facing cottages, or short chains that would end in cottages at both ends.</li>
+    <li>Still stuck? A <strong>Hint</strong> outlines a tile that can now be worked out; try to see why before pressing again.</li>
+  </ul>
+
+  <p>See loops in action: <a href="/walkthroughs/chapel-green">Walkthrough: Chapel Green</a>.</p>
+</Base>

@@ -1,0 +1,46 @@
+---
+/* One real step of the solver on a real puzzle, before and after. Built from
+   the solver's own trace, so the picture can't show a wrong deduction. */
+import WiringDiagram from './WiringDiagram.astro';
+import { findPuzzle } from '../games/net/puzzles';
+import { parse } from '../games/net/model';
+import { solve, type NetRule } from '../games/net/solver';
+
+interface Props {
+  puzzleId: string;
+  /** 1-based solver step to show. */
+  step: number;
+  /** The rule the text describes; the build fails if the step used another. */
+  rule: NetRule;
+  label: string;
+}
+
+const { puzzleId, step, rule, label } = Astro.props;
+const puzzle = findPuzzle(puzzleId);
+if (!puzzle) throw new Error(`WiringStep: no puzzle ${puzzleId}`);
+const board = parse(puzzle);
+const before = solve(board, undefined, step - 1).options;
+const run = solve(board, undefined, step);
+const taken = run.steps[step - 1];
+if (!taken || taken.rule !== rule) throw new Error(`WiringStep: ${puzzleId} step ${step} is ${taken?.rule}, not ${rule}`);
+const settled = taken.tiles.filter((t) => run.options[t].length === 1);
+---
+<figure class="wiring-step">
+  <div class="ws-pair">
+    <div>
+      <span class="ws-tag">Before</span>
+      <WiringDiagram puzzle={puzzle} options={before} note={taken.tiles} label={`${label}: before`} unit={board.w > 5 ? 22 : 30} />
+    </div>
+    <div>
+      <span class="ws-tag">After</span>
+      <WiringDiagram puzzle={puzzle} options={run.options} fresh={settled} label={`${label}: after`} unit={board.w > 5 ? 22 : 30} />
+    </div>
+  </div>
+  <figcaption><slot /></figcaption>
+</figure>
+
+<style>
+  .wiring-step{ background:var(--paper); border:2px solid var(--rule); border-radius:12px; padding:12px 14px; }
+  .ws-pair{ display:flex; flex-wrap:wrap; gap:14px 26px; margin-bottom:8px; }
+  .ws-tag{ display:block; font-size:14px; color:var(--ink-soft); margin-bottom:4px; }
+</style>

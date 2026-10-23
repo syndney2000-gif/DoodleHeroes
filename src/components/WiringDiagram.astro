@@ -1,0 +1,59 @@
+---
+/* A static Lighthouse Wiring position drawn as SVG at build time. Tiles the
+   reasoning has settled are drawn in their final turn; the rest are faded,
+   in their starting turn, with a "?". */
+import { SIDES, parse, type NetPuzzle } from '../games/net/model';
+
+interface Props {
+  puzzle: Pick<NetPuzzle, 'rows' | 'source'>;
+  /** Possible orientations per tile; omit to draw the starting position. */
+  options?: number[][];
+  /** Tiles to draw in teal: just worked out. */
+  fresh?: number[];
+  /** Tiles to tint yellow: where to look. */
+  note?: number[];
+  label: string;
+  unit?: number;
+}
+
+const { puzzle, options, fresh = [], note = [], label, unit = 34 } = Astro.props;
+const b = parse(puzzle);
+const U = unit;
+const tiles = b.tiles.map((orig, i) => {
+  const known = options ? options[i].length === 1 : false;
+  const mask = known ? options![i][0] : orig;
+  const x = (i % b.w) * U, y = Math.floor(i / b.w) * U;
+  const m = U / 2;
+  const wires = SIDES.filter((s) => mask & s).map((s) =>
+    s === 1 ? [m, 0] : s === 2 ? [U, m] : s === 4 ? [m, U] : [0, m]);
+  const isEnd = wires.length === 1;
+  return { i, x, y, known, wires, isEnd, fresh: fresh.includes(i), note: note.includes(i), source: i === b.source };
+});
+const hs = U * 0.17;
+---
+<svg class="wiring-diagram" viewBox={`0 0 ${b.w * U} ${b.h * U}`} width={b.w * U} height={b.h * U}
+  role="img" aria-label={label} font-family="Fredoka, system-ui, sans-serif" font-weight="600">
+  <rect x="0" y="0" width={b.w * U} height={b.h * U} rx="8" fill="#2E2A3D" />
+  {tiles.map((t) => {
+    const colour = t.fresh ? '#2BA59C' : t.known || !options ? '#5B556B' : '#C9C0A8';
+    const m = U / 2;
+    return (
+      <g transform={`translate(${t.x} ${t.y})`}>
+        <rect x="1" y="1" width={U - 2} height={U - 2} rx="4" fill={t.note ? '#FFE58A' : t.fresh ? '#D7F0EC' : '#F6EFD9'} />
+        {t.wires.map(([x2, y2]) => <line x1={m} y1={m} x2={x2} y2={y2} stroke={colour} stroke-width={U * 0.13} stroke-linecap="round" />)}
+        {t.source
+          ? <circle cx={m} cy={m} r={U * 0.24} fill="#FFCB47" stroke="#1F1B2D" stroke-width="2" />
+          : t.isEnd
+            ? <path d={`M${m - hs} ${m + hs} V${m - hs * 0.2} L${m} ${m - hs * 1.2} L${m + hs} ${m - hs * 0.2} V${m + hs} Z`} fill="#F6EFD9" stroke={colour} stroke-width="1.8" stroke-linejoin="round" />
+            : <circle cx={m} cy={m} r={U * 0.08} fill={colour} />}
+        {options && !t.known && !t.source && (
+          <text x={U - 4} y={U * 0.32} text-anchor="end" font-size={U * 0.3} fill="#8A8170">?</text>
+        )}
+      </g>
+    );
+  })}
+</svg>
+
+<style>
+  .wiring-diagram{ display:block; height:auto; max-width:100%; }
+</style>

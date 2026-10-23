@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+import WiringDiagram from '../components/WiringDiagram.astro';
+import PuzzleList from '../components/PuzzleList.astro';
+import { chapters, findPuzzle } from '../games/net/puzzles';
+import { parse } from '../games/net/model';
+import { solve } from '../games/net/solver';
+
+const first = findPuzzle('first-light')!;
+const solved = solve(parse(first)).options;
+---
+<Base
+  title="Lighthouse Wiring — rotating-tile logic puzzles"
+  description="Lighthouse Wiring is a free rotating-tile logic puzzle: turn the tiles so power runs from the lighthouse to every cottage. Rules with examples, hints and stars explained, 12 grids and a daily challenge."
+  section="lighthouse-wiring"
+>
+  <p class="eyebrow">Puzzle 3 of the island</p>
+  <h1>Lighthouse Wiring</h1>
+  <p class="lede">Every tile holds a piece of wire. Turn the tiles so power flows from the lighthouse to every cottage on the island — no loose ends, no loops. Each grid has exactly one solution, and every one can be found by reasoning.</p>
+
+  <p class="hero-actions">
+    <a class="btn" href="/lighthouse-wiring/play?p=first-light">Start with the first grid ▶</a>
+    <a class="btn secondary" href="/lighthouse-wiring/play?p=daily">Today’s daily grid</a>
+  </p>
+
+  <h2 id="rules">The rules</h2>
+  <ol>
+    <li><strong>You can only turn tiles</strong>, never move them. Each tile’s wire shape stays the same.</li>
+    <li><strong>Every wire end must meet another.</strong> If a tile’s wire reaches its right edge, the tile to its right must have a wire reaching back.</li>
+    <li><strong>Nothing points off the board.</strong> The outer edge is a wall.</li>
+    <li><strong>Everything connects to the lighthouse</strong>, the yellow lamp in the middle, in one network.</li>
+    <li><strong>No loops.</strong> There is exactly one route from the lighthouse to each tile.</li>
+  </ol>
+
+  <h3>The five tile shapes</h3>
+  <table>
+    <thead><tr><th>Shape</th><th>Wires</th><th>Ways to turn it</th></tr></thead>
+    <tbody>
+      <tr><td>Cottage (end)</td><td>One</td><td>4</td></tr>
+      <tr><td>Straight</td><td>Two, opposite</td><td>2 — across or up-and-down</td></tr>
+      <tr><td>Bend</td><td>Two, at a corner</td><td>4</td></tr>
+      <tr><td>T-junction</td><td>Three</td><td>4</td></tr>
+      <tr><td>Crossing</td><td>Four</td><td>1 — it’s already right</td></tr>
+    </tbody>
+  </table>
+
+  <div class="figs">
+    <figure>
+      <WiringDiagram puzzle={first} label="The first grid, First Light, as it starts" />
+      <figcaption>“First Light” as it starts: every tile turned at random.</figcaption>
+    </figure>
+    <figure>
+      <WiringDiagram puzzle={first} options={solved} label="First Light solved" />
+      <figcaption>Solved: every cottage is reached from the lighthouse by exactly one route.</figcaption>
+    </figure>
+  </div>
+  <p>A good first look: tiles on the edge and in corners have far fewer ways to turn, because they can’t point off the board. The <a href="/guides/wiring-basics">beginner’s guide</a> starts there.</p>
+
+  <h2 id="puzzles">The grids</h2>
+  <p>Three chapters, from the village to the cliffs. Solved grids show your best star rating.</p>
+  <PuzzleList
+    game="lighthouse-wiring"
+    playHref="/lighthouse-wiring/play"
+    chapters={chapters.map((c) => ({ ...c, size: `${c.puzzles[0].rows.length} × ${c.puzzles[0].rows.length}` }))}
+  />
+  <p><a href="/lighthouse-wiring/play?p=daily">The daily grid</a> is a fresh 7 × 7 puzzle each day, the same for everyone, generated from the date and checked by the solver before it’s shown.</p>
+
+  <h2 id="controls">Controls</h2>
+  <table>
+    <thead><tr><th>To…</th><th>Touch or mouse</th><th>Keyboard</th></tr></thead>
+    <tbody>
+      <tr><td>Turn a tile clockwise</td><td>Tap it (in ↻ Turn mode)</td><td><kbd>Space</kbd></td></tr>
+      <tr><td>Turn anticlockwise</td><td>Right-click, or <kbd>Shift</kbd>+tap</td><td><kbd>Shift</kbd>+<kbd>Space</kbd></td></tr>
+      <tr><td>Lock or unlock a tile</td><td>Tap it in ■ Lock mode</td><td><kbd>L</kbd></td></tr>
+      <tr><td>Move</td><td>—</td><td>Arrow keys</td></tr>
+      <tr><td>Undo</td><td>↶ Undo</td><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td></tr>
+    </tbody>
+  </table>
+  <p>Wires turn orange when they connect back to the lighthouse, and cottages light up. Locking a tile you’ve worked out keeps you from turning it by accident, and tells Check and Hint what you’re sure of.</p>
+
+  <h2 id="scoring">Check, hints and stars</h2>
+  <ul>
+    <li><strong>Check</strong> is free. It marks any <em>locked</em> tile that’s turned the wrong way. Unlocked tiles are treated as experiments, so Check leaves them alone.</li>
+    <li><strong>Hint</strong> costs one star per press. Starting from your locked tiles, it outlines a tile whose direction can now be worked out. Press again to turn and lock it. If a locked tile is wrong, the hint shows that first.</li>
+    <li><strong>Stars:</strong> three with no hints, two with one, one with two or more. Progress saves in your browser.</li>
+  </ul>
+
+  <h2 id="difficulty">Difficulty</h2>
+  <table>
+    <thead><tr><th>Chapter</th><th>Grid</th><th>What it teaches</th></tr></thead>
+    <tbody>
+      <tr><td>Village Lanes</td><td>5 × 5</td><td>Edges, corners and matching neighbours.</td></tr>
+      <tr><td>Harbour Grid</td><td>7 × 7</td><td>Spotting wires that would close a loop.</td></tr>
+      <tr><td>Cliff Road</td><td>9 × 9</td><td>Long chains of deductions, and sections that mustn’t be sealed off.</td></tr>
+    </tbody>
+  </table>
+  <p>Every grid is checked twice before publishing: once by a solver that only uses the reasoning in our guides, and once by a full search that confirms there’s exactly one solution.</p>
+
+  <h2 id="learn">Learn more</h2>
+  <ul>
+    <li><a href="/guides/wiring-basics">Wiring puzzles for beginners</a> — edges, corners and matching neighbours, on a real grid.</li>
+    <li><a href="/guides/wiring-advanced">Advanced wiring puzzles</a> — no loops, no sealed sections, and one way out.</li>
+    <li><a href="/walkthroughs/chapel-green">Walkthrough: Chapel Green</a> — a full 5 × 5 solve, including two loop deductions.</li>
+  </ul>
+</Base>
+
+<style>
+  .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+</style>

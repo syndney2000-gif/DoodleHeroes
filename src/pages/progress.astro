@@ -13,43 +13,59 @@ import Base from '../layouts/Base.astro';
   <div id="summary"><p class="muted">Loading…</p></div>
 
   <h2>Start over</h2>
-  <p>Reset clears every saved board, star and best time on this device. It can’t be undone.</p>
+  <p>Reset clears every saved board, star and best time on this device, for all three games and the expedition. It can’t be undone.</p>
   <p><button class="btn secondary" type="button" id="reset">Reset all progress</button></p>
   <p id="reset-status" role="status" aria-live="polite"></p>
 </Base>
 
 <script>
   import { clearAll, results } from '../lib/storage';
-  import { allPuzzles } from '../games/nonogram/puzzles';
-  import { formatTime } from '../lib/scoring';
+  import { formatTime, starText } from '../lib/scoring';
+  import { allPuzzles as sketches } from '../games/nonogram/puzzles';
+  import { allPuzzles as maps } from '../games/bridges/puzzles';
+  import { allPuzzles as grids } from '../games/net/puzzles';
+  import { expedition } from '../content/expedition';
+
+  const games = [
+    { key: 'island-sketch', name: 'Island Sketch', noun: 'sketches', puzzles: sketches },
+    { key: 'isle-spans', name: 'Isle Spans', noun: 'maps', puzzles: maps },
+    { key: 'lighthouse-wiring', name: 'Lighthouse Wiring', noun: 'grids', puzzles: grids },
+  ];
+
+  const el = (tag: string, text?: string) => {
+    const node = document.createElement(tag);
+    if (text != null) node.textContent = text;
+    return node;
+  };
 
   function render() {
     const done = results();
-    const el = document.getElementById('summary')!;
-    const solved = allPuzzles.filter((p) => done[`island-sketch/${p.id}`]);
-    const stars = solved.reduce((n, p) => n + done[`island-sketch/${p.id}`].stars, 0);
-    el.textContent = '';
-    const h = document.createElement('h2');
-    h.textContent = 'Island Sketch';
-    const p = document.createElement('p');
-    p.textContent = `${solved.length} of ${allPuzzles.length} sketches solved · ${stars} of ${allPuzzles.length * 3} stars`;
-    el.append(h, p);
-    if (!solved.length) return;
-    const table = document.createElement('table');
-    table.innerHTML = '<thead><tr><th>Sketch</th><th>Stars</th><th>Best time</th></tr></thead>';
-    const body = document.createElement('tbody');
-    for (const puzzle of solved) {
-      const r = done[`island-sketch/${puzzle.id}`];
-      const row = document.createElement('tr');
-      for (const text of [puzzle.title, '★'.repeat(r.stars) + '☆'.repeat(3 - r.stars), formatTime(r.seconds)]) {
-        const td = document.createElement('td');
-        td.textContent = text;
-        row.append(td);
+    const root = document.getElementById('summary')!;
+    root.textContent = '';
+
+    const chaptersDone = expedition.filter((c) => c.tasks.every((t) => done[`${t.game}/${t.puzzleId}`])).length;
+    root.append(el('h2', 'Lantern Isles expedition'), el('p', `${chaptersDone} of ${expedition.length} chapters complete.`));
+
+    for (const game of games) {
+      const solved = game.puzzles.filter((p) => done[`${game.key}/${p.id}`]);
+      const stars = solved.reduce((n, p) => n + done[`${game.key}/${p.id}`].stars, 0);
+      root.append(el('h2', game.name), el('p', `${solved.length} of ${game.puzzles.length} ${game.noun} solved · ${stars} of ${game.puzzles.length * 3} stars`));
+      if (!solved.length) continue;
+      const table = el('table');
+      const head = el('thead');
+      const hr = el('tr');
+      for (const h of ['Puzzle', 'Stars', 'Best time']) hr.append(el('th', h));
+      head.append(hr);
+      const body = el('tbody');
+      for (const p of solved) {
+        const r = done[`${game.key}/${p.id}`];
+        const row = el('tr');
+        row.append(el('td', p.title), el('td', starText(r.stars)), el('td', formatTime(r.seconds)));
+        body.append(row);
       }
-      body.append(row);
+      table.append(head, body);
+      root.append(table);
     }
-    table.append(body);
-    el.append(table);
   }
 
   render();

@@ -195,7 +195,9 @@ import Base from '../../layouts/Base.astro';
   render();
 </script>
 
-<style>
+<!-- Global because the guess list and stats are built by the script, which
+     scoped styles don't reach. Every selector is prefixed dg-. -->
+<style is:global>
   .dg-page{ max-width:420px; margin:12px auto 10px; padding:10px; }
   .dg-page canvas{
     display:block; width:100%; height:auto; aspect-ratio:1; border-radius:6px;

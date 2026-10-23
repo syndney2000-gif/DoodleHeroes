@@ -1,129 +1,203 @@
-/* Doodle Heroes — shared styles. Paper, ink and a few marker colours. */
+/* Doodle Heroes — notebook styles.
+   Everything sits on ruled notebook paper: pencil outlines, marker colours,
+   highlighter for emphasis. Headings and buttons are handwritten (Patrick
+   Hand); body text, numbers and clues stay in a clean face (Nunito) so they
+   remain easy to read. All the texture is CSS — no image files to load. */
 
 :root{
-  --bg: #FFF4D6;
-  --paper: #FFFBEC;
-  --ink: #1F1B2D;
-  --ink-soft: #4A4459;
-  --red: #E5484D;
-  --orange: #FF8E3C;
-  --yellow: #FFCB47;
+  --bg: #FBF7EC;          /* notebook paper */
+  --paper: #FFFDF6;       /* a fresh sheet on top */
+  --ink: #2D2B33;         /* pencil graphite */
+  --ink-soft: #5B5866;
+  --red: #E0474C;         /* red marker */
+  --orange: #F08A24;
+  --yellow: #FFD84D;      /* highlighter */
+  --highlight: rgba(255, 216, 77, 0.6);
   --teal: #2BA59C;
-  --blue: #3C7DD9;
-  --green: #4FAF62;
-  --rule: rgba(31,27,45,0.14);
-  --shadow: rgba(31,27,45,0.18);
+  --blue: #2F63C8;        /* blue biro */
+  --green: #3E9E57;
+  --rule: rgba(47, 99, 200, 0.16);   /* ruled lines */
+  --margin: rgba(224, 71, 76, 0.32); /* the red margin */
+  --shadow: rgba(45, 43, 51, 0.16);
   --radius: 14px;
+  /* Uneven corners read as hand-drawn rather than machine-cut. */
+  --wobble: 255px 14px 225px 14px / 14px 225px 14px 255px;
+  --wobble-soft: 6px 18px 8px 16px / 16px 8px 18px 6px;
+  --hand: 'Patrick Hand', 'Comic Sans MS', cursive;
+  --text: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 *{ box-sizing:border-box; margin:0; padding:0; }
+/* The hidden attribute must win over any display rule a component sets. */
+[hidden]{ display:none !important; }
 html{ -webkit-text-size-adjust:100%; }
 body{
-  font-family:'Fredoka',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-family:var(--text);
   font-weight:500;
   color:var(--ink);
-  background:var(--bg);
+  background-color:var(--bg);
+  /* Ruled lines, plus one faint coffee ring in the corner. */
+  background-image:
+    radial-gradient(circle at 92% 14%, transparent 52px, rgba(150, 100, 50, 0.07) 53px 58px, transparent 59px),
+    repeating-linear-gradient(to bottom, transparent 0 31px, var(--rule) 31px 32px);
   line-height:1.65;
   font-size:17px;
 }
 img,svg{ max-width:100%; }
-a{ color:var(--blue); }
-a:hover{ color:var(--ink); }
+a{ color:var(--blue); text-underline-offset:3px; text-decoration-thickness:1.5px; }
+a:hover{ color:var(--ink); text-decoration-style:wavy; }
 :focus-visible{ outline:3px solid var(--blue); outline-offset:2px; }
 
 .wrap{ max-width:780px; margin:0 auto; padding:0 16px; }
 .wrap.wide{ max-width:1000px; }
 
+/* The red margin line, on screens wide enough to have room for it. */
+main.wrap{ position:relative; }
+@media (min-width:860px){
+  main.wrap::before{
+    content:""; position:absolute; top:0; bottom:0; left:-22px; width:2px; background:var(--margin);
+  }
+}
+
 /* ---------- header / footer ---------- */
 
-.topbar{ border-bottom:3px solid var(--ink); background:var(--paper); }
+.topbar{ position:relative; background:var(--paper); box-shadow:0 2px 0 var(--shadow); z-index:2; }
+/* Torn bottom edge. */
+.topbar::after{
+  content:""; position:absolute; left:0; right:0; bottom:-8px; height:8px;
+  background:
+    linear-gradient(135deg, var(--paper) 50%, transparent 50%) 0 0 / 12px 8px repeat-x,
+    linear-gradient(225deg, var(--paper) 50%, transparent 50%) 0 0 / 12px 8px repeat-x;
+}
 .topbar .wrap{
-  display:flex; align-items:center; gap:10px 18px; flex-wrap:wrap;
+  display:flex; align-items:center; gap:8px 18px; flex-wrap:wrap;
   padding-top:12px; padding-bottom:12px;
 }
 .brand{
-  font-family:'Caveat',cursive; font-weight:700; font-size:30px; line-height:1;
+  font-family:var(--hand); font-size:31px; line-height:1;
   color:var(--ink); text-decoration:none; white-space:nowrap;
+  transform:rotate(-1.5deg);
 }
 .brand span{ color:var(--red); }
-.topbar nav{ display:flex; gap:4px 16px; flex-wrap:wrap; margin-left:auto; }
+.brand:hover{ text-decoration:none; }
+.topbar nav{ display:flex; gap:2px 14px; flex-wrap:wrap; margin-left:auto; }
 .topbar nav a{
-  color:var(--ink-soft); text-decoration:none; font-size:15px;
-  padding:3px 2px; border-bottom:2px solid transparent;
+  font-family:var(--hand); color:var(--ink-soft); text-decoration:none; font-size:19px;
+  padding:2px 4px; border-radius:var(--wobble);
 }
-.topbar nav a:hover{ color:var(--ink); border-bottom-color:var(--yellow); }
-.topbar nav a[aria-current="page"]{ color:var(--ink); border-bottom-color:var(--red); }
+.topbar nav a:hover{ color:var(--ink); background:var(--highlight); }
+.topbar nav a[aria-current="page"]{
+  color:var(--ink);
+  background:linear-gradient(transparent 58%, var(--highlight) 58% 92%, transparent 92%);
+}
 
 footer.site{
-  border-top:3px solid var(--ink); background:var(--paper);
-  padding:26px 0 34px; font-size:15px; color:var(--ink-soft);
+  position:relative; background:var(--paper); margin-top:12px;
+  padding:28px 0 34px; font-size:15px; color:var(--ink-soft);
 }
-footer.site nav{ display:flex; gap:6px 18px; flex-wrap:wrap; margin-bottom:10px; }
+footer.site::before{
+  content:""; position:absolute; left:0; right:0; top:-8px; height:8px;
+  background:
+    linear-gradient(45deg, var(--paper) 50%, transparent 50%) 0 0 / 12px 8px repeat-x,
+    linear-gradient(-45deg, var(--paper) 50%, transparent 50%) 0 0 / 12px 8px repeat-x;
+}
+footer.site nav{ display:flex; gap:6px 18px; flex-wrap:wrap; margin-bottom:10px; font-family:var(--hand); font-size:18px; }
 footer.site a{ color:var(--ink-soft); }
 
-main{ padding:34px 0 56px; }
+main{ padding:46px 0 56px; }
 
 /* ---------- type ---------- */
 
-h1{ font-size:clamp(30px,6vw,42px); line-height:1.15; margin-bottom:12px; font-weight:700; }
-h2{ font-size:clamp(23px,4.4vw,28px); line-height:1.25; margin:38px 0 10px; font-weight:700; }
-h3{ font-size:20px; line-height:1.3; margin:26px 0 6px; font-weight:600; }
+h1, h2, h3{ font-family:var(--hand); font-weight:400; letter-spacing:.2px; }
+h1{ font-size:clamp(36px,7vw,50px); line-height:1.1; margin-bottom:14px; }
+h1 > :first-child, h1{ text-wrap:balance; }
+h2{ font-size:clamp(28px,5vw,34px); line-height:1.2; margin:40px 0 10px; }
+/* A highlighter swipe under section headings. */
+h2{
+  display:inline-block;
+  background:linear-gradient(transparent 60%, var(--highlight) 60% 90%, transparent 90%);
+  padding:0 4px; margin-left:-4px;
+}
+h3{ font-size:24px; line-height:1.25; margin:26px 0 6px; }
 p, ul, ol{ margin-bottom:14px; }
 ul, ol{ padding-left:24px; }
 li{ margin-bottom:6px; }
+li::marker{ color:var(--red); }
+strong{ font-weight:800; }
 .lede{ font-size:19px; color:var(--ink-soft); margin-bottom:22px; }
 .eyebrow{
-  font-family:'Caveat',cursive; font-size:24px; font-weight:700; color:var(--red);
-  line-height:1; margin-bottom:4px;
+  font-family:var(--hand); font-size:21px; color:var(--red);
+  line-height:1.1; margin-bottom:2px; transform:rotate(-1deg); transform-origin:left;
 }
 kbd{
-  font-family:inherit; font-size:14px; background:var(--paper);
-  border:2px solid var(--ink); border-bottom-width:3px; border-radius:6px; padding:0 6px;
+  font-family:var(--text); font-weight:700; font-size:14px; background:var(--paper);
+  border:2px solid var(--ink); border-bottom-width:3.5px; border-radius:var(--wobble-soft); padding:0 6px;
 }
 small, .muted{ color:var(--ink-soft); }
 
-table{ width:100%; border-collapse:collapse; margin:10px 0 18px; font-size:16px; }
+table{ width:100%; border-collapse:collapse; margin:10px 0 18px; font-size:16px; background:var(--paper); }
 th, td{ text-align:left; padding:8px 10px; border-bottom:1px solid var(--rule); vertical-align:top; }
-th{ font-weight:600; }
+th{ font-family:var(--hand); font-weight:400; font-size:19px; border-bottom:2px solid var(--ink); }
 
 /* ---------- blocks ---------- */
 
+/* A sheet of paper taped onto the page. */
 .card{
-  background:var(--paper); border:3px solid var(--ink); border-radius:var(--radius);
-  box-shadow:4px 4px 0 var(--ink); padding:18px 20px; margin:18px 0;
+  position:relative;
+  background:var(--paper);
+  border:2px solid var(--ink); border-radius:var(--wobble-soft);
+  box-shadow:3px 4px 0 var(--shadow);
+  padding:20px 20px 18px; margin:22px 0;
+}
+.card::before{
+  content:""; position:absolute; top:-11px; left:50%; width:84px; height:22px;
+  transform:translateX(-50%) rotate(-3deg);
+  background:rgba(255, 236, 160, 0.75); border-left:1px dashed rgba(0,0,0,.08); border-right:1px dashed rgba(0,0,0,.08);
 }
 .note{
-  background:var(--paper); border-left:5px solid var(--yellow);
-  padding:12px 16px; margin:18px 0; border-radius:0 10px 10px 0;
+  background:linear-gradient(90deg, var(--highlight), rgba(255,216,77,.18));
+  padding:12px 16px; margin:18px 0; border-radius:var(--wobble-soft);
 }
+
+/* Pencil-outlined buttons. The main action is a sticky note. */
 .btn{
   display:inline-flex; align-items:center; gap:8px; justify-content:center;
-  font:inherit; font-weight:600; font-size:17px; line-height:1.2;
-  color:var(--ink); background:var(--yellow); text-decoration:none;
-  border:3px solid var(--ink); border-radius:12px; box-shadow:3px 3px 0 var(--ink);
-  padding:10px 18px; cursor:pointer; min-height:44px;
+  font-family:var(--hand); font-size:21px; line-height:1.1;
+  color:var(--ink); background:#FFE680; text-decoration:none;
+  border:2.5px solid var(--ink); border-radius:var(--wobble);
+  box-shadow:2px 3px 0 var(--ink);
+  padding:9px 20px 8px; cursor:pointer; min-height:48px;
+  transition:transform .08s ease-out, box-shadow .08s ease-out;
 }
-.btn:hover{ color:var(--ink); transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink); }
-.btn:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink); }
-.btn.secondary{ background:var(--paper); }
-.btn[aria-pressed="true"]{ background:var(--ink); color:var(--paper); }
+.btn:hover{
+  color:var(--ink); text-decoration:none;
+  /* Pencil hatching over the fill. */
+  background-image:repeating-linear-gradient(-45deg, rgba(45,43,51,.10) 0 2px, transparent 2px 6px);
+}
+.btn:active{ transform:scale(.96, .92); box-shadow:1px 1px 0 var(--ink); }
+.btn.secondary{ background-color:var(--paper); }
+.btn[aria-pressed="true"]{ background-color:var(--ink); color:var(--paper); }
+@media (prefers-reduced-motion:reduce){ .btn{ transition:none; } .btn:active{ transform:none; } }
 
-.grid-cards{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); margin:16px 0; }
+.grid-cards{ display:grid; gap:22px 16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); margin:20px 0; }
 .grid-cards .card{ margin:0; display:flex; flex-direction:column; gap:6px; }
 .grid-cards .card h3{ margin:0; }
 .grid-cards .card p{ margin:0; font-size:16px; color:var(--ink-soft); }
 .grid-cards .card .btn{ margin-top:auto; align-self:flex-start; }
 
-figure{ margin:20px 0; }
+figure{ margin:22px 0; }
 figcaption{ font-size:15px; color:var(--ink-soft); margin-top:6px; }
 .figs{ display:flex; flex-wrap:wrap; gap:18px; align-items:flex-start; }
 .figs figure{ margin:0; flex:1 1 200px; }
 
-/* Ad units: the "Advertisement" label and spacing keep them clearly apart
-   from content and nowhere near game controls. */
-.ad-slot{ margin:34px 0; padding-top:8px; border-top:1px dashed var(--rule); min-height:0; }
+/* Stars and stickers. */
+.stars{ color:var(--orange); letter-spacing:2px; }
+
+/* Ad units: plainly labelled and boxed, never styled like the notebook, so
+   nobody mistakes an ad for site content. */
+.ad-slot{ margin:34px 0; padding-top:8px; border-top:1px dashed var(--ink-soft); min-height:0; background:var(--bg); }
 .ad-slot::before{
-  content:"Advertisement"; display:block; font-size:12px; letter-spacing:.06em;
+  content:"Advertisement"; display:block; font-family:var(--text); font-size:12px; letter-spacing:.06em;
   text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px;
 }
 

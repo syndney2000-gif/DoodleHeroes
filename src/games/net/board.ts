@@ -102,6 +102,10 @@ export class WiringBoard implements PlayableBoard {
       // changes this group's rotation, which CSS animates.
       const spin = document.createElementNS(NS, 'g');
       spin.setAttribute('class', 'nw-spin');
+      const frame = document.createElementNS(NS, 'rect');
+      frame.setAttribute('width', String(T)); frame.setAttribute('height', String(T));
+      frame.setAttribute('fill', 'none');
+      spin.append(frame);
       for (const side of SIDES) {
         if (!(orig & side)) continue;
         const [x2, y2] = side === 1 ? [T / 2, 0] : side === 2 ? [T, T / 2] : side === 4 ? [T / 2, T] : [0, T / 2];

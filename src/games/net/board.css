@@ -4,16 +4,18 @@
 .nw-board{
   display:block; margin:0 auto;
   width:min(100%, calc(var(--w) * 58px)); height:auto;
-  background:#2E2A3D; border:3px solid var(--ink); border-radius:14px;
+  background:#D9D2BF; border:2.5px solid var(--ink); border-radius:var(--wobble-soft);
   touch-action:manipulation; user-select:none; -webkit-user-select:none;
 }
 .nw-tile{ cursor:pointer; outline:none; }
 .nw-bg{ fill:#F6EFD9; }
 @media (hover:hover){ .nw-tile:hover .nw-bg{ fill:#FFF1C2; } }
 
+/* Each turning group holds an invisible full-tile rect, so its box is the
+   whole tile and it spins about the tile's centre in every browser. */
 .nw-spin{
-  transform-box:view-box;
-  transform-origin:20px 20px;
+  transform-box:fill-box;
+  transform-origin:center;
   transition:transform .18s ease-out;
 }
 @media (prefers-reduced-motion:reduce){ .nw-spin{ transition:none; } }

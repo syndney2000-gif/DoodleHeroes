@@ -45,7 +45,7 @@ const lit = (r: number, c: number) =>
 const thick = (k: number, n: number) => k === 0 || k === n || k % 5 === 0;
 ---
 <svg class="mini-board" viewBox={`0 0 ${width} ${height}`} width={width} height={height} role="img" aria-label={label}
-  font-family="Fredoka, system-ui, sans-serif" font-weight="600" font-size={font}>
+  font-family="Nunito, system-ui, sans-serif" font-weight="700" font-size={font}>
   {highlight && (
     highlight.kind === 'row'
       ? <rect x="0" y={top + highlight.index * cell} width={left - 2} height={cell} rx="5" fill="#FFE58A" />

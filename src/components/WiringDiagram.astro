@@ -32,8 +32,8 @@ const tiles = b.tiles.map((orig, i) => {
 const hs = U * 0.17;
 ---
 <svg class="wiring-diagram" viewBox={`0 0 ${b.w * U} ${b.h * U}`} width={b.w * U} height={b.h * U}
-  role="img" aria-label={label} font-family="Fredoka, system-ui, sans-serif" font-weight="600">
-  <rect x="0" y="0" width={b.w * U} height={b.h * U} rx="8" fill="#2E2A3D" />
+  role="img" aria-label={label} font-family="Nunito, system-ui, sans-serif" font-weight="700">
+  <rect x="0" y="0" width={b.w * U} height={b.h * U} rx="8" fill="#D9D2BF" />
   {tiles.map((t) => {
     const colour = t.fresh ? '#2BA59C' : t.known || !options ? '#5B556B' : '#C9C0A8';
     const m = U / 2;

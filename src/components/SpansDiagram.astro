@@ -54,7 +54,7 @@ const tints = note.map((id) => {
 });
 ---
 <svg class="spans-diagram" viewBox={`0 0 ${board.w * U} ${board.h * U}`} width={board.w * U} height={board.h * U}
-  role="img" aria-label={label} font-family="Fredoka, system-ui, sans-serif" font-weight="600">
+  role="img" aria-label={label} font-family="Nunito, system-ui, sans-serif" font-weight="700">
   <rect x="0" y="0" width={board.w * U} height={board.h * U} rx="10" fill="#DCEFF2" />
   {tints.map((t) => <rect x={t.x} y={t.y} width={t.w} height={t.h} rx="5" fill="#FFE58A" />)}
   {ink.map(([x1, y1, x2, y2]) => <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#1F1B2D" stroke-width="3" stroke-linecap="round" />)}

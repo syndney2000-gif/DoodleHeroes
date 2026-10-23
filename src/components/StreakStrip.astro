@@ -1,0 +1,45 @@
+---
+/* The last seven days as notebook checkboxes, ticked on days a daily puzzle
+   was solved. Filled in from saved results once the page loads. */
+---
+<div class="streak card" data-streak>
+  <p class="streak-title">Your week <span class="streak-count" data-streak-count></span></p>
+  <ol class="streak-days" data-streak-days aria-label="Daily puzzles solved over the last seven days"></ol>
+  <p class="streak-links">Today’s dailies: <a href="/island-sketch/play?p=daily">sketch</a> · <a href="/isle-spans/play?p=daily">map</a> · <a href="/lighthouse-wiring/play?p=daily">grid</a></p>
+</div>
+
+<script>
+  import { results } from '../lib/storage';
+  import { lastWeek, streak } from '../lib/achievements';
+  const r = results();
+  const s = streak(r);
+  for (const strip of document.querySelectorAll<HTMLElement>('[data-streak]')) {
+    strip.querySelector('[data-streak-count]')!.textContent = s ? `· ${s}-day streak` : '';
+    const list = strip.querySelector('[data-streak-days]')!;
+    list.textContent = '';
+    for (const day of lastWeek(r)) {
+      const li = document.createElement('li');
+      li.className = day.done ? 'done' : '';
+      li.innerHTML = `<span class="box" aria-hidden="true">${day.done ? '✓' : ''}</span><span class="day"></span>`;
+      li.querySelector('.day')!.textContent = day.label;
+      li.setAttribute('aria-label', `${day.label}: ${day.done ? 'solved' : 'not solved'}`);
+      list.append(li);
+    }
+  }
+</script>
+
+<style>
+  .streak{ padding:16px 18px 12px; }
+  .streak-title{ font-family:var(--hand); font-size:24px; margin:0 0 6px; }
+  .streak-count{ color:var(--red); }
+  .streak-days{ list-style:none; padding:0; margin:0 0 8px; display:flex; gap:8px; flex-wrap:wrap; }
+  .streak-days :global(li){ margin:0; display:flex; flex-direction:column; align-items:center; gap:2px; min-width:36px; }
+  .streak-days :global(.box){
+    width:30px; height:30px; display:grid; place-items:center;
+    border:2px solid var(--ink); border-radius:var(--wobble-soft);
+    font-family:var(--hand); font-size:24px; color:var(--green); background:var(--paper);
+  }
+  .streak-days :global(li.done .box){ background:#E6F4E9; }
+  .streak-days :global(.day){ font-size:13px; color:var(--ink-soft); }
+  .streak-links{ font-size:15px; margin:0; color:var(--ink-soft); }
+</style>

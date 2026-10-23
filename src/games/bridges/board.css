@@ -4,9 +4,9 @@
 .sp-board{
   display:block; margin:0 auto;
   width:min(100%, calc(var(--w) * 52px)); height:auto;
-  background:#DCEFF2; border:3px solid var(--ink); border-radius:14px;
+  background:#DCEFF2; border:2.5px solid var(--ink); border-radius:var(--wobble-soft);
   touch-action:pinch-zoom; user-select:none; -webkit-user-select:none;
-  font-family:'Fredoka', system-ui, sans-serif; font-weight:600;
+  font-family:'Nunito', system-ui, sans-serif; font-weight:700;
 }
 .sp-dot{ fill:rgba(31,27,45,0.16); }
 .sp-hit{ fill:transparent; cursor:pointer; }

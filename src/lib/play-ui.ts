@@ -2,6 +2,8 @@
    toolbar buttons, timer, hint count, status line and the solved panel. */
 
 import { formatTime, starText } from './scoring';
+import { results } from './storage';
+import { earnedIds, stickers } from './achievements';
 
 export interface BoardCallbacks {
   onStatus(message: string): void;
@@ -45,6 +47,8 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
     $('pl-hints').textContent = n === 0 ? 'no hints used' : n === 1 ? '1 hint used' : `${n} hints used`;
   };
 
+  // Stickers held before this puzzle, so the report card can announce new ones.
+  const stickersBefore = earnedIds(results());
   let board: B | undefined;
   board = s.create($('pl-board'), {
     onStatus(message) {
@@ -57,11 +61,18 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
     onSolved({ stars, seconds, hints }) {
       showHints(hints);
       $('pl-time').textContent = formatTime(seconds);
+      // S for a clean solve, then A and B, like a stamped report card.
+      $('pl-grade').textContent = ['B', 'B', 'A', 'S'][stars];
       $('pl-stars').textContent = starText(stars);
       $('pl-stars').setAttribute('aria-label', `${stars} of 3 stars`);
       $('pl-done-text').textContent =
         `Solved in ${formatTime(seconds)} with ${hints === 0 ? 'no hints' : hints === 1 ? '1 hint' : `${hints} hints`}.`;
       $('pl-note').textContent = s.note;
+      const fresh = stickers.filter((x) => earnedIds(results()).has(x.id) && !stickersBefore.has(x.id));
+      const stickerEl = $('pl-sticker');
+      stickerEl.hidden = fresh.length === 0;
+      stickerEl.textContent = fresh.map((x) => `${x.icon} New sticker: ${x.name}`).join('  ·  ');
+      fresh.forEach((x) => stickersBefore.add(x.id));
       const next = $<HTMLAnchorElement>('pl-next');
       next.href = s.next?.href ?? s.listHref;
       next.textContent = s.next?.label ?? 'Back to the list →';
@@ -75,12 +86,19 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
   $('pl-undo').addEventListener('click', () => board!.undo());
   $('pl-check').addEventListener('click', () => board!.check());
   $('pl-hint').addEventListener('click', () => board!.hint());
-  $('pl-restart').addEventListener('click', () => {
-    if (!confirm('Clear the board and start this puzzle again?')) return;
+  const startOver = () => {
     board!.restart();
     $('pl-done').hidden = true;
     for (const b of tools()) b.disabled = false;
     showHints(0);
+  };
+  $('pl-restart').addEventListener('click', () => {
+    if (confirm('Clear the board and start this puzzle again?')) startOver();
+  });
+  // After a solve there's nothing to lose, so Try again needs no confirmation.
+  $('pl-again').addEventListener('click', () => {
+    startOver();
+    $('pl-board').scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
   return board;
 }

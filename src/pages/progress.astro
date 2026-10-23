@@ -1,5 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
+import StreakStrip from '../components/StreakStrip.astro';
+import { stickers } from '../lib/achievements';
 ---
 <Base
   title="Your progress"
@@ -9,6 +11,19 @@ import Base from '../layouts/Base.astro';
 >
   <h1>Your progress</h1>
   <p class="lede">Progress is saved only in this browser, on this device. Nothing is sent to us, and clearing your browser’s site data removes it too.</p>
+
+  <StreakStrip />
+
+  <h2>Sticker sheet</h2>
+  <ul class="stickers">
+    {stickers.map((x) => (
+      <li data-sticker={x.id}>
+        <span class="icon" aria-hidden="true">{x.icon}</span>
+        <span class="name">{x.name}</span>
+        <span class="how">{x.how}</span>
+      </li>
+    ))}
+  </ul>
 
   <div id="summary"><p class="muted">Loading…</p></div>
 
@@ -25,6 +40,7 @@ import Base from '../layouts/Base.astro';
   import { allPuzzles as maps } from '../games/bridges/puzzles';
   import { allPuzzles as grids } from '../games/net/puzzles';
   import { expedition } from '../content/expedition';
+  import { earnedIds } from '../lib/achievements';
 
   const games = [
     { key: 'island-sketch', name: 'Island Sketch', noun: 'sketches', puzzles: sketches },
@@ -68,11 +84,38 @@ import Base from '../layouts/Base.astro';
     }
   }
 
+  function renderStickers() {
+    const earned = earnedIds(results());
+    for (const li of document.querySelectorAll<HTMLElement>('[data-sticker]')) {
+      const on = earned.has(li.dataset.sticker!);
+      li.classList.toggle('earned', on);
+      li.setAttribute('aria-label', `${li.querySelector('.name')!.textContent}: ${on ? 'earned' : 'not yet earned'}`);
+    }
+  }
+
   render();
+  renderStickers();
   document.getElementById('reset')!.addEventListener('click', () => {
     if (!confirm('Reset all saved progress on this device?')) return;
     clearAll();
     render();
+    renderStickers();
     document.getElementById('reset-status')!.textContent = 'All progress cleared.';
   });
 </script>
+
+<style>
+  .stickers{ list-style:none; padding:0; display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); margin:12px 0 24px; }
+  .stickers li{
+    margin:0; display:flex; flex-direction:column; align-items:center; text-align:center; gap:2px;
+    padding:12px 8px; border:2px dashed var(--rule); border-radius:var(--wobble-soft); background:var(--paper);
+  }
+  .stickers .icon{ font-size:34px; filter:grayscale(1); opacity:.3; }
+  .stickers .name{ font-family:var(--hand); font-size:20px; color:var(--ink-soft); }
+  .stickers .how{ font-size:13px; color:var(--ink-soft); }
+  /* Earned stickers peel off the sheet: solid border, colour, a slight tilt. */
+  .stickers li.earned{ border:2px solid var(--ink); box-shadow:2px 3px 0 var(--shadow); transform:rotate(-2deg); background:#FFF8D9; }
+  .stickers li.earned:nth-child(even){ transform:rotate(1.5deg); }
+  .stickers li.earned .icon{ filter:none; opacity:1; }
+  .stickers li.earned .name{ color:var(--ink); }
+</style>

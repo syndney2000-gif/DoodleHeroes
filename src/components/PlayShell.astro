@@ -38,12 +38,16 @@ const { game, description, section, listHref } = Astro.props;
     <p class="pl-status" id="pl-status" role="status" aria-live="polite"></p>
 
     <section class="card pl-done" id="pl-done" hidden>
+      <p class="pl-report">Report card</p>
       <h2>Solved!</h2>
+      <span class="pl-grade" id="pl-grade" aria-hidden="true">S</span>
       <p class="pl-stars" id="pl-stars"></p>
       <p id="pl-done-text"></p>
       <p id="pl-note" class="muted"></p>
+      <p class="pl-sticker" id="pl-sticker" hidden></p>
       <p class="pl-done-actions">
         <a class="btn" id="pl-next" href={listHref}>Next →</a>
+        <button class="btn secondary" type="button" id="pl-again">Try again</button>
         <a class="btn secondary" href={`${listHref}#puzzles`}>All puzzles</a>
         <a class="btn secondary" href="/expedition">Expedition</a>
       </p>
@@ -67,8 +71,23 @@ const { game, description, section, listHref } = Astro.props;
   .pl-toolbar .btn:disabled{ opacity:.45; cursor:default; transform:none; }
   .pl-meta{ text-align:center; color:var(--ink-soft); font-size:15px; margin-bottom:12px; font-variant-numeric:tabular-nums; }
   .pl-status{ text-align:center; min-height:1.65em; margin:14px auto; max-width:620px; }
-  .pl-done{ max-width:560px; margin:18px auto; text-align:center; }
+  .pl-done{ max-width:560px; margin:26px auto; text-align:center; }
   .pl-done h2{ margin-top:0; }
+  .pl-sticker{
+    display:inline-block; font-family:var(--hand); font-size:21px; padding:4px 14px;
+    background:#FFF3B8; border:2px dashed var(--orange); border-radius:var(--wobble-soft); transform:rotate(-1.5deg);
+  }
+  .pl-report{ font-family:var(--hand); font-size:18px; color:var(--ink-soft); margin:0; text-transform:uppercase; letter-spacing:.1em; }
+  /* A rubber-stamp grade in the corner of the report card. */
+  .pl-grade{
+    position:absolute; top:14px; right:18px; width:64px; height:64px;
+    display:grid; place-items:center; transform:rotate(-12deg);
+    font-family:var(--hand); font-size:44px; line-height:1; color:var(--red);
+    border:3.5px solid var(--red); border-radius:50%; opacity:.85;
+    animation:pl-stamp .35s ease-out;
+  }
+  @keyframes pl-stamp{ from{ transform:rotate(-12deg) scale(2.2); opacity:0; } to{ transform:rotate(-12deg) scale(1); opacity:.85; } }
+  @media (prefers-reduced-motion:reduce){ .pl-grade{ animation:none; } }
   .pl-stars{ font-size:34px; color:var(--orange); letter-spacing:4px; margin:0; }
   .pl-done-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:12px 0 0; }
   .pl-help{ max-width:780px; margin:40px auto 0; }

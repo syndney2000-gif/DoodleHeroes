@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import StreakStrip from '../components/StreakStrip.astro';
 import MiniBoard from '../components/MiniBoard.astro';
 import SpansDiagram from '../components/SpansDiagram.astro';
 import WiringDiagram from '../components/WiringDiagram.astro';
@@ -58,6 +59,7 @@ const firstLightSolved = solveWiring(parseWiring(firstLight)).options;
   </div>
 
   <h2>Daily challenges</h2>
+  <StreakStrip />
   <p>Each game has a fresh puzzle every day, the same for everyone: a 10 × 10 <a href="/island-sketch/play?p=daily">daily sketch</a>, a 9 × 9 <a href="/isle-spans/play?p=daily">daily map</a> and a 7 × 7 <a href="/lighthouse-wiring/play?p=daily">daily grid</a>. They’re generated from the date and checked by a solver to make sure they can be finished without guessing.</p>
 
   <h2>Learn to solve, not just to play</h2>

@@ -112,6 +112,6 @@ switched on yet. If you serve the site from another domain, add it to
 
 ## Before launch
 
-- `hello@doodleheros.com` (in `src/lib/site.ts`) must be a working mailbox.
+- `sydney2000@gmail.com` (in `src/lib/site.ts`) must be a working mailbox.
 - Change the AdSense account's child-directed setting to match the
   general-audience site.

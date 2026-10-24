@@ -15,7 +15,20 @@ npm test          # solver + catalogue + daily-puzzle checks
 npm run build     # static site into dist/
 ```
 
-## Deploy (Cloudflare Pages)
+## Deploy (Cloudflare Workers)
+
+The root `wrangler.toml` builds Astro and uploads `dist` as static assets.
+It supports the Workers Builds deploy command `npx wrangler versions upload`.
+Use `npx wrangler deploy` to publish directly to production.
+
+- Repository root: `/` (not `party/`).
+- Node.js: `22` or newer.
+- Worker name: `doodle-heroes`; match this to the Worker name in your
+  Cloudflare dashboard if it differs.
+- Preview uploads must be deployed/promoted before they serve production traffic.
+- Draw Party's server remains a separate deployment from `party/`.
+
+## Deploy (Cloudflare Pages alternative)
 
 The site is now built with Astro, so the Pages project needs build settings:
 

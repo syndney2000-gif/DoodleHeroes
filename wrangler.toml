@@ -1,0 +1,11 @@
+name = "doodle-heroes"
+compatibility_date = "2026-10-24"
+
+# Build even when CI invokes `wrangler versions upload` directly.
+[build]
+command = "npm run build"
+
+[assets]
+directory = "./dist"
+html_handling = "drop-trailing-slash"
+not_found_handling = "404-page"

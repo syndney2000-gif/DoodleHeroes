@@ -32,8 +32,8 @@ const { game, description, section, listHref } = Astro.props;
     </div>
 
     <p class="pl-meta"><span id="pl-time">0:00</span> · <span id="pl-hints">no hints used</span></p>
-
-    <div id="pl-board"></div>
+    {section === 'island-sketch' && <div class="pl-zoom-tools"><button class="btn secondary" type="button" id="pl-zoom" aria-pressed="false" aria-controls="pl-board">Larger squares</button><small id="pl-zoom-help" hidden>Swipe the clue area to scroll. Tap or drag the squares to draw.</small></div>}
+    <div class="pl-board-viewport" tabindex="0" role="region" aria-label={`${game} board, scroll to explore`}><div id="pl-board"></div></div>
 
     <p class="pl-status" id="pl-status" role="status" aria-live="polite"></p>
 
@@ -64,12 +64,26 @@ const { game, description, section, listHref } = Astro.props;
   </section>
 </Base>
 
+<script>
+  const zoom = document.getElementById('pl-zoom');
+  zoom?.addEventListener('click', () => {
+    const enlarged = document.getElementById('pl-board')!.classList.toggle('enlarged');
+    zoom.setAttribute('aria-pressed', String(enlarged));
+    zoom.textContent = enlarged ? 'Fit squares to screen' : 'Larger squares';
+    document.getElementById('pl-zoom-help')!.hidden = !enlarged;
+  });
+</script>
+
 <style is:global>
   .pl-toolbar{ display:flex; flex-wrap:wrap; gap:10px 16px; justify-content:center; margin:6px 0 10px; }
   .pl-modes, .pl-actions{ display:flex; flex-wrap:wrap; gap:8px; }
   .pl-toolbar .btn{ font-size:15px; padding:8px 12px; }
   .pl-toolbar .btn:disabled{ opacity:.45; cursor:default; transform:none; }
   .pl-meta{ text-align:center; color:var(--ink-soft); font-size:15px; margin-bottom:12px; font-variant-numeric:tabular-nums; }
+  .pl-board-viewport{ max-width:100%; overflow:auto; padding:5px; border-radius:12px; }
+  .pl-zoom-tools{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center; margin-bottom:12px; }
+  .pl-zoom-tools .btn{ font-size:12px; }
+  .pl-zoom-tools small{ font-size:12px; }
   .pl-status{ text-align:center; min-height:1.65em; margin:14px auto; max-width:620px; }
   .pl-done{ max-width:560px; margin:26px auto; text-align:center; }
   .pl-done h2{ margin-top:0; }

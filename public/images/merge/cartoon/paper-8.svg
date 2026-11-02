@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Story Castle</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 105 V57 H38 V38 H88 V57 H108 V105Z" fill="#FFF8E6" /><rect x="16" y="52" width="25" height="55" rx="3" fill="#A8CCD1"/><rect x="87" y="52" width="25" height="55" rx="3" fill="#A8CCD1"/><path d="M12 53 L28 30 L45 53Z M83 53 L100 29 L116 53Z" fill="#F0B697" /><path d="M39 39 L64 13 L89 39Z" fill="#DE9EAA" /><path d="M64 14 V5 L83 10 L64 15Z" fill="#EBC975" /><path d="M50 106 V80 Q64 64 78 80 V106Z" fill="#EBC975" /><path d="M64 78 V106 M24 66 V76 M100 66 V76 M58 46 V57 M71 46 V57" fill="none" stroke-width="3"/><path d="M9 107 Q35 101 64 111 Q93 101 119 107 L118 116 Q91 111 64 119 Q37 111 10 116Z" fill="#B9D4A4" /></g>
+</svg>

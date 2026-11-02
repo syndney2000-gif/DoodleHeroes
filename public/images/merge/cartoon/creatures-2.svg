@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Ladybird</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M36 59 L24 53 M33 76 L21 78 M42 94 L31 106 M92 59 L104 53 M95 76 L107 78 M86 94 L97 106" fill="none" stroke-width="4"/><circle cx="64" cy="44" r="21" fill="#688D69" /><path d="M52 27 L47 18 M77 27 L82 18" fill="none" stroke-width="3"/><ellipse cx="64" cy="75" rx="34" ry="33" fill="#DE9EAA" /><path d="M64 44 V107" fill="none" /><circle cx="47" cy="64" r="7" fill="#304C3B" /><circle cx="43" cy="84" r="6" fill="#304C3B" /><circle cx="81" cy="64" r="7" fill="#304C3B" /><circle cx="85" cy="84" r="6" fill="#304C3B" /><circle cx="57" cy="41" r="3" fill="#FFF8E6" stroke="none"/><circle cx="71" cy="41" r="3" fill="#FFF8E6" stroke="none"/><path d="M59 48 Q64 52 69 48" fill="none" stroke="#FFF8E6" stroke-width="2"/></g>
+</svg>

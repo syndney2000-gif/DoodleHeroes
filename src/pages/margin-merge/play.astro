@@ -11,46 +11,17 @@ import '../../games/merge/studio.css';
   section="merge"
   wide
 >
-  <p class="eyebrow">Your little workshop</p>
-  <h1>Margin Merge</h1>
-  <p class="lede">From a quiet studio to a harbour full of lights. Twelve chapters, four neighbours, and an island to bring together.</p>
+  <div class="merge-intro"><a class="play-back merge-return" href="/games" aria-label="Back to your game collection">←</a><div><p class="eyebrow">Your little workshop</p><h1>Margin Merge</h1></div><span class="merge-mascot" aria-hidden="true"><img src="/images/merge/cartoon/heroes-4.svg" width="56" height="56" alt="" /></span></div>
   <noscript><p class="note">Margin Merge needs JavaScript. The <a href="/margin-merge">guide</a> works without it.</p></noscript>
 
   <div class="mm" id="mm" hidden>
-    <section class="studio-card" id="mm-studio" aria-labelledby="studio-title">
-      <div class="studio-top"><p class="eyebrow" data-story-act>Story 1 of 3 · A place to begin</p><small data-studio-count>0 of {studioChapters.length} projects complete</small></div>
-      <h2 id="studio-title" data-studio-title tabindex="-1">Prepare the workshop</h2>
-      <p class="studio-story" data-studio-story></p>
-      <blockquote class="story-letter" data-story-letter><p data-story-letter-text></p><cite data-story-speaker></cite></blockquote>
-      <progress class="studio-progress" data-studio-progress max="48" value="0" aria-label="Overall island story progress"></progress>
-      <details class="studio-visual" data-studio-visual open><summary data-scene-caption>Island studio</summary><JourneyScenes /></details>
-      <ol class="studio-chapters" data-studio-chapters aria-label="Restoration chapters"></ol>
-      <ul class="studio-goals" data-studio-goals aria-label="Current chapter goals"></ul>
-      <p class="studio-supply-note" data-studio-supply-note>Discoveries count automatically. Supplying an item removes it from your board.</p>
-      <button class="btn studio-restore" type="button" data-studio-restore disabled>Restore the workshop →</button>
-      <p class="studio-reward" data-studio-reward></p>
-      <div class="studio-ending" data-studio-ending hidden><p class="eyebrow">Story complete</p><h3 data-ending-title>The studio is home again.</h3><p data-ending-text></p><section class="next-story" data-next-story><p data-next-story-text></p><button class="btn" type="button" data-story-continue>Read Mara’s letter →</button></section><button class="btn secondary" type="button" data-studio-continue>Stay in free play</button><a href="/progress">See your achievements in the Journal</a></div>
-      <p class="studio-free-play" data-studio-free-play hidden></p>
-      <button class="btn" type="button" data-story-resume hidden>Start the next story →</button>
-      <p class="story-perks" data-perks-summary></p>
-      <details class="story-journal"><summary>Letters &amp; memories</summary><div data-story-archive></div></details>
-      <p class="studio-status" data-studio-status role="status" aria-live="polite"></p>
-      <a class="studio-board-link" href="#mm-board">Back to merging ↓</a>
-    </section>
+    <a class="mm-chapter-summary" href="#mm-studio"><span aria-hidden="true">✦</span><span><small data-chapter-mini>Your island story</small><strong data-goal-summary>Make a little room for wonder.</strong></span><span aria-hidden="true">↓</span></a>
     <div class="mm-bar">
       <span class="mm-level" id="mm-level" title="Level">1</span>
       <div class="mm-xp"><i id="mm-xp"></i></div>
       <span class="mm-pill" title="Ink"><span class="resource-drop" aria-hidden="true">◈</span> <b id="mm-ink">30</b><small id="mm-ink-next"></small></span>
       <span class="mm-pill" title="Coins"><span class="resource-coin" aria-hidden="true">●</span> <b id="mm-coins">0</b></span>
     </div>
-
-    <section class="mm-tools" aria-label="Earned workshop tools">
-      <label for="mm-focus">Sketchbook focus <select id="mm-focus" disabled><option value="">All unlocked chains</option></select></label>
-      <p class="muted" id="mm-tools-help">Complete harbour projects to unlock focused drawing and a satchel.</p>
-      <details id="mm-satchel-panel"><summary id="mm-satchel-title">Satchel · unlocks in chapter 6</summary><div class="mm-satchel" id="mm-satchel"></div><p class="muted">Select a board item and choose Store selected. Retrieve puts it in the first empty square.</p></details>
-    </section>
-    <p class="mm-orders-label">Optional orders <a href="#mm-studio">Studio goals ↑</a></p>
-    <section class="mm-orders" id="mm-orders" aria-label="Optional orders"></section>
 
     <div class="mm-board" id="mm-board" role="grid" aria-label="Merge board"></div>
 
@@ -62,6 +33,37 @@ import '../../games/merge/studio.css';
       <button class="btn secondary" type="button" id="mm-book">Collection book</button>
     </div>
     <p class="mm-status" id="mm-status" role="status" aria-live="polite">Tap the sketchbook to draw your first doodle.</p>
+
+    <section class="studio-card" id="mm-studio" aria-labelledby="studio-title">
+      <div class="studio-top"><p class="eyebrow" data-story-act>Story 1 of 3 · A place to begin</p><small data-studio-count>0 of {studioChapters.length} projects complete</small></div>
+      <h2 id="studio-title" data-studio-title tabindex="-1">Prepare the workshop</h2>
+      <details class="studio-reading"><summary>The story so far <span aria-hidden="true">✉</span></summary>
+      <p class="studio-story" data-studio-story></p>
+      <blockquote class="story-letter" data-story-letter><p data-story-letter-text></p><cite data-story-speaker></cite></blockquote>
+      <progress class="studio-progress" data-studio-progress max="48" value="0" aria-label="Overall island story progress"></progress>
+      <details class="studio-visual" data-studio-visual open><summary data-scene-caption>Island studio</summary><JourneyScenes /></details>
+      <ol class="studio-chapters" data-studio-chapters aria-label="Restoration chapters"></ol>
+      </details>
+      <ul class="studio-goals" data-studio-goals aria-label="Current chapter goals"></ul>
+      <p class="studio-supply-note" data-studio-supply-note>Discoveries count automatically. Supplying an item removes it from your board.</p>
+      <button class="btn studio-restore" type="button" data-studio-restore disabled>Restore the workshop →</button>
+      <p class="studio-reward" data-studio-reward></p>
+      <div class="studio-ending" data-studio-ending hidden><p class="eyebrow">Story complete</p><h3 data-ending-title>The studio is home again.</h3><p data-ending-text></p><section class="next-story" data-next-story><p data-next-story-text></p><button class="btn" type="button" data-story-continue>Read Mara’s letter →</button></section><button class="btn secondary" type="button" data-studio-continue>Stay in free play</button><a href="/progress">See your achievements in the Journal</a></div>
+      <p class="studio-free-play" data-studio-free-play hidden></p>
+      <button class="btn" type="button" data-story-resume hidden>Start the next story →</button>
+      <p class="story-perks" data-perks-summary></p>
+      <details class="story-journal"><summary>Letters &amp; memories</summary><div data-story-archive></div></details>
+      <p class="studio-status" data-studio-status role="status" aria-live="polite"></p>
+      <a class="studio-board-link" href="#mm-board">Back to merging ↑</a>
+    </section>
+    <section class="mm-tools" aria-label="Earned workshop tools">
+      <label for="mm-focus">Sketchbook focus <select id="mm-focus" disabled><option value="">All unlocked chains</option></select></label>
+      <p class="muted" id="mm-tools-help">Complete harbour projects to unlock focused drawing and a satchel.</p>
+      <details id="mm-satchel-panel"><summary id="mm-satchel-title">Satchel · unlocks in chapter 6</summary><div class="mm-satchel" id="mm-satchel"></div><p class="muted">Select a board item and choose Store selected. Retrieve puts it in the first empty square.</p></details>
+    </section>
+    <p class="mm-orders-label">Optional orders <a href="#mm-board">Back to the board ↑</a></p>
+    <section class="mm-orders" id="mm-orders" aria-label="Optional orders"></section>
+
 
     <dialog class="card mm-dialog" id="mm-collection">
       <h2>Collection</h2>
@@ -123,14 +125,20 @@ import '../../games/merge/studio.css';
   }
 
   function paintBoard(flash?: number) {
+    const picked = selected == null ? null : s.cells[selected];
     s.cells.forEach((c, i) => {
       const b = cellEls[i];
       b.classList.toggle('sel', selected === i);
-      b.classList.remove('pop');
-      if (flash === i) { void b.offsetWidth; b.classList.add('pop'); }
+      if (flash === i && !reducedMotion()) {
+        b.classList.remove('pop');
+        requestAnimationFrame(() => b.classList.add('pop'));
+      }
       b.setAttribute('aria-selected', String(selected === i));
-      const picked = selected == null ? null : s.cells[selected];
       b.classList.toggle('match', !!c && !!picked && i !== selected && c.chain === picked.chain && c.tier === picked.tier && c.tier < TOP_TIER);
+      const key = c ? `${c.chain}:${c.tier}` : '';
+      if (b.dataset.item === key) return;
+      b.dataset.item = key;
+      b.classList.remove('pop');
       if (!c) {
         b.innerHTML = '';
         delete b.dataset.chain;
@@ -148,6 +156,15 @@ import '../../games/merge/studio.css';
 
   // Motion is presentation only: rules and saves commit before effects run.
   const animations = new Map<number, Animation>();
+  window.addEventListener('dh:motion-change', () => {
+    if (reducedMotion()) {
+      for (const animation of document.getAnimations()) {
+        if (animation.effect instanceof KeyframeEffect && animation.effect.target?.closest('.mm, .mm-flight')) animation.cancel();
+      }
+      document.querySelectorAll('.mm-flight').forEach(el => el.remove());
+      animations.clear();
+    }
+  });
   function animateMove(from: number, to: number, swapped: boolean) {
     if (reducedMotion()) return;
     const a = cellEls[from].getBoundingClientRect(), b = cellEls[to].getBoundingClientRect();
@@ -155,7 +172,7 @@ import '../../games/merge/studio.css';
       const image = cellEls[cell].querySelector('img');
       if (!image) continue;
       animations.get(cell)?.cancel();
-      const animation = image.animate([{ transform: `translate(${x}px,${y}px) scale(1.08)` }, { transform: 'translate(0,0) scale(1)' }], { duration: 210, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      const animation = image.animate([{ transform: `translate(${x}px,${y}px) scale(1.04)` }, { transform: 'translate(0,1px) scale(1.02,.98)', offset: .82 }, { transform: 'translate(0,0) scale(1)' }], { duration: 240, easing: 'cubic-bezier(.2,.8,.2,1)' });
       animations.set(cell, animation);
       animation.onfinish = () => animations.delete(cell);
     }
@@ -198,7 +215,24 @@ import '../../games/merge/studio.css';
   }
 
   // Dragging: a ghost follows the pointer; a short press with no movement is a tap.
-  let drag: { from: number; x: number; y: number; ghost: HTMLElement | null; id: number } | null = null;
+  let drag: { from: number; x: number; y: number; px: number; py: number; ghost: HTMLElement | null; id: number } | null = null;
+  let dragFrame = 0;
+  let dropTarget: HTMLButtonElement | null = null;
+  function paintDrag() {
+    dragFrame = 0;
+    if (!drag?.ghost) return;
+    drag.ghost.style.transform = `translate3d(${drag.px}px,${drag.py}px,0) translate(-50%,-65%) rotate(-4deg)`;
+    const under = document.elementFromPoint(drag.px, drag.py)?.closest<HTMLButtonElement>('.mm-cell') ?? null;
+    if (under !== dropTarget) {
+      dropTarget?.classList.remove('drop-target');
+      under?.classList.add('drop-target');
+      dropTarget = under;
+    }
+  }
+  function clearDragFrame() {
+    cancelAnimationFrame(dragFrame); dragFrame = 0;
+    dropTarget?.classList.remove('drop-target'); dropTarget = null;
+  }
   board.addEventListener('pointerdown', (e) => {
     const cell = (e.target as Element).closest<HTMLButtonElement>('.mm-cell');
     if (!cell || e.button !== 0) return;
@@ -206,7 +240,7 @@ import '../../games/merge/studio.css';
     if (!s.cells[i]) return;
     // No pointer capture yet: capturing now would send the tap's click to
     // the board instead of the square. It starts once a real drag begins.
-    drag = { from: i, x: e.clientX, y: e.clientY, ghost: null, id: e.pointerId };
+    drag = { from: i, x: e.clientX, y: e.clientY, px: e.clientX, py: e.clientY, ghost: null, id: e.pointerId };
   });
   board.addEventListener('pointermove', (e) => {
     if (!drag || e.pointerId !== drag.id) return;
@@ -220,16 +254,15 @@ import '../../games/merge/studio.css';
       board.setPointerCapture(e.pointerId);
     }
     if (drag.ghost) {
-      drag.ghost.style.left = `${e.clientX}px`; drag.ghost.style.top = `${e.clientY}px`;
-      const under = document.elementFromPoint(e.clientX, e.clientY)?.closest<HTMLButtonElement>('.mm-cell');
-      cellEls.forEach(cell => cell.classList.toggle('drop-target', cell === under));
+      drag.px = e.clientX; drag.py = e.clientY;
+      if (!dragFrame) dragFrame = requestAnimationFrame(paintDrag);
     }
   });
   const endDrag = (e: PointerEvent) => {
     if (!drag || e.pointerId !== drag.id) return;
     const d = drag;
     drag = null;
-    cellEls.forEach(cell => cell.classList.remove('drop-target'));
+    clearDragFrame();
     if (board.hasPointerCapture(e.pointerId)) board.releasePointerCapture(e.pointerId);
     cellEls[d.from].classList.remove('lifting');
     if (!d.ghost) return; // a plain tap: the click handler deals with it
@@ -259,6 +292,7 @@ import '../../games/merge/studio.css';
   });
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden || !drag) return;
+    clearDragFrame();
     drag.ghost?.remove(); cellEls[drag.from].classList.remove('lifting');
     if (board.hasPointerCapture(drag.id)) board.releasePointerCapture(drag.id);
     drag = null; selected = null;
@@ -267,11 +301,25 @@ import '../../games/merge/studio.css';
 
   /* ---------- orders ---------- */
 
+  const orderEls = new Map<number, HTMLElement>();
   function paintOrders() {
     const box = $('mm-orders');
-    box.textContent = '';
+    let removedFocus = false;
+    for (const [id, card] of orderEls) {
+      if (s.orders.some(order => order.id === id)) continue;
+      removedFocus ||= card.contains(document.activeElement);
+      card.remove(); orderEls.delete(id);
+    }
     for (const o of s.orders) {
       const ready = !!orderCells(s, o);
+      const existing = orderEls.get(o.id);
+      if (existing) {
+        existing.classList.toggle('ready', ready);
+        const [deliverButton, swapButton] = existing.querySelectorAll<HTMLButtonElement>('button');
+        deliverButton.disabled = !ready; deliverButton.textContent = ready ? 'Deliver' : 'Not yet';
+        swapButton.disabled = s.coins < SKIP_ORDER_COST;
+        continue;
+      }
       const card = document.createElement('article');
       card.className = `mm-order${ready ? ' ready' : ''}`;
       card.innerHTML = `<div class="wants">${o.wants.map((w) => `<span class="want" title="${chains[w.chain].items[w.tier - 1].name}">${itemMarkup(w)}<small>${chains[w.chain].items[w.tier - 1].name}</small></span>`).join('')}</div>
@@ -310,7 +358,9 @@ import '../../games/merge/studio.css';
       swap.addEventListener('click', () => { if (skipOrder(s, o.id)) { playSound('place'); persist(); render(); status('New order.'); } });
       card.append(go, swap);
       box.append(card);
+      orderEls.set(o.id, card);
     }
+    if (removedFocus) (box.querySelector<HTMLButtonElement>('button:not(:disabled)') ?? $<HTMLButtonElement>('mm-draw')).focus({ preventScroll: true });
   }
 
   function newChainNote(oldLevel: number) {
@@ -332,14 +382,28 @@ import '../../games/merge/studio.css';
     $<HTMLButtonElement>('mm-buy').disabled = s.coins < INK_POT.cost;
   }
 
+  let focusKey = '';
+  let satchelKey = '';
   function paintTools() {
     const perks = mergePerks(s);
     const focus = $<HTMLSelectElement>('mm-focus');
-    focus.innerHTML = '<option value="">All unlocked chains</option>' + unlockedChains(s).map(chain => `<option value="${chain}">${chains[chain].name}</option>`).join('');
+    const unlocked = unlockedChains(s);
+    const key = unlocked.join(',');
+    if (focusKey !== key) {
+      focusKey = key;
+      focus.innerHTML = '<option value="">All unlocked chains</option>' + unlocked.map(chain => `<option value="${chain}">${chains[chain].name}</option>`).join('');
+    }
     focus.disabled = !perks.focus; focus.value = s.focus ?? '';
     $('mm-tools-help').textContent = `${perks.focus ? 'Choose a chain to draw, at the same one-ink cost.' : 'Chapter 5 unlocks focused drawing.'} Ink refills every ${perks.inkSeconds} seconds.`;
     $('mm-satchel-title').textContent = perks.satchel ? `Satchel · ${s.satchel?.length ?? 0} / ${perks.satchel} items` : 'Satchel · unlocks in chapter 6';
-    $('mm-satchel').innerHTML = s.satchel?.length ? s.satchel.map((item, index) => `<button type="button" class="mm-pocket" data-retrieve="${index}" aria-label="Retrieve ${itemName(item)}"${s.cells.includes(null) ? '' : ' disabled'}>${itemMarkup(item)}<small>${itemName(item)} · ${item.tier}</small></button>`).join('') : '<p class="muted">A little extra space for the things you want to keep.</p>';
+    const pockets = JSON.stringify(s.satchel ?? []);
+    if (satchelKey !== pockets) {
+      satchelKey = pockets;
+      const hadFocus = $('mm-satchel').contains(document.activeElement);
+      $('mm-satchel').innerHTML = s.satchel?.length ? s.satchel.map((item, index) => `<button type="button" class="mm-pocket" data-retrieve="${index}" aria-label="Retrieve ${itemName(item)}">${itemMarkup(item)}<small>${itemName(item)} · ${item.tier}</small></button>`).join('') : '<p class="muted">A little extra space for the things you want to keep.</p>';
+      if (hadFocus) ($('mm-satchel').querySelector<HTMLButtonElement>('button') ?? $<HTMLButtonElement>('mm-draw')).focus({ preventScroll: true });
+    }
+    $('mm-satchel').querySelectorAll<HTMLButtonElement>('button').forEach(button => { button.disabled = !s.cells.includes(null); });
   }
   function render(flash?: number) { paintBar(); paintOrders(); paintBoard(flash); studio.render(); paintTools(); }
   $('mm-focus').addEventListener('change', () => {
@@ -478,4 +542,50 @@ import '../../games/merge/studio.css';
   @keyframes mm-notice { from { opacity:0; margin-top:-10px; } }
   .mm-help { max-width:660px; margin:36px auto; }
   @media(max-width:480px) { .mm-orders { gap:8px; } .mm-order { padding:10px 7px; border-radius:18px; } .mm-order .want small { display:none; } .mm-order .merge-art { width:38px; height:38px; } .mm-board { gap:5px; padding:8px; border-radius:20px; } .mm-cell { border-radius:10px; } .mm-pill { gap:4px; font-size:11px; padding:6px 8px; } .mm-bar { gap:7px; } .mm-pill small { font-size:8px; } .mm-actions .btn { flex:1 1 40%; padding:10px; } .mm-draw { min-width:0; } .mm-book { gap:6px; } .mm-book li { padding:6px; } }
+</style>
+
+<style is:global>
+  .merge-intro { display:flex; align-items:center; justify-content:space-between; gap:16px; max-width:660px; margin:0 auto 14px; }
+  main.wrap:has(.merge-intro) { padding-top:14px; }
+  .merge-intro>div { flex:1; min-width:0; }
+  .merge-return { display:grid; place-items:center; width:44px; height:44px; flex:none; margin:0; border:2px solid #B4C2AB; border-radius:15px; background:var(--paper); font-size:20px; box-shadow:0 3px 0 var(--contact); }
+  .merge-intro h1 { font-size:32px; margin:0; }
+  .merge-intro .eyebrow { margin:0 0 4px; }
+  .merge-mascot { display:grid; place-items:center; width:64px; height:64px; border:2px solid #B4C2AB; border-radius:22px 22px 22px 6px; background:#F2E5BC; transform:rotate(5deg); }
+  .mm-chapter-summary { display:flex; align-items:center; gap:12px; max-width:490px; margin:0 auto 12px; padding:10px 14px; background:#F2E5BC; border:2px solid #D6C48F; border-radius:17px; text-decoration:none; box-shadow:0 3px 0 #E3D8B8; }
+  .mm-chapter-summary>span:nth-child(2) { flex:1; min-width:0; }
+  .mm-chapter-summary small,.mm-chapter-summary strong { display:block; line-height:1.45; }
+  .mm-chapter-summary small { font-size:10px; }
+  .mm-chapter-summary strong { font-size:12px; }
+  .mm-bar { max-width:490px; margin-bottom:12px; }
+  .mm-board { border:2px solid #9EB58E; box-shadow:0 5px 0 #CAD6BE; background:#DCE8CF; }
+  .mm-cell { border-color:#C4D3B8; box-shadow:inset 0 2px 2px #304C3B08; transition:background var(--motion-quick); }
+  .mm-cell[data-chain] { border:2px solid #B5C4A9; box-shadow:0 2px 0 #BACBA9; }
+  .mm-cell.sel { transform:none; outline-color:#3D6952; }
+  .mm-cell.match::before { content:'+'; position:absolute; top:0; right:3px; font-size:11px; font-weight:900; color:var(--green); z-index:1; }
+  .mm-cell.drop-target { outline-width:3px; }
+  .mm-cell.pop .merge-art { animation:mm-cartoon-merge 320ms cubic-bezier(.2,.8,.2,1); }
+  @keyframes mm-cartoon-merge { 0% { transform:scale(.84,1.06); } 22% { transform:scale(1.05,.88); } 62% { transform:scale(1.06,1.06) translateY(-2px); } 100% { transform:scale(1); } }
+  .mm-cell.pop::after { animation-duration:320ms; }
+  .mm-ghost { left:0; top:0; transform:none; will-change:transform; }
+  .mm-actions { max-width:490px; margin:16px auto 8px; gap:10px; }
+  .mm-actions .btn { min-height:44px; }
+  .mm-draw { flex:1 0 65%; background:#36543E; }
+  .mm-actions #mm-erase { flex:1; }
+  .mm-actions #mm-buy,.mm-actions #mm-store,.mm-actions #mm-book { flex:1 1 28%; font-size:11px; padding:8px; }
+  .mm-status { min-height:24px; margin:10px auto 24px; font-size:12px; }
+  .studio-card { scroll-margin-top:20px; border-width:2px; border-color:#B4C2AB; box-shadow:0 4px 0 #DDE4D4; }
+  .studio-reading { margin:8px 0 16px; }
+  .studio-reading>summary { min-height:44px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-size:13px; font-weight:800; padding:8px 12px; border-radius:12px; background:var(--soft); }
+  .studio-reading[open]>summary { margin-bottom:16px; }
+  .studio-reading[open]>summary span { transform:rotate(-12deg); }
+  .mm-order { border-width:2px; box-shadow:0 3px 0 #E1E6D8; }
+  .mm-order.ready { border-color:#8DA878; }
+  .mm-order .btn,.mm-order .mm-swap { min-height:44px; }
+  .mm-help li { font-size:14px; }
+  .mm-notice { top:auto; bottom:96px; right:16px; left:auto; transform:none; max-width:min(340px,calc(100vw - 32px)); animation:mm-notice .18s ease-out; }
+  .mm-notice+.mm-notice { top:auto; bottom:154px; }
+  @media(max-width:480px) { .merge-intro h1 { font-size:28px; } .merge-mascot { width:52px; height:52px; border-radius:18px 18px 18px 5px; } .merge-mascot img { width:46px; height:46px; } .mm-chapter-summary { gap:8px; padding:8px 10px; } .mm-bar { gap:6px; } .mm-actions .mm-draw { flex:1 0 65%; } }
+  @media(prefers-reduced-motion:reduce) { .mm *, .mm *::before,.mm *::after { animation:none!important; transition:none!important; } }
+  [data-reduced-motion] .mm *,[data-reduced-motion] .mm *::before,[data-reduced-motion] .mm *::after { animation:none!important; transition:none!important; }
 </style>

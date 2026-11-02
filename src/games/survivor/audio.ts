@@ -5,7 +5,7 @@
 import type { GameEvent } from './engine';
 
 import { tone, playSound } from '../../lib/audio';
-export { soundOn, setSound } from '../../lib/audio';
+export { musicOn, setMusic, soundOn, setSound } from '../../lib/audio';
 const last = new Map<string, number>();
 
 function limited(key: string, gapMs: number, play: () => void) {

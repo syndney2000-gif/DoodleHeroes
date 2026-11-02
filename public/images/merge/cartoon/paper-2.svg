@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Sticky Note</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M31 30 L98 34 L94 84 L76 103 L28 97Z" fill="#EBC975" /><path d="M94 84 L77 82 L76 103Z" fill="#FFF8E6" /><path d="M44 49 L81 51 M43 62 L76 64 M42 76 L62 77" fill="none" stroke="#688D69" stroke-width="3"/></g>
+</svg>

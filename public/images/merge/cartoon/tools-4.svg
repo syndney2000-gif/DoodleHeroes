@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Paintbrush</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(30 64 64)"><path d="M58 63 H70 L68 109 Q64 117 60 109Z" fill="#F0B697" /><rect x="54" y="48" width="20" height="22" rx="3" fill="#EBC975"/><path d="M54 49 Q47 35 60 26 Q71 19 69 10 Q89 36 74 49Z" fill="#688D69" /><path d="M60 40 Q68 30 67 24" fill="none" stroke="#B9D4A4" stroke-width="4"/><path d="M55 56 H73 M55 62 H73" fill="none" stroke-width="2"/></g></g>
+</svg>

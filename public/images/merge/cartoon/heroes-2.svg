@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Blob</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M28 84 Q20 67 37 59 Q34 36 57 40 Q71 24 85 43 Q106 44 100 68 Q119 90 94 100 Q76 109 61 102 Q35 111 28 94Z" fill="#B9D4A4" /><path d="M41 57 Q45 46 54 48" fill="none" stroke="#FFF8E6" stroke-width="5"/><circle cx="55" cy="76" r="2.4" fill="#304C3B" stroke="none"/><circle cx="77" cy="76" r="2.4" fill="#304C3B" stroke="none"/><path d="M62 82 Q66 86 70 82" fill="none" stroke-width="2"/><ellipse cx="52" cy="81" rx="3.5" ry="2" fill="#F0B697" stroke="none"/><ellipse cx="80" cy="81" rx="3.5" ry="2" fill="#F0B697" stroke="none"/></g>
+</svg>

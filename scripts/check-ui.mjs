@@ -55,8 +55,14 @@ try {
   await open('/margin-merge/play');
   await page.waitForSelector('.mm-cell img');
   await noOverflow();
+  const boardRect = await page.locator('#mm-board').boundingBox();
+  const drawRect = await page.locator('#mm-draw').boundingBox();
+  assert.ok(boardRect.y + boardRect.height < 760, 'Board is visible in the initial mobile viewport');
+  assert.ok(drawRect.y + drawRect.height < 760, 'Draw is visible above mobile navigation');
   const cells = page.locator('.mm-cell');
+  await cells.nth(4).locator('img').evaluate(el => { window.retainedImage = el; });
   await cells.nth(0).click();
+  assert.ok(await cells.nth(4).locator('img').evaluate(el => el === window.retainedImage), 'Selecting preserves unrelated board images');
   assert.ok(await cells.nth(1).evaluate(el => el.classList.contains('match')));
   await cells.nth(1).click();
   assert.equal(await cells.nth(1).getAttribute('aria-label'), 'Sticky Note, Paper level 2');
@@ -101,7 +107,19 @@ try {
   await open('/margin-merge/play');
   await page.locator('#mm-draw').click();
   assert.equal(await page.evaluate(() => window.audioStarts), 0);
-  assert.equal(await page.locator('[data-sound-toggle]').getAttribute('aria-label'), 'Enable sound');
+  assert.equal(await page.locator('[data-sound-toggle]').getAttribute('aria-label'), 'Enable sound effects');
+  await open('/settings');
+  assert.equal(await page.locator('#setting-music').isChecked(), false);
+  await page.locator('#setting-music').check();
+  await page.waitForFunction(() => window.audioStarts === 1);
+  assert.equal(await page.locator('[data-music-toggle]').getAttribute('aria-pressed'), 'true');
+  await page.locator('#setting-music-volume').evaluate(el => { el.value = '25'; el.dispatchEvent(new Event('input', { bubbles: true })); });
+  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('dh:settings:music-volume'))), .25);
+  await page.reload();
+  assert.equal(await page.locator('#setting-music').isChecked(), true);
+  assert.equal(await page.evaluate(() => window.audioStarts), 0, 'Music waits for a gesture after navigation');
+  await page.locator('#setting-music').uncheck();
+  assert.equal(await page.locator('[data-music-toggle]').getAttribute('aria-pressed'), 'false');
   // Reduced motion changes presentation, never the move or persisted result.
   await open('/games');
   await page.evaluate(() => {
@@ -215,14 +233,49 @@ try {
 
   for (const path of ['/games', '/progress', '/island-sketch/play?p=sun', '/isle-spans/play?p=two-coves', '/lighthouse-wiring/play?p=first-light', '/doodle-guess/play', '/scribble-siege/play']) {
     await open(path); await noOverflow();
+    if (path.startsWith('/island-sketch/play')) {
+      await page.locator('#pl-zoom').click();
+      assert.equal(await page.locator('#pl-zoom').getAttribute('aria-pressed'), 'true');
+      assert.equal(await page.locator('.ns-cell').first().evaluate(el => el.getBoundingClientRect().width), 44);
+      await noOverflow();
+      await page.locator('#pl-zoom').click();
+    }
     if (path === '/progress') {
       assert.ok((await page.locator('#summary').innerText()).includes('Island stories complete'));
       await page.screenshot({ path: `${output}/journal-mobile.png`, fullPage: true });
     }
+    if (path === '/scribble-siege/play') {
+      await page.evaluate(() => {
+        window.siegeDraws = 0;
+        const original = CanvasRenderingContext2D.prototype.setTransform;
+        CanvasRenderingContext2D.prototype.setTransform = function (...args) {
+          if (this.canvas.id === 'sg-canvas') window.siegeDraws++;
+          return original.apply(this, args);
+        };
+      });
+      await page.locator('#sg-play').click();
+      await page.waitForFunction(() => window.siegeDraws > 2);
+      await page.locator('#hud-pause').click();
+      assert.equal(await page.locator('#ov-pause').isVisible(), true);
+      const pausedDraws = await page.evaluate(() => window.siegeDraws);
+      await page.waitForTimeout(150);
+      assert.equal(await page.evaluate(() => window.siegeDraws), pausedDraws, 'Paused Siege does not redraw');
+      await page.locator('#pz-music').click();
+      assert.equal(await page.locator('#pz-music').getAttribute('aria-pressed'), 'true');
+      assert.equal(await page.locator('#pz-sound').getAttribute('aria-pressed'), 'false');
+      await page.locator('#pz-music').click();
+      await page.locator('#pz-resume').click();
+      await page.waitForFunction(count => window.siegeDraws > count, pausedDraws);
+      await page.locator('#hud-pause').click();
+      await page.locator('#pz-quit').click();
+      assert.equal(await page.locator('#ov-end').isVisible(), true);
+      await page.locator('#end-menu').click();
+      assert.equal(await page.locator('#scr-menu').isVisible(), true);
+    }
   }
   // All 32 local assets decode successfully in the browser.
   const images = await page.evaluate(async () => {
-    const urls = ['heroes','paper','tools','creatures'].flatMap(chain => Array.from({ length: 8 }, (_, i) => `/images/merge/${chain}-${i + 1}.webp`));
+    const urls = ['heroes','paper','tools','creatures'].flatMap(chain => Array.from({ length: 8 }, (_, i) => `/images/merge/cartoon/${chain}-${i + 1}.svg`));
     return Promise.all(urls.map(url => new Promise(resolve => { const i = new Image(); i.onload = () => resolve(i.naturalWidth > 0); i.onerror = () => resolve(false); i.src = url; })));
   });
   assert.ok(images.every(Boolean));

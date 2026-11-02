@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Palette</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M110 65 Q114 32 78 24 Q42 17 23 44 Q7 67 25 89 Q45 115 70 102 Q82 96 68 85 Q60 76 72 72 Q83 68 89 79 Q101 90 110 65Z" fill="#EBC975" /><ellipse cx="50" cy="82" rx="9" ry="7" fill="#FFF8E6" /><circle cx="39" cy="44" r="9" fill="#DE9EAA" /><circle cx="61" cy="35" r="9" fill="#A8CCD1" /><circle cx="85" cy="43" r="9" fill="#B9D4A4" /><circle cx="96" cy="61" r="8" fill="#C6B9DE" /><path d="M88 94 L108 107" fill="none" stroke="#688D69" stroke-width="7"/><path d="M82 88 L90 89 L94 96 L89 101 L81 96Z" fill="#F0B697" /></g>
+</svg>

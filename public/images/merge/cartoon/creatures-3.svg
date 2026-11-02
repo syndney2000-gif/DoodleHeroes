@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Paper Bird</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 77 L59 62 L80 31 L108 47 L95 60 L87 83 L64 100Z" fill="#FFF8E6" /><path d="M59 62 L44 27 L87 83Z" fill="#A8CCD1" /><path d="M59 62 L18 77 L64 100Z" fill="#B9D4A4" /><path d="M95 47 L115 53 L95 59Z" fill="#EBC975" /><circle cx="86" cy="47" r="3" fill="#304C3B" stroke="none"/><path d="M65 99 L61 111 M76 94 L78 106" fill="none" stroke-width="3"/><path d="M49 44 L72 73" fill="none" stroke="#FFF8E6" stroke-width="3"/></g>
+</svg>

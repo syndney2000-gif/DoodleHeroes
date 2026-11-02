@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Book Stack</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="24" y="89" width="83" height="19" rx="5" fill="#FFF8E6"/><rect x="24" y="84" width="83" height="17" rx="5" fill="#C6B9DE"/><path d="M33 86 V99" fill="none" /><rect x="32" y="67" width="72" height="18" rx="5" fill="#FFF8E6"/><rect x="32" y="62" width="72" height="16" rx="5" fill="#F0B697"/><path d="M41 64 V76" fill="none" /><rect x="22" y="45" width="78" height="18" rx="5" fill="#FFF8E6"/><rect x="22" y="40" width="78" height="16" rx="5" fill="#B9D4A4"/><path d="M31 42 V54" fill="none" /><rect x="38" y="24" width="62" height="17" rx="5" fill="#FFF8E6"/><rect x="38" y="19" width="62" height="15" rx="5" fill="#A8CCD1"/><path d="M47 21 V32" fill="none" /><path d="M88 59 V77 L95 72 L101 78 V59Z" fill="#EBC975" /><path d="M39 94 H95 M46 72 H93 M36 50 H90 M52 28 H90" fill="none" stroke-width="2"/></g>
+</svg>

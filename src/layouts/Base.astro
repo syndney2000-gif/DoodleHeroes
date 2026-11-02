@@ -62,7 +62,8 @@ const navKey = section && gameSections.includes(section) ? 'games' : section;
         ))}
       </nav>
       <div class="header-tools">
-        <button class="icon-button" type="button" data-sound-toggle aria-label="Mute sound" aria-pressed="false"><Icon name="sound" size={18} /></button>
+        <button class="icon-button" type="button" data-music-toggle aria-label="Enable music" aria-pressed="false"><Icon name="music" size={18} /></button>
+        <button class="icon-button" type="button" data-sound-toggle aria-label="Mute sound effects" aria-pressed="true"><Icon name="sound" size={18} /></button>
         <a class="icon-button" href="/settings" aria-label="Settings" aria-current={section === 'settings' ? 'page' : undefined}><Icon name="settings" size={18} /></a>
       </div>
     </div>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Framed Picture</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="24" width="88" height="80" rx="4" fill="#F0B697"/><rect x="27" y="31" width="74" height="66" rx="2" fill="#A8CCD1"/><circle cx="81" cy="46" r="9" fill="#EBC975" /><path d="M28 89 L49 61 L68 82 L82 67 L100 88 V96 H28Z" fill="#B9D4A4" /><path d="M28 91 Q55 81 75 92 T100 91" fill="#688D69" stroke="none"/><path d="M27 32 H101 M27 96 H101" fill="none" stroke="#FFF8E6" stroke-width="2"/></g>
+</svg>

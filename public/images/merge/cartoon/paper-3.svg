@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Notebook</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="35" y="28" width="63" height="82" rx="5" fill="#FFF8E6"/><rect x="35" y="23" width="63" height="80" rx="5" fill="#B9D4A4"/><path d="M44 25 V101" fill="none" /><rect x="57" y="40" width="29" height="27" rx="3" fill="#FFF8E6"/><path d="M64 49 H79 M64 57 H76" fill="none" stroke-width="2"/><path d="M28 38 H43" fill="none" stroke-width="4"/><path d="M28 54 H43" fill="none" stroke-width="4"/><path d="M28 70 H43" fill="none" stroke-width="4"/><path d="M28 86 H43" fill="none" stroke-width="4"/><path d="M82 102 V116 L88 111 L94 116 V102Z" fill="#DE9EAA" /></g>
+</svg>

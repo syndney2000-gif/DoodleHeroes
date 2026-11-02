@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Art Prize</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="41" y="100" width="47" height="11" rx="3" fill="#F0B697"/><rect x="48" y="89" width="33" height="12" rx="3" fill="#EBC975"/><path d="M61 69 H69 V90 H61Z" fill="#EBC975" /><path d="M44 30 H84 V53 Q83 76 64 77 Q45 76 44 53Z" fill="#EBC975" /><path d="M43 37 H29 Q24 62 47 63 M85 37 H99 Q105 62 82 63" fill="none" stroke-width="6" stroke="#304C3B"/><path d="M43 37 H29 Q24 62 47 63 M85 37 H99 Q105 62 82 63" fill="none" stroke-width="3" stroke="#EBC975"/><path d="M64 39 L67.6 47.4 L76 51 L67.6 54.6 L64 63 L60.4 54.6 L52 51 L60.4 47.4Z" fill="#FFF8E6" /><path d="M50 31 V45" fill="none" stroke="#FFF8E6" stroke-width="3"/><path d="M24 14 L25.8 18.2 L30 20 L25.8 21.8 L24 26 L22.2 21.8 L18 20 L22.2 18.2Z" fill="#EBC975" /><path d="M106 71 L108.1 75.9 L113 78 L108.1 80.1 L106 85 L103.9 80.1 L99 78 L103.9 75.9Z" fill="#EBC975" /></g>
+</svg>

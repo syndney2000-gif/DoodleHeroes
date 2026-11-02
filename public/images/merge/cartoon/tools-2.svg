@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Crayon</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(29 64 64)"><path d="M52 101 V41 L64 19 L76 41 V101Z" fill="#DE9EAA" /><rect x="50" y="45" width="28" height="42" rx="2" fill="#F0B697"/><path d="M54 53 H74 M54 79 H74 M58 41 L64 29 L70 41" fill="none" stroke-width="2"/><path d="M64 59 L66.1 63.9 L71 66 L66.1 68.1 L64 73 L61.9 68.1 L57 66 L61.9 63.9Z" fill="#FFF8E6" /></g></g>
+</svg>

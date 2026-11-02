@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Sketch Fox</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M76 100 Q116 106 112 66 Q96 78 84 72Z" fill="#F0B697" /><path d="M112 66 Q115 86 104 95 L95 81Z" fill="#FFF8E6" /><ellipse cx="61" cy="87" rx="25" ry="23" fill="#F0B697" /><path d="M31 50 L30 20 L54 36 Q64 32 74 36 L96 20 L93 53 Q87 73 62 83 Q38 73 31 50Z" fill="#F0B697" /><path d="M36 43 L35 30 L47 40 M80 40 L91 30 L88 44" fill="#DE9EAA" stroke="none"/><path d="M35 56 Q48 53 62 67 Q76 53 90 56 Q79 76 62 83 Q45 75 35 56Z" fill="#FFF8E6" stroke="none"/><circle cx="49" cy="51" r="2.4" fill="#304C3B" stroke="none"/><circle cx="75" cy="51" r="2.4" fill="#304C3B" stroke="none"/><path d="M58 57 Q62 61 66 57" fill="none" stroke-width="2"/><path d="M57 66 L67 66 L62 72Z" fill="#304C3B" /><ellipse cx="49" cy="108" rx="10" ry="5" fill="#FFF8E6" /><ellipse cx="72" cy="108" rx="10" ry="5" fill="#FFF8E6" /></g>
+</svg>

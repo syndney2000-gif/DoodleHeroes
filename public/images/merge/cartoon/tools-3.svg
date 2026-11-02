@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Fountain Pen</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(31 64 64)"><rect x="53" y="19" width="22" height="59" rx="7" fill="#A8CCD1"/><path d="M53 74 H75 L76 90 L64 112 L52 90Z" fill="#EBC975" /><path d="M64 110 V88 M53 75 H75 M59 25 V57" fill="none" stroke-width="2.5"/><circle cx="64" cy="87" r="3" fill="#304C3B" /><path d="M75 28 H81 V57" fill="none" stroke="#688D69" stroke-width="4"/></g></g>
+</svg>

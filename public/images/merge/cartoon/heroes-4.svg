@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Doodle Kid</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M45 70 Q64 62 82 70 L87 99 Q64 108 40 99Z" fill="#B9D4A4" /><path d="M50 101 L47 111 M76 101 L80 111" fill="none" stroke-width="7"/><path d="M44 75 L30 91 M82 75 L96 87" fill="none" stroke-width="8"/><circle cx="64" cy="48" r="25" fill="#FFF8E6" /><path d="M39 44 Q33 22 59 22 Q84 14 91 42 L74 36 L66 25 L59 38Z" fill="#F0B697" /><circle cx="54" cy="49" r="2.4" fill="#304C3B" stroke="none"/><circle cx="74" cy="49" r="2.4" fill="#304C3B" stroke="none"/><path d="M60 55 Q64 59 68 55" fill="none" stroke-width="2"/><ellipse cx="51" cy="54" rx="3.5" ry="2" fill="#F0B697" stroke="none"/><ellipse cx="77" cy="54" rx="3.5" ry="2" fill="#F0B697" stroke="none"/><path d="M46 68 L64 77 L81 68" fill="#EBC975" /><circle cx="64" cy="89" r="4" fill="#EBC975" /></g>
+</svg>

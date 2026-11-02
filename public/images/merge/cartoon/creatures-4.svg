@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Ink Cat</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M38 90 Q13 92 21 69 Q24 62 29 65" fill="none" stroke-width="13" stroke="#304C3B"/><path d="M38 90 Q13 92 21 69 Q24 62 29 65" fill="none" stroke-width="8" stroke="#688D69"/><ellipse cx="67" cy="85" rx="27" ry="24" fill="#688D69" /><path d="M40 59 L40 28 L58 39 Q67 35 78 39 L95 27 L95 60 Q95 80 68 81 Q40 79 40 59Z" fill="#688D69" /><path d="M45 43 V36 L54 43 M83 43 L90 36 V44" fill="#F0B697" stroke="none"/><ellipse cx="67" cy="65" rx="18" ry="11" fill="#FFF8E6" stroke="none"/><circle cx="56" cy="55" r="3" fill="#FFF8E6" stroke="none"/><circle cx="80" cy="55" r="3" fill="#FFF8E6" stroke="none"/><path d="M64 62 L70 62 L67 66Z" fill="#DE9EAA" stroke-width="1.5"/><path d="M61 69 Q67 75 73 69 M38 61 L26 57 M38 67 L25 69 M96 61 L108 57 M96 67 L109 69" fill="none" stroke-width="2"/><ellipse cx="55" cy="106" rx="11" ry="5" fill="#FFF8E6" /><ellipse cx="79" cy="106" rx="11" ry="5" fill="#FFF8E6" /></g>
+</svg>

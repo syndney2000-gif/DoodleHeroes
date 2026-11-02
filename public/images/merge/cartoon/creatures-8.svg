@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Star Whale</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M25 65 Q21 40 51 36 Q87 30 101 56 L112 42 L118 48 L115 64 L121 79 L113 85 L99 73 Q91 106 53 107 Q20 107 16 84 Q12 71 25 65Z" fill="#A8CCD1" /><path d="M20 84 Q52 99 98 74 Q90 105 53 107 Q27 106 20 84Z" fill="#FFF8E6" stroke="none"/><path d="M53 79 Q49 103 68 99 L78 86Z" fill="#A8CCD1" /><circle cx="35" cy="68" r="3" fill="#304C3B" stroke="none"/><path d="M27 79 Q34 83 40 77" fill="none" stroke-width="2"/><ellipse cx="42" cy="74" rx="5" ry="3" fill="#F0B697" stroke="none"/><path d="M76 45 L79.0 52.0 L86 55 L79.0 58.0 L76 65 L73.0 58.0 L66 55 L73.0 52.0Z" fill="#EBC975" /><path d="M48 31 Q43 20 34 24 M48 31 Q50 11 60 17" fill="none" stroke="#A8CCD1" stroke-width="4"/><path d="M26 28 L27.8 32.2 L32 34 L27.8 35.8 L26 40 L24.2 35.8 L20 34 L24.2 32.2Z" fill="#EBC975" /><path d="M101 14 L103.1 18.9 L108 21 L103.1 23.1 L101 28 L98.9 23.1 L94 21 L98.9 18.9Z" fill="#EBC975" /></g>
+</svg>

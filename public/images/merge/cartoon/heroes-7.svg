@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Super Doodle</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M41 61 Q19 81 19 106 L61 99 L99 111 Q107 81 87 61Z" fill="#DE9EAA" /><path d="M45 70 Q64 62 82 70 L87 99 Q64 108 40 99Z" fill="#A8CCD1" /><path d="M50 101 L47 111 M76 101 L80 111" fill="none" stroke-width="7"/><path d="M44 75 L29 63 M83 74 L98 54" fill="none" stroke-width="8"/><circle cx="64" cy="42" r="24" fill="#FFF8E6" /><path d="M40 39 Q44 14 70 18 L87 30 L74 29 L65 24 L54 38Z" fill="#688D69" /><path d="M43 41 Q64 35 85 41 L82 53 Q64 48 46 53Z" fill="#EBC975" /><circle cx="54" cy="44" r="2.4" fill="#304C3B" stroke="none"/><circle cx="74" cy="44" r="2.4" fill="#304C3B" stroke="none"/><path d="M60 50 Q64 54 68 50" fill="none" stroke-width="2"/><path d="M64 74 L67.6 82.4 L76 86 L67.6 89.6 L64 98 L60.4 89.6 L52 86 L60.4 82.4Z" fill="#EBC975" /><path d="M108 24 L110.1 28.9 L115 31 L110.1 33.1 L108 38 L105.9 33.1 L101 31 L105.9 28.9Z" fill="#EBC975" /></g>
+</svg>

@@ -17,6 +17,9 @@
   font-weight:600;
 }
 .ns-row{ display:contents; }
+.ns-board.enlarged { --cell:44px; max-width:none; touch-action:pan-x pan-y pinch-zoom; }
+.ns-board.enlarged .ns-cell { touch-action:none; }
+.ns-board.enlarged .ns-row-clue { position:sticky; left:0; background:var(--bg); z-index:2; }
 
 .ns-clue{ color:var(--ink); transition:opacity .2s; }
 .ns-clue.done{ opacity:.3; }

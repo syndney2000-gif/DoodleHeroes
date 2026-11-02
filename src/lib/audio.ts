@@ -4,12 +4,19 @@ import { load, save } from './storage';
 export type Cue = 'tap' | 'place' | 'draw' | 'merge' | 'discover' | 'deliver' | 'levelup' | 'invalid' | 'erase' | 'hint' | 'solved';
 let ctx: AudioContext | undefined;
 let bus: GainNode | undefined;
+let musicBus: GainNode | undefined;
+let musicSource: AudioBufferSourceNode | undefined;
+let musicBuffer: AudioBuffer | undefined;
+let musicPending: Promise<void> | undefined;
+let unlocked = false;
 const buffers = new Map<Cue, AudioBuffer>();
 const pending = new Map<Cue, Promise<AudioBuffer | undefined>>();
 const last = new Map<Cue, number>();
 let enabled = load<boolean>('settings:sound') ?? load<boolean>('scribble-siege:sound') ?? true;
 let volume = Math.min(1, Math.max(0, load<number>('settings:volume') ?? .65));
 let generation = 0;
+let musicEnabled = load<boolean>('settings:music') ?? false;
+let musicLevel = Math.min(1, Math.max(0, load<number>('settings:music-volume') ?? .35));
 
 function context() {
   if (ctx || typeof window === 'undefined') return ctx;
@@ -20,6 +27,9 @@ function context() {
     bus = ctx.createGain();
     bus.gain.value = enabled && !document.hidden ? volume : 0;
     bus.connect(ctx.destination);
+    musicBus = ctx.createGain();
+    musicBus.gain.value = musicEnabled && !document.hidden ? musicLevel : 0;
+    musicBus.connect(ctx.destination);
   } catch { /* Games keep working if audio is unavailable. */ }
   return ctx;
 }
@@ -42,18 +52,65 @@ async function buffer(cue: Cue) {
   return task;
 }
 export function unlockAudio() {
+  unlocked = true;
   const c = context();
   if (!c) return;
   if (c.state === 'suspended') void c.resume().catch(() => {});
   for (const cue of ['tap', 'place', 'draw', 'merge', 'discover', 'deliver', 'levelup', 'invalid', 'erase', 'hint', 'solved'] as Cue[]) void buffer(cue);
+  void startMusic();
 }
 export function soundOn() { return enabled; }
 export function soundVolume() { return volume; }
+export function musicOn() { return musicEnabled; }
+export function musicVolume() { return musicLevel; }
+async function startMusic() {
+  if (!unlocked || !musicEnabled || document.hidden || musicSource) return;
+  const c = context();
+  if (!c || !musicBus) return;
+  if (!musicBuffer) {
+    musicPending ??= (async () => {
+      try {
+        const response = await fetch('/audio/meadow-loop.wav');
+        if (response.ok) musicBuffer = await c.decodeAudioData(await response.arrayBuffer());
+      } catch { /* Music is optional; a failed load never interrupts play. */ }
+      finally { musicPending = undefined; }
+    })();
+    await musicPending;
+  }
+  // Recheck after decoding: the user may have muted or left the tab.
+  if (!musicBuffer || !musicEnabled || document.hidden || musicSource) return;
+  const source = c.createBufferSource();
+  source.buffer = musicBuffer;
+  source.loop = true;
+  source.connect(musicBus);
+  musicBus.gain.cancelScheduledValues(c.currentTime);
+  musicBus.gain.setTargetAtTime(musicLevel, c.currentTime, .15);
+  musicSource = source;
+  source.start();
+}
+export function setMusic(on: boolean) {
+  musicEnabled = on;
+  save('settings:music', on);
+  if (!on && musicSource) {
+    musicSource.stop(); musicSource.disconnect(); musicSource = undefined;
+  }
+  if (on) void startMusic();
+  mix();
+}
+export function setMusicVolume(value: number) {
+  musicLevel = Math.min(1, Math.max(0, value));
+  save('settings:music-volume', musicLevel);
+  mix();
+}
 function mix() {
   generation++;
   if (ctx && bus) {
     bus.gain.cancelScheduledValues(ctx.currentTime);
     bus.gain.setTargetAtTime(enabled && !document.hidden ? volume : 0, ctx.currentTime, .015);
+  }
+  if (ctx && musicBus) {
+    musicBus.gain.cancelScheduledValues(ctx.currentTime);
+    musicBus.gain.setTargetAtTime(musicEnabled && !document.hidden ? musicLevel : 0, ctx.currentTime, .15);
   }
   if (typeof window !== 'undefined') window.dispatchEvent(new Event('dh:audio-change'));
 }
@@ -110,6 +167,14 @@ if (typeof window !== 'undefined') {
   document.addEventListener('visibilitychange', () => {
     mix();
     if (document.hidden) void ctx?.suspend().catch(() => {});
-    else if (enabled && ctx?.state === 'suspended') void ctx.resume().catch(() => {});
+    else if ((enabled || musicEnabled) && ctx?.state === 'suspended') {
+      void ctx.resume().then(() => startMusic()).catch(() => {});
+    }
+  });
+  window.addEventListener('pagehide', () => { void ctx?.suspend().catch(() => {}); });
+  window.addEventListener('pageshow', () => {
+    if (unlocked && !document.hidden && (enabled || musicEnabled) && ctx?.state === 'suspended') {
+      void ctx.resume().then(() => startMusic()).catch(() => {});
+    }
   });
 }

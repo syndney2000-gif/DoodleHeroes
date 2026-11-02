@@ -4,6 +4,8 @@
    won't remember. */
 
 const PREFIX = 'dh:';
+const failedWrites = new Set<string>();
+export function hasUnsavedChanges() { return failedWrites.size > 0; }
 
 export function load<T>(key: string): T | undefined {
   try {
@@ -17,16 +19,24 @@ export function load<T>(key: string): T | undefined {
 export function save(key: string, value: unknown): void {
   try {
     localStorage.setItem(PREFIX + key, JSON.stringify(value));
+    if (failedWrites.delete(key) && !failedWrites.size && typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('dh:save-recovered'));
+    }
   } catch {
-    /* storage full or unavailable */
+    failedWrites.add(key);
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event('dh:save-error'));
   }
 }
 
 export function remove(key: string): void {
   try {
     localStorage.removeItem(PREFIX + key);
+    if (failedWrites.delete(key) && !failedWrites.size && typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('dh:save-recovered'));
+    }
   } catch {
-    /* unavailable */
+    failedWrites.add(key);
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event('dh:save-error'));
   }
 }
 
@@ -45,7 +55,7 @@ export function keys(): string[] {
 }
 
 export function clearAll(): void {
-  for (const k of keys()) remove(k);
+  for (const k of new Set([...keys(), ...failedWrites])) remove(k);
 }
 
 /* ---------- finished puzzles ---------- */

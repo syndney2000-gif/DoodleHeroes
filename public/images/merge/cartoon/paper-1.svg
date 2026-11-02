@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Paper Scrap</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M34 36 L93 28 L89 89 L74 97 L63 89 L49 100 L37 91 L25 96Z" fill="#FFF8E6" /><path d="M93 28 L75 32 L85 48Z" fill="#EBC975" /><path d="M44 51 L72 47 M42 64 L78 58 M40 77 L63 73" fill="none" stroke="#688D69" stroke-width="3"/></g>
+</svg>

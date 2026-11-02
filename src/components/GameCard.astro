@@ -6,7 +6,7 @@ const { game } = Astro.props;
 ---
 <article class={`world-card ${game.color}`}>
   <div class="world-card-top"><span class={`world-icon ${game.color}`}>
-    {game.id === 'margin-merge' ? <span class="merge-symbol" aria-hidden="true"><img class="merge-source first" src="/images/merge/paper-1.webp" width="32" height="32" alt="" /><img class="merge-source second" src="/images/merge/paper-1.webp" width="32" height="32" alt="" /><span>›</span><img class="merge-result" src="/images/merge/paper-2.webp" width="40" height="40" alt="" /></span> : <Icon name={game.symbol} size={30} />}
+    {game.id === 'margin-merge' ? <span class="merge-symbol" aria-hidden="true"><img class="merge-source first" src="/images/merge/cartoon/paper-1.svg" width="32" height="32" alt="" /><img class="merge-source second" src="/images/merge/cartoon/paper-1.svg" width="32" height="32" alt="" /><span>›</span><img class="merge-result" src="/images/merge/cartoon/paper-2.svg" width="40" height="40" alt="" /></span> : <Icon name={game.symbol} size={30} />}
   </span><span class="game-kind">{game.kind}</span></div>
   <h3><a href={`/${game.id}/play${game.first}`}>{game.name}<Icon name="arrow" size={20} /></a></h3>
   <p>{game.copy}</p>

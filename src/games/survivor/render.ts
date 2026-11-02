@@ -29,6 +29,10 @@ export function makeView(canvas: HTMLCanvasElement): View {
     reducedMotion: reducedMotion(),
   };
   resize(view);
+  window.addEventListener('dh:motion-change', () => {
+    view.reducedMotion = reducedMotion();
+    if (view.reducedMotion) view.shake = 0;
+  });
   return view;
 }
 

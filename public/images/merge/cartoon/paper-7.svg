@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Library</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="22" y="25" width="84" height="83" rx="4" fill="#F0B697"/><rect x="29" y="34" width="70" height="64" rx="1" fill="#FFF8E6"/><path d="M28 65 H100 M28 97 H100 M25 108 V114 M101 108 V114" fill="none" stroke-width="4"/><rect x="33" y="40" width="12" height="23" rx="2" fill="#B9D4A4"/><rect x="47" y="37" width="13" height="26" rx="2" fill="#EBC975"/><path d="M65 40 L77 36 L86 60 L74 64Z" fill="#C6B9DE" /><rect x="84" y="40" width="10" height="23" rx="2" fill="#A8CCD1"/><rect x="33" y="74" width="11" height="21" rx="2" fill="#C6B9DE"/><rect x="46" y="71" width="13" height="24" rx="2" fill="#A8CCD1"/><rect x="62" y="75" width="12" height="20" rx="2" fill="#DE9EAA"/><rect x="77" y="72" width="17" height="23" rx="2" fill="#EBC975"/><path d="M17 25 Q64 9 111 25Z" fill="#B9D4A4" /></g>
+</svg>

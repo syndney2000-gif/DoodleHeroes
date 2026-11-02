@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
+  <title id="title">Storybook</title>
+  <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
+  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
+  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 35 Q42 23 64 37 Q87 23 110 35 V98 Q87 85 64 102 Q42 87 19 98Z" fill="#DE9EAA" /><path d="M24 31 Q45 23 64 37 Q84 23 105 31 V91 Q85 82 64 97 Q44 82 24 91Z" fill="#FFF8E6" /><path d="M64 38 V95 M32 65 Q44 62 55 67 M32 75 Q44 72 55 77 M75 68 Q87 62 98 65 M75 78 Q87 72 98 75" fill="none" stroke-width="2"/><path d="M43 39 L45.4 44.6 L51 47 L45.4 49.4 L43 55 L40.6 49.4 L35 47 L40.6 44.6Z" fill="#EBC975" /><path d="M78 54 L84 42 L91 54Z" fill="#B9D4A4" /><path d="M62 36 L62 73 L70 66 L77 71 L77 34Z" fill="#EBC975" /></g>
+</svg>

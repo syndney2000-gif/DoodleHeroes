@@ -34,8 +34,12 @@ for name, notes in CUES.items():
             u = t - start
             if 0 <= u < length:
                 envelope = min(1., u / .007) * (1 - u / length) ** 2
-                # Soft bell-like partial, built entirely from sine waves.
-                value += gain * envelope * (math.sin(math.tau * freq * u) + .18 * math.sin(math.tau * freq * 2 * u))
+                # A rounded cartoon pop: a short pitch swoop, soft overtones,
+                # and no harsh square waves. The phase is continuous.
+                direction = -1 if name in ('invalid', 'erase') else 1
+                bend = .22 * direction
+                phase = math.tau * freq * ((1 - bend) * u + bend * u * u / (2 * length))
+                value += gain * envelope * (math.sin(phase) + .12 * math.sin(phase * 2))
         data.append(struct.pack('<h', round(max(-1, min(1, value)) * 32767)))
     with wave.open(str(OUT / f'{name}.wav'), 'wb') as f:
         f.setnchannels(1)
@@ -43,3 +47,44 @@ for name, notes in CUES.items():
         f.setframerate(RATE)
         f.writeframes(b''.join(data))
     print(f'{name}.wav')
+
+# Original eight-bar, 96 BPM meadow miniature. A pentatonic plucked melody
+# over four warm, sparse chords. Every voice wraps around the loop boundary,
+# so both the waveform and release tails join without a click or silence.
+LOOP = 20.
+BEAT = .625
+music = []
+chords = [(130.8128, 164.8138, 195.9977), (110., 130.8128, 164.8138),
+          (87.3071, 130.8128, 174.6141), (97.9989, 146.8324, 195.9977)]
+for bar, chord in enumerate(chords):
+    for freq in chord:
+        music.append((freq, 5.5, bar * 5., .018, 'pad'))
+    for step, note in enumerate([0, 2, 1, 2]):
+        music.append((chord[note] * 2, 1.1, bar * 5. + step * 1.25, .055, 'pluck'))
+melody = [(0, 523.2511), (1.5, 659.2551), (3, 783.9909), (5, 659.2551),
+          (8, 440.), (10, 523.2511), (11.5, 659.2551), (14, 587.3295),
+          (16, 523.2511), (18, 783.9909), (19.5, 659.2551), (22, 523.2511),
+          (24, 587.3295), (26, 440.), (27.5, 391.9954), (30, 523.2511)]
+for beat, freq in melody:
+    music.append((freq, 1.1, beat * BEAT, .09, 'pluck'))
+frames = bytearray()
+for i in range(round(LOOP * RATE)):
+    t = i / RATE
+    value = 0.
+    for freq, length, start, gain, voice in music:
+        u = (t - start) % LOOP
+        if u >= length:
+            continue
+        if voice == 'pad':
+            envelope = math.sin(math.pi * u / length) ** 2
+            value += gain * envelope * math.sin(math.tau * freq * u)
+        else:
+            envelope = min(1., u / .008) * math.exp(-4.5 * u) * (1 - u / length)
+            value += gain * envelope * (math.sin(math.tau * freq * u) + .12 * math.sin(math.tau * freq * 3 * u))
+    frames.extend(struct.pack('<h', round(max(-1, min(1, value)) * 32767)))
+with wave.open(str(OUT / 'meadow-loop.wav'), 'wb') as f:
+    f.setnchannels(1)
+    f.setsampwidth(2)
+    f.setframerate(RATE)
+    f.writeframes(frames)
+print('meadow-loop.wav (20-second seamless original music)')

@@ -444,8 +444,8 @@ export async function start(root: HTMLElement) {
   }
 
   function frame(ts: number) {
-    raf = requestAnimationFrame(frame);
-    if (!game || !view) return;
+    raf = 0;
+    if (!game || !view || paused || document.hidden) return;
     const dt = Math.min(0.1, (ts - lastTs) / 1000);
     lastTs = ts;
     if (game.status === 'playing' && !paused) {
@@ -469,6 +469,13 @@ export async function start(root: HTMLElement) {
       else if (game.status === 'dead' || game.status === 'won') endRun();
       else $('ov-level').hidden = true;
     }
+    if (game.status === 'playing' && !paused) raf = requestAnimationFrame(frame);
+  }
+
+  function resumeFrames() {
+    cancelAnimationFrame(raf);
+    lastTs = performance.now(); acc = 0;
+    raf = requestAnimationFrame(frame);
   }
 
   function updateHud(g: Game) {
@@ -547,7 +554,7 @@ export async function start(root: HTMLElement) {
   function afterLevelChoice() {
     if (!game) return;
     if (game.status === 'levelup') showLevelUp();
-    else { $('ov-level').hidden = true; shownStatus = game.status; lastTs = performance.now(); }
+    else { $('ov-level').hidden = true; shownStatus = game.status; resumeFrames(); }
   }
   $('lv-reroll').addEventListener('click', () => { if (game) { reroll(game); showLevelUp(); } });
   $('lv-skip').addEventListener('click', () => { if (game) { skip(game); afterLevelChoice(); } });
@@ -563,21 +570,34 @@ export async function start(root: HTMLElement) {
     if (!game || game.status !== 'playing') return;
     paused = v;
     $('ov-pause').hidden = !v;
-    $('pz-sound').textContent = `Sound: ${audio.soundOn() ? 'on' : 'off'}`;
+    syncPauseAudio();
     lastTs = performance.now();
+    if (v) { cancelAnimationFrame(raf); raf = 0; acc = 0; }
+    else resumeFrames();
   }
   controls.onPause(() => setPaused(!paused));
   $('hud-pause').addEventListener('click', () => setPaused(true));
   $('pz-resume').addEventListener('click', () => setPaused(false));
-  $('pz-sound').addEventListener('click', () => { audio.setSound(!audio.soundOn()); $('pz-sound').textContent = `Sound: ${audio.soundOn() ? 'on' : 'off'}`; });
+  function syncPauseAudio() {
+    $('pz-sound').textContent = `Effects: ${audio.soundOn() ? 'on' : 'off'}`;
+    $('pz-sound').setAttribute('aria-pressed', String(audio.soundOn()));
+    $('pz-music').textContent = `Music: ${audio.musicOn() ? 'on' : 'off'}`;
+    $('pz-music').setAttribute('aria-pressed', String(audio.musicOn()));
+  }
+  $('pz-sound').addEventListener('click', () => audio.setSound(!audio.soundOn()));
+  $('pz-music').addEventListener('click', () => audio.setMusic(!audio.musicOn()));
+  window.addEventListener('dh:audio-change', syncPauseAudio);
   $('pz-quit').addEventListener('click', () => {
     if (!game) return;
     paused = false;
     $('ov-pause').hidden = true;
     game.status = 'dead';
+    endRun();
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden && current === 'game') setPaused(true); });
-  window.addEventListener('resize', () => { if (view) resize(view); });
+  window.addEventListener('resize', () => {
+    if (view) { resize(view); if (game) draw(view, game, sprites, spriteFor(runHero)); }
+  });
 
   /* ---------- end of run ---------- */
 

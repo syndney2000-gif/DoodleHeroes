@@ -27,7 +27,7 @@ import { INK_POT, SKIP_ORDER_COST } from '../games/merge/engine';
     <thead><tr><th>Chain</th><th>Starts as</th><th>Ends as</th><th>Unlocks at</th></tr></thead>
     <tbody>
       {chainIds.map((c) => (
-        <tr><td>{chains[c].name}</td><td>{chains[c].items[0].icon} {chains[c].items[0].name}</td><td>{chains[c].items[TOP_TIER - 1].icon} {chains[c].items[TOP_TIER - 1].name}</td><td>Level {chains[c].unlockLevel}</td></tr>
+        <tr><td>{chains[c].name}</td><td><img src={chains[c].items[0].image} width="48" height="48" alt="" loading="lazy" /> {chains[c].items[0].name}</td><td><img src={chains[c].items[TOP_TIER - 1].image} width="48" height="48" alt="" loading="lazy" /> {chains[c].items[TOP_TIER - 1].name}</td><td>Level {chains[c].unlockLevel}</td></tr>
       ))}
     </tbody>
   </table>

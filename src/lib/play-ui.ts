@@ -2,6 +2,8 @@
    toolbar buttons, timer, hint count, status line and the solved panel. */
 
 import { formatTime, starText } from './scoring';
+import { playSound } from './audio';
+import { reducedMotion } from './site-shell';
 import { results } from './storage';
 import { earnedIds, stickers } from './achievements';
 
@@ -59,6 +61,7 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
       $('pl-time').textContent = formatTime(seconds);
     },
     onSolved({ stars, seconds, hints }) {
+      playSound('solved');
       showHints(hints);
       $('pl-time').textContent = formatTime(seconds);
       // S for a clean solve, then A and B, like a stamped report card.
@@ -82,10 +85,12 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
     },
   });
   showHints(board.hintCount);
+  $('pl-board').addEventListener('pointerup', () => { if ($('pl-done').hidden) playSound('place'); });
+  $('pl-board').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') playSound('place'); });
 
-  $('pl-undo').addEventListener('click', () => board!.undo());
-  $('pl-check').addEventListener('click', () => board!.check());
-  $('pl-hint').addEventListener('click', () => board!.hint());
+  $('pl-undo').addEventListener('click', () => { board!.undo(); playSound('place'); });
+  $('pl-check').addEventListener('click', () => { board!.check(); playSound('tap'); });
+  $('pl-hint').addEventListener('click', () => { board!.hint(); playSound('hint'); });
   const startOver = () => {
     board!.restart();
     $('pl-done').hidden = true;
@@ -98,7 +103,7 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
   // After a solve there's nothing to lose, so Try again needs no confirmation.
   $('pl-again').addEventListener('click', () => {
     startOver();
-    $('pl-board').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    $('pl-board').scrollIntoView({ behavior: reducedMotion() ? 'instant' : 'smooth', block: 'center' });
   });
   return board;
 }
@@ -108,6 +113,7 @@ export function setupModes(onChange: (mode: string) => void): void {
   const buttons = document.querySelectorAll<HTMLButtonElement>('[data-mode]');
   for (const btn of buttons) {
     btn.addEventListener('click', () => {
+      playSound('tap');
       onChange(btn.dataset.mode!);
       for (const b of buttons) {
         const on = b === btn;

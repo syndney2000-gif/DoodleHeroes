@@ -1,0 +1,12 @@
+---
+import Icon from './Icon.astro';
+import type { games } from '../lib/games';
+interface Props { game: typeof games[number]; }
+const { game } = Astro.props;
+---
+<article class={`world-card ${game.color}`}>
+  <div class="world-card-top"><span class={`world-icon ${game.color}`}><Icon name={game.symbol} size={30} /></span><span class="game-kind">{game.kind}</span></div>
+  <h3><a href={`/${game.id}/play${game.first}`}>{game.name}<Icon name="arrow" size={20} /></a></h3>
+  <p>{game.copy}</p>
+  <div class="world-links"><a href={`/${game.id}/play${game.first}`}>Play now <span aria-hidden="true">↗</span></a><a href={`/${game.id}`}>How to play</a></div>
+</article>

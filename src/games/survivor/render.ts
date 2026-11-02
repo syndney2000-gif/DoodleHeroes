@@ -1,3 +1,4 @@
+import { reducedMotion } from '../../lib/site-shell';
 /* Scribble Siege — draws a game state onto a canvas. Reads the state, never
    changes it. */
 
@@ -25,7 +26,7 @@ export interface View {
 export function makeView(canvas: HTMLCanvasElement): View {
   const view: View = {
     canvas, ctx: canvas.getContext('2d')!, zoom: 1, w: 0, h: 0, dpr: 1, shake: 0,
-    reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    reducedMotion: reducedMotion(),
   };
   resize(view);
   return view;

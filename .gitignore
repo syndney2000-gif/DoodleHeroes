@@ -1,3 +1,6 @@
 node_modules/
 dist/
 .astro/
+
+# Local Cloudflare caches from the retired party server.
+.wrangler/

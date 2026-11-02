@@ -1,110 +1,28 @@
 ---
 import Base from '../layouts/Base.astro';
+import Island from '../components/Island.astro';
+import Icon from '../components/Icon.astro';
+import GameCard from '../components/GameCard.astro';
 import StreakStrip from '../components/StreakStrip.astro';
-import MiniBoard from '../components/MiniBoard.astro';
-import SpansDiagram from '../components/SpansDiagram.astro';
-import WiringDiagram from '../components/WiringDiagram.astro';
-import { findPuzzle as findSketch } from '../games/nonogram/puzzles';
-import { cluesFor } from '../games/nonogram/solver';
-import { findPuzzle as findSpans } from '../games/bridges/puzzles';
-import { parse as parseSpans } from '../games/bridges/model';
-import { solution as spansSolution } from '../games/bridges/solver';
-import { findPuzzle as findWiring } from '../games/net/puzzles';
-import { parse as parseWiring } from '../games/net/model';
-import { solve as solveWiring } from '../games/net/solver';
-
-const lighthouse = findSketch('lighthouse')!;
-const lc = cluesFor(lighthouse.solution);
-const coves = findSpans('two-coves')!;
-const covesSolved = spansSolution(parseSpans(coves.rows))!;
-const firstLight = findWiring('first-light')!;
-const firstLightSolved = solveWiring(parseWiring(firstLight)).options;
+import { games } from '../lib/games';
+const dailyGames = games.filter(g => g.daily !== null && g.id !== 'scribble-siege');
 ---
-<Base
-  title="Doodle Heroes"
-  description="Hand-made logic puzzles you can solve without guessing: picture logic, bridge building and wiring puzzles, an island expedition that links them, illustrated guides and three daily challenges."
-  section="home"
->
-  <p class="eyebrow">Hand-made logic puzzles</p>
-  <h1>Bring the island back, one puzzle at a time.</h1>
-  <p class="lede">Doodle Heroes is a small collection of logic puzzles set on a hand-drawn island. Every puzzle has exactly one answer, and every one can be reached by reasoning alone — you never have to guess. Free, no account, and your progress stays in your own browser.</p>
-
-  <section class="card siege-promo">
-    <p class="eyebrow">New · action game</p>
-    <h2>Scribble Siege</h2>
-    <p>The margins have come alive. Steer your hero through swarms of scribbles for ten minutes while your weapons fight on their own — then spend your coins, unlock new heroes, or <strong>draw your own</strong>.</p>
-    <p class="actions"><a class="btn" href="/scribble-siege/play">Play Scribble Siege ▶</a> <a class="btn secondary" href="/scribble-siege">How it works</a></p>
+<Base title="Doodle Heroes" description="Six single-player worlds of cozy puzzles, little adventures and wonderful discoveries. Free to play, with progress saved in your browser." section="home">
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Your pocket-sized happy place</p>
+      <h1>A little wonder.<br />One tile at a time.</h1>
+      <p>Your island escape, with a softer touch. Make a little room for play today.</p>
+      <a class="btn" href="/island-sketch/play?p=sun" data-continue>Start a little adventure →</a>
+      <span class="continue-caption" data-continue-caption>Island Sketch · A fresh page is waiting</span>
+    </div>
+    <div class="hero-art"><Island /><span class="island-badge">✦ THE LANTERN ISLES</span></div>
   </section>
-
-  <section class="card siege-promo">
-    <p class="eyebrow">Daily puzzle</p>
-    <h2>Doodle Guess</h2>
-    <p>One doodle a day. It draws itself line by line — name it in as few guesses as you can, then share your result.</p>
-    <p class="actions"><a class="btn" href="/doodle-guess/play">Play today’s doodle ▶</a> <a class="btn secondary" href="/doodle-guess">How it works</a></p>
-  </section>
-
-  <section class="card siege-promo">
-    <p class="eyebrow">Play together</p>
-    <h2>Draw Party &amp; Margin Merge</h2>
-    <p>Draw and guess with friends in a private room, or relax with a merge game where two doodles make something better.</p>
-    <p class="actions"><a class="btn" href="/draw-party/play">Start a Draw Party ▶</a> <a class="btn secondary" href="/margin-merge/play">Play Margin Merge</a> <a class="btn secondary" href="/games">All games</a></p>
-  </section>
-
-  <section class="card expedition">
-    <p class="eyebrow">Expedition mode</p>
-    <h2>Lantern Isles</h2>
-    <p>A dark island, a blank map and a lighthouse that hasn’t shone in years. Four chapters, each with one puzzle from every game: sketch the map, rebuild the bridges, and rewire the island until the lighthouse beam sweeps the sea again.</p>
-    <p><a class="btn" href="/expedition">Start the expedition ▶</a></p>
-  </section>
-
-  <h2>Three logic puzzles</h2>
-  <div class="games">
-    <article class="card game">
-      <MiniBoard rows={lc.rows} cols={lc.cols} state={lighthouse.solution.map((r) => r.replaceAll('.', '?'))} label="A solved Island Sketch puzzle showing a lighthouse" cell={14} />
-      <h3><a href="/island-sketch">Island Sketch</a></h3>
-      <p>Picture logic. Number clues say how many squares to fill in each row and column; solve them and a sketch appears.</p>
-      <p class="game-links"><a href="/island-sketch/play?p=sun">Play</a> · <a href="/island-sketch#rules">Rules</a> · <a href="/island-sketch/play?p=daily">Daily</a></p>
-    </article>
-    <article class="card game">
-      <SpansDiagram rows={coves.rows} counts={covesSolved} label="A solved Isle Spans puzzle" unit={22} />
-      <h3><a href="/isle-spans">Isle Spans</a></h3>
-      <p>Bridge building. Join every island with straight bridges that never cross, matching each island’s number.</p>
-      <p class="game-links"><a href="/isle-spans/play?p=two-coves">Play</a> · <a href="/isle-spans#rules">Rules</a> · <a href="/isle-spans/play?p=daily">Daily</a></p>
-    </article>
-    <article class="card game">
-      <WiringDiagram puzzle={firstLight} options={firstLightSolved} label="A solved Lighthouse Wiring puzzle" unit={30} />
-      <h3><a href="/lighthouse-wiring">Lighthouse Wiring</a></h3>
-      <p>Rotating tiles. Turn every tile so power flows from the lighthouse to each cottage, with no loose ends and no loops.</p>
-      <p class="game-links"><a href="/lighthouse-wiring/play?p=first-light">Play</a> · <a href="/lighthouse-wiring#rules">Rules</a> · <a href="/lighthouse-wiring/play?p=daily">Daily</a></p>
-    </article>
-  </div>
-
-  <h2>Daily challenges</h2>
+  <div class="section-heading"><h2>Your little worlds</h2><span class="eyebrow">Six ways to play</span></div>
+  <div class="world-grid">{games.map(game => <GameCard game={game} />)}</div>
+  <div class="section-heading"><h2>A fresh little challenge</h2><span class="eyebrow">Made for today</span></div>
+  <div class="daily-grid">{dailyGames.map(game => <a class="daily-card" href={`/${game.id}/play${game.daily}`}><span class={`world-icon ${game.color}`}><Icon name={game.symbol} size={22} /></span><b>{game.name}</b><small>Today’s daily <span aria-hidden="true">↗</span></small></a>)}</div>
   <StreakStrip />
-  <p>Each game has a fresh puzzle every day, the same for everyone: a 10 × 10 <a href="/island-sketch/play?p=daily">daily sketch</a>, a 9 × 9 <a href="/isle-spans/play?p=daily">daily map</a> and a 7 × 7 <a href="/lighthouse-wiring/play?p=daily">daily grid</a>. They’re generated from the date and checked by a solver to make sure they can be finished without guessing.</p>
-
-  <h2>Learn to solve, not just to play</h2>
-  <p>Logic puzzles get better once you can see the reasoning. Each game has a beginner’s guide, an advanced guide and a complete walkthrough, all illustrated with real board positions.</p>
-  <ul>
-    <li><strong>Island Sketch:</strong> <a href="/guides/nonogram-basics">beginner</a> · <a href="/guides/nonogram-advanced">advanced</a> · <a href="/walkthroughs/the-lighthouse">walkthrough</a></li>
-    <li><strong>Isle Spans:</strong> <a href="/guides/bridges-basics">beginner</a> · <a href="/guides/bridges-advanced">advanced</a> · <a href="/walkthroughs/tide-pools">walkthrough</a></li>
-    <li><strong>Lighthouse Wiring:</strong> <a href="/guides/wiring-basics">beginner</a> · <a href="/guides/wiring-advanced">advanced</a> · <a href="/walkthroughs/chapel-green">walkthrough</a></li>
-    <li><strong>Scribble Siege:</strong> <a href="/guides/scribble-siege-survival">survival guide</a> · <a href="/scribble-siege">heroes, weapons &amp; upgrades</a></li>
-  </ul>
-  <p>The in-game Hint button uses the same reasoning: rather than revealing a random square, it points to where the next deduction is, so you can work it out yourself.</p>
-
-  <h2>How we make the puzzles</h2>
-  <p>The Island Sketch pictures are drawn by hand; the bridge and wiring maps are grown from fixed seeds and picked by hand for a steady rise in difficulty. Every one is then checked by a solver that only uses reasoning a person can do, which proves it has exactly one solution; the bridge and wiring puzzles also pass an independent full search. You can read more <a href="/about">about the project</a>.</p>
+  <section class="card expedition-link"><div><p class="eyebrow">A story to wander through</p><h2>A little more light.</h2><p>Sketch the map, rebuild the bridges, and bring the Lantern Isles back to life.</p></div><a class="btn secondary" href="/expedition">Explore the island →</a></section>
+  <p class="muted" style="font-size:13px">Free to play. No account needed. Progress stays in this browser. New to a puzzle? Our <a href="/guides">illustrated guides</a> will help you find your way.</p>
 </Base>
-
-<style>
-  .expedition h2, .siege-promo h2{ margin-top:0; }
-  .siege-promo .actions{ margin-bottom:0; }
-  .expedition p:last-child{ margin-bottom:0; }
-  .games{ display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
-  .game{ margin:0; display:flex; flex-direction:column; gap:6px; }
-  .game h3{ margin:8px 0 0; }
-  .game p{ margin:0; font-size:16px; color:var(--ink-soft); }
-  .game .game-links{ margin-top:auto; padding-top:6px; color:var(--ink); }
-  .game :global(svg){ align-self:center; }
-</style>

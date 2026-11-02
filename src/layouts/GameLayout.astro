@@ -19,14 +19,15 @@ const canonical = new URL(Astro.url.pathname.replace(/\.html$/, ''), Astro.site)
   <title>{title} · Doodle Heroes</title>
   <meta name="description" content={description}>
   <link rel="canonical" href={canonical.href}>
-  <meta name="theme-color" content="#FBF7EC">
+  <meta name="theme-color" content="#FAF7EF">
   <link rel="icon" type="image/png" sizes="64x64" href="/icons/favicon-64.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Patrick+Hand&display=swap" rel="stylesheet">
 </head>
 <body class="game-page">
   <slot />
+  <script>import '../lib/site-shell';</script>
 </body>
 </html>

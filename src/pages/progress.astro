@@ -4,17 +4,19 @@ import StreakStrip from '../components/StreakStrip.astro';
 import { stickers } from '../lib/achievements';
 ---
 <Base
-  title="Your progress"
+  title="Your journal"
   description="See which Doodle Heroes puzzles you've solved and reset your saved progress."
   ads={false}
   noindex
+  section="journal"
 >
-  <h1>Your progress</h1>
+  <p class="eyebrow">Your little journal</p>
+  <h1>Look how far you’ve wandered.</h1>
   <p class="lede">Progress is saved only in this browser, on this device. Nothing is sent to us, and clearing your browser’s site data removes it too.</p>
 
   <StreakStrip />
 
-  <h2>Sticker sheet</h2>
+  <h2>Little milestones</h2>
   <ul class="stickers">
     {stickers.map((x) => (
       <li data-sticker={x.id}>
@@ -28,13 +30,13 @@ import { stickers } from '../lib/achievements';
   <div id="summary"><p class="muted">Loading…</p></div>
 
   <h2>Start over</h2>
-  <p>Reset clears everything saved on this device — puzzle boards, stars and best times, the expedition, and Scribble Siege coins, upgrades, records and your drawn hero. It can’t be undone.</p>
+  <p>Reset clears everything saved on this device — puzzle boards, stars and best times, Merge discoveries and orders, Doodle Guess history, the expedition, and Scribble Siege coins, upgrades, records and your drawn hero. Your sound and motion preferences stay. It can’t be undone.</p>
   <p><button class="btn secondary" type="button" id="reset">Reset all progress</button></p>
   <p id="reset-status" role="status" aria-live="polite"></p>
 </Base>
 
 <script>
-  import { clearAll, results } from '../lib/storage';
+  import { clearAll, results, load, keys, save } from '../lib/storage';
   import { formatTime, starText } from '../lib/scoring';
   import { allPuzzles as sketches } from '../games/nonogram/puzzles';
   import { allPuzzles as maps } from '../games/bridges/puzzles';
@@ -42,6 +44,9 @@ import { stickers } from '../lib/achievements';
   import { expedition } from '../content/expedition';
   import { earnedIds } from '../lib/achievements';
   import { loadProfile } from '../games/survivor/meta';
+  import type { MergeState } from '../games/merge/engine';
+  import { dailyDrawing, isRight, MAX_GUESSES } from '../games/doodle-guess/game';
+  import { playSound } from '../lib/audio';
 
   const games = [
     { key: 'island-sketch', name: 'Island Sketch', noun: 'sketches', puzzles: sketches },
@@ -60,7 +65,26 @@ import { stickers } from '../lib/achievements';
     const root = document.getElementById('summary')!;
     root.textContent = '';
 
+    const merge = load<MergeState>('margin-merge:state');
+    const cards = el('div'); cards.className = 'record-grid';
+    function record(title: string, number: string, detail: string, href: string) {
+      const card = el('section'); card.className = 'card';
+      const count = el('p', number); count.className = 'record-number';
+      const link = el('a', 'Keep exploring →'); link.href = href;
+      card.append(el('h3', title), count, el('p', detail), link); cards.append(card);
+    }
+    record('Margin Merge', `${merge?.discovered?.length ?? 0} / 32`, `${merge?.merges ?? 0} merges · ${merge?.delivered ?? 0} orders · Level ${merge?.level ?? 1}`, '/margin-merge/play');
+    const guessDays = keys().filter(k => k.startsWith('doodle-guess:day:')).flatMap(k => {
+      const guesses = load<string[]>(k);
+      if (!Array.isArray(guesses)) return [];
+      const drawing = dailyDrawing(k.slice('doodle-guess:day:'.length));
+      const solved = guesses.some(g => isRight(drawing, g));
+      return solved || guesses.length >= MAX_GUESSES ? [{ solved }] : [];
+    });
+    record('Doodle Guess', String(guessDays.filter(day => day.solved).length), `${guessDays.length} daily doodles played · ${guessDays.filter(day => day.solved).length} discovered`, '/doodle-guess/play');
     const siege = loadProfile();
+    record('Scribble Siege', String(siege.wins), `${siege.runs} adventures · ${siege.totalKills.toLocaleString()} scribbles defeated`, '/scribble-siege/play');
+    root.append(cards);
     const longest = Math.max(0, ...Object.values(siege.bestTime).map((t) => t ?? 0));
     root.append(
       el('h2', 'Scribble Siege'),
@@ -107,7 +131,10 @@ import { stickers } from '../lib/achievements';
   renderStickers();
   document.getElementById('reset')!.addEventListener('click', () => {
     if (!confirm('Reset all saved progress on this device?')) return;
+    const retained = keys().filter(k => k.startsWith('settings:')).map(k => [k, load<unknown>(k)] as const);
     clearAll();
+    retained.forEach(([k, v]) => { if (v !== undefined) save(k, v); });
+    playSound('erase');
     render();
     renderStickers();
     document.getElementById('reset-status')!.textContent = 'All progress cleared.';
@@ -124,8 +151,8 @@ import { stickers } from '../lib/achievements';
   .stickers .name{ font-family:var(--hand); font-size:20px; color:var(--ink-soft); }
   .stickers .how{ font-size:13px; color:var(--ink-soft); }
   /* Earned stickers peel off the sheet: solid border, colour, a slight tilt. */
-  .stickers li.earned{ border:2px solid var(--ink); box-shadow:2px 3px 0 var(--shadow); transform:rotate(-2deg); background:#FFF8D9; }
-  .stickers li.earned:nth-child(even){ transform:rotate(1.5deg); }
+  .stickers li.earned{ border:2px solid var(--ink); box-shadow:2px 3px 0 var(--shadow);  background:#FFF8D9; }
+  .stickers li.earned:nth-child(even){  }
   .stickers li.earned .icon{ filter:none; opacity:1; }
   .stickers li.earned .name{ color:var(--ink); }
 </style>

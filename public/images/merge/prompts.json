@@ -1,0 +1,230 @@
+{
+  "generator": "Built-in image_gen tool",
+  "output": "192px transparent WebP; resized and encoded with ImageMagick",
+  "items": [
+    {
+      "chain": "heroes",
+      "tier": 1,
+      "name": "Ink Dot",
+      "file": "heroes-1.webp",
+      "prompt": "Use case: stylized-concept. Asset type: a single game item sprite for a premium cozy merge game. Subject: a tiny glossy black ink droplet, realistic sculptural liquid with a rounded teardrop silhouette. Realistic high-quality 3D product render, tactile believable material, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Forest green and warm ivory game UI. No text, letters, emoji, border, badge, tile, watermark, other objects, or backdrop. Crisp readable silhouette at 56px."
+    },
+    {
+      "chain": "heroes",
+      "tier": 2,
+      "name": "Blob",
+      "file": "heroes-2.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a small glossy black ink blob, organic rounded sculptural shape with two tiny curious eyes. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "heroes",
+      "tier": 3,
+      "name": "Stick Figure",
+      "file": "heroes-3.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a little standing stick figure made from thin polished charcoal wire. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "heroes",
+      "tier": 4,
+      "name": "Doodle Kid",
+      "file": "heroes-4.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a miniature young adventurer figurine with tousled brown hair, green sweater and cream trousers. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "heroes",
+      "tier": 5,
+      "name": "Pencil Knight",
+      "file": "heroes-5.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a miniature armored knight with a pencil spear, forest green cape and brushed silver armor. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "heroes",
+      "tier": 6,
+      "name": "Ink Wizard",
+      "file": "heroes-6.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a miniature wizard figurine with flowing dark blue robe, pointed hat and a glass ink staff. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "heroes",
+      "tier": 7,
+      "name": "Super Doodle",
+      "file": "heroes-7.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a miniature superhero figurine with forest green suit, gold accents and a flowing cream cape. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "heroes",
+      "tier": 8,
+      "name": "Hero of the Margin",
+      "file": "heroes-8.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: an ornate golden crown with green gemstones on a small ivory pedestal. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "paper",
+      "tier": 1,
+      "name": "Paper Scrap",
+      "file": "paper-1.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a single small torn scrap of warm ivory textured paper, curved and dimensional. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "paper",
+      "tier": 2,
+      "name": "Sticky Note",
+      "file": "paper-2.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a small stack of pale yellow sticky notes with the top note curling upward. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "paper",
+      "tier": 3,
+      "name": "Notebook",
+      "file": "paper-3.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a small closed sage-green spiral notebook with warm ivory paper edges. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "paper",
+      "tier": 4,
+      "name": "Sketchbook",
+      "file": "paper-4.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: an open linen-bound artist sketchbook with a subtle pencil leaf drawing. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "paper",
+      "tier": 5,
+      "name": "Storybook",
+      "file": "paper-5.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a thick closed burgundy leather storybook with embossed gold ornament. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "paper",
+      "tier": 6,
+      "name": "Book Stack",
+      "file": "paper-6.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a neat stack of four small linen and leather books in sage, ochre, plum and ivory. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "paper",
+      "tier": 7,
+      "name": "Library",
+      "file": "paper-7.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a tiny realistic miniature cozy stone library building with green roof and arched windows. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "paper",
+      "tier": 8,
+      "name": "Story Castle",
+      "file": "paper-8.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: an intricate tiny ivory fairytale castle with sage green turret roofs and a gold flag. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "tools",
+      "tier": 1,
+      "name": "Pencil Stub",
+      "file": "tools-1.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a short sharpened wooden graphite pencil stub with a forest-green painted hexagonal barrel. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "tools",
+      "tier": 2,
+      "name": "Crayon",
+      "file": "tools-2.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a short wax artist crayon in dusty coral with a simple plain cream paper wrapper. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "tools",
+      "tier": 3,
+      "name": "Fountain Pen",
+      "file": "tools-3.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: an elegant forest-green fountain pen with a gold nib and gold trim. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "tools",
+      "tier": 4,
+      "name": "Paintbrush",
+      "file": "tools-4.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a single premium artist paintbrush with wooden handle, brass ferrule and soft bristles tipped in sage paint. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "tools",
+      "tier": 5,
+      "name": "Palette",
+      "file": "tools-5.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a wooden oval painter's palette with small daubs of pastel sage, ochre, rose, cream and blue paint. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "tools",
+      "tier": 6,
+      "name": "Framed Picture",
+      "file": "tools-6.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a tiny landscape oil painting of green hills inside a simple warm wooden frame. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "tools",
+      "tier": 7,
+      "name": "Art Prize",
+      "file": "tools-7.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a small elegant sculptural golden trophy cup on a dark green stone base. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "tools",
+      "tier": 8,
+      "name": "Masterpiece",
+      "file": "tools-8.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: an ornate gilt frame containing a luminous detailed painting of an island lighthouse at sunset. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "creatures",
+      "tier": 1,
+      "name": "Squiggle Worm",
+      "file": "creatures-1.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a tiny curved bright green caterpillar with realistic soft segmented body and little feet. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "creatures",
+      "tier": 2,
+      "name": "Ladybird",
+      "file": "creatures-2.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a realistic glossy red ladybird beetle with black spots, tiny legs and domed shell. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "creatures",
+      "tier": 3,
+      "name": "Paper Bird",
+      "file": "creatures-3.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a carefully folded sage-green origami paper bird with visible paper fibers and crisp folds. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "creatures",
+      "tier": 4,
+      "name": "Ink Cat",
+      "file": "creatures-4.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a small sitting black cat, realistic soft fur and bright amber eyes. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "creatures",
+      "tier": 5,
+      "name": "Sketch Fox",
+      "file": "creatures-5.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a small sitting red fox with realistic russet fur, white chest and a bushy curled tail. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "creatures",
+      "tier": 6,
+      "name": "Margin Dragon",
+      "file": "creatures-6.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a miniature friendly forest-green dragon with realistic textured scales, folded wings and gold horns. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "creatures",
+      "tier": 7,
+      "name": "Unicorn",
+      "file": "creatures-7.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a miniature ivory unicorn with a golden horn and flowing soft cream mane. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    },
+    {
+      "chain": "creatures",
+      "tier": 8,
+      "name": "Star Whale",
+      "file": "creatures-8.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one isolated game item sprite for a premium cozy merge game. Subject: a small deep teal whale floating gently, with a realistic smooth skin surface and tiny golden star markings. Realistic high-quality 3D product render, tactile believable materials and fine surface detail, warm soft studio lighting from upper left, subtle contact shadow. Single centered object filling 76% of square canvas, three-quarter view slightly from above. Transparent background with genuine alpha. Consistent cozy forest green and warm ivory art direction. No text, letters, numbers, emoji, border, badge, tile, watermark, extra props or backdrop. Crisp readable silhouette at 56px. Save generated asset as a file and return its local file path."
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { reducedMotion } from '../../lib/site-shell';
 /* Scribble Siege — the menus, the game loop and the overlays. */
 
 import {
@@ -596,7 +597,7 @@ export async function start(root: HTMLElement) {
     $('end-level').textContent = String(g.level);
     // Coins count up, unless motion is reduced.
     const coinEl = $('end-coins');
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) coinEl.textContent = String(coins);
+    if (reducedMotion()) coinEl.textContent = String(coins);
     else {
       const t0 = performance.now();
       const tick = (now: number) => {

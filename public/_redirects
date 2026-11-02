@@ -6,3 +6,7 @@
 /drawing-tips         /guides                 301
 /how-to-draw-*        /guides                 301
 /parents              /about                  301
+
+# Retired multiplayer routes.
+/draw-party           /games                  301
+/draw-party/play      /games                  301

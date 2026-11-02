@@ -1,0 +1,18 @@
+---
+interface Props { name: string; size?: number; }
+const { name, size = 24 } = Astro.props;
+const paths: Record<string, string> = {
+  home: 'M3 10 12 3l9 7M5 9v12h5v-7h4v7h5V9',
+  grid: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',
+  journal: 'M5 3h14a1 1 0 0 1 1 1v17H6a3 3 0 0 1-3-3V5a2 2 0 0 1 2-2ZM6 3v14m-3 1a2 2 0 0 1 3-1h14M10 7h6m-6 4h4',
+  settings: 'm9 3-1 3-3 1-2 3 2 2v3l2 2 3-1 2 2 3-1 1-3 3-1 1-3-2-2V7l-3-1-2-3Zm3 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6',
+  sun: 'M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10',
+  bridge: 'M3 19V5m18 14V5M3 8c5 8 13 8 18 0M3 17h18M7 12v5m5-3v3m5-5v5',
+  pencil: 'm15 4 5 5M3 21l2-7L16 3a2 2 0 0 1 3 0l2 2a2 2 0 0 1 0 3L10 19ZM5 14l5 5',
+  spark: 'm12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5ZM20 2v4m-2-2h4',
+  swords: 'm4 3 14 14m-1-14L3 17M3 3l1 6 4-4Zm18 0-1 6-4-4ZM2 18l4 4m12-4 4 4M4 20l4-4m12 4-4-4',
+  arrow: 'M4 12h16m-6-6 6 6-6 6',
+  sound: 'M4 9h4l5-5v16l-5-5H4ZM17 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14',
+};
+---
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={paths[name] ?? paths.spark} /></svg>

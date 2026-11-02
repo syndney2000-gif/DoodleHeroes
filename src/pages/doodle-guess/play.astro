@@ -28,7 +28,7 @@ import Base from '../../layouts/Base.astro';
     <p class="dg-status" id="dg-status" role="status" aria-live="polite"></p>
 
     <section class="card dg-done" id="dg-done" hidden>
-      <p class="dg-report">Report card</p>
+      <p class="dg-report">A little discovery</p>
       <span class="dg-stamp" id="dg-stamp" aria-hidden="true"></span>
       <h2 id="dg-result"></h2>
       <p class="dg-answer" id="dg-answer"></p>
@@ -63,6 +63,8 @@ import Base from '../../layouts/Base.astro';
   import { drawInk } from '../../games/doodle-guess/render';
   import { keys, load, recordResult, save } from '../../lib/storage';
   import { localDateKey } from '../../lib/rng';
+  import { playSound } from '../../lib/audio';
+  import { reducedMotion } from '../../lib/site-shell';
 
   const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
   const practice = new URLSearchParams(location.search).get('mode') === 'practice';
@@ -83,12 +85,12 @@ import Base from '../../layouts/Base.astro';
   /* ---------- drawing, with the new ink sketched in ---------- */
 
   const canvas = $<HTMLCanvasElement>('dg-canvas');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   let shown = 0;
   function sketchTo(target: number) {
     const from = shown;
     shown = target;
-    if (reduced || target <= from) { drawInk(canvas, drawing, target); return; }
+    if (reducedMotion() || target <= from) { drawInk(canvas, drawing, target); return; }
     const t0 = performance.now();
     const step = (now: number) => {
       const k = Math.min(1, (now - t0) / 900);
@@ -173,6 +175,7 @@ import Base from '../../layouts/Base.astro';
     if (!word.trim()) return;
     if (!isKnownWord(word)) { status.textContent = `“${word.trim()}” isn’t in the word list — try another word for it.`; return; }
     if (!guess(round, word)) { status.textContent = 'You’ve already tried that one.'; return; }
+    playSound(round.solved ? 'solved' : over(round) ? 'invalid' : 'draw');
     input.value = '';
     if (!practice) {
       save(saveKey, round.guesses);
@@ -201,7 +204,7 @@ import Base from '../../layouts/Base.astro';
   .dg-page{ max-width:420px; margin:12px auto 10px; padding:10px; }
   .dg-page canvas{
     display:block; width:100%; height:auto; aspect-ratio:1; border-radius:6px;
-    background:#fff repeating-linear-gradient(to bottom, transparent 0 31px, rgba(47,99,200,.13) 31px 32px);
+    background:var(--paper);
   }
   .dg-guesses{
     list-style:none; padding:0; margin:0 auto 8px; max-width:420px;

@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Settings" description="Make your Doodle Heroes experience feel just right." section="settings" ads={false} noindex>
+  <p class="eyebrow">Make yourself at home</p>
+  <h1>A little more you.</h1>
+  <p class="lede">A few small comforts for your time on the island.</p>
+  <section class="card" aria-label="Preferences">
+    <label class="setting-row" for="setting-sound"><span><strong>Sound effects</strong><p>Soft taps, little discoveries, and a reason to celebrate.</p></span><input type="checkbox" id="setting-sound" /></label>
+    <label class="setting-row" for="setting-volume"><span><strong>Sound volume</strong><p>Find your comfortable level.</p></span><input type="range" id="setting-volume" min="0" max="100" step="5" /></label>
+    <label class="setting-row" for="setting-motion"><span><strong>Reduce motion</strong><p>Keep things still. Your device’s preference is always respected.</p></span><input type="checkbox" id="setting-motion" /></label>
+    <p id="settings-status" role="status" aria-live="polite" style="margin-top:18px;margin-bottom:0"></p>
+  </section>
+  <section class="card"><h2>Your progress belongs to you.</h2><p>Games save in this browser. You can review your discoveries and reset your progress in the Journal.</p><a class="btn secondary" href="/progress">Open your journal →</a></section>
+  <p class="muted">All sound effects are original synthesized audio, released under CC0. <a href="/audio/README.md">Audio source and dedication</a>.</p>
+</Base>
+<script>
+  import { playSound, setSound, setVolume, soundOn, soundVolume } from '../lib/audio';
+  import { load, save } from '../lib/storage';
+  import { syncMotion } from '../lib/site-shell';
+  const sound = document.getElementById('setting-sound') as HTMLInputElement;
+  const volume = document.getElementById('setting-volume') as HTMLInputElement;
+  const motion = document.getElementById('setting-motion') as HTMLInputElement;
+  const status = document.getElementById('settings-status')!;
+  sound.checked = soundOn(); volume.value = String(soundVolume() * 100);
+  motion.checked = !!load<boolean>('settings:reduced-motion');
+  sound.addEventListener('change', () => { setSound(sound.checked); playSound('tap'); status.textContent = sound.checked ? 'Sound enabled.' : 'Sound muted.'; });
+  window.addEventListener('dh:audio-change', () => { sound.checked = soundOn(); });
+  volume.addEventListener('input', () => setVolume(Number(volume.value) / 100));
+  volume.addEventListener('change', () => { playSound('merge'); status.textContent = `Volume set to ${volume.value}%.`; });
+  motion.addEventListener('change', () => { save('settings:reduced-motion', motion.checked); syncMotion(); status.textContent = motion.checked ? 'Reduced motion enabled.' : 'Using your device’s motion preference.'; });
+</script>

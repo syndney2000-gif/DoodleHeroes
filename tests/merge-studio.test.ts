@@ -1,21 +1,54 @@
 import { describe, expect, test } from 'vitest';
 import { draw, erase, inkMax, move, newState, refillInk, type MergeState } from '../src/games/merge/engine';
 import { chainIds, TOP_TIER } from '../src/games/merge/data';
-import { continueFreePlay, restoreStudio, studioChapters, studioProgress, studioStatus, supplyStudio } from '../src/games/merge/studio';
+import { continueFreePlay, continueStory, restoreStudio, studioChapters, studioProgress, studioStatus, supplyStudio } from '../src/games/merge/studio';
 
 const T = 1_000_000;
 function prepareChapter(s: MergeState) {
   const { chapter } = studioStatus(s);
   s.cells.fill(null);
-  for (const [i, goal] of chapter.goals.entries()) {
+  let cell = 0;
+  for (const goal of chapter.goals) {
     if (goal.kind === 'discover') s.discovered.push(`${goal.item.chain}:${goal.item.tier}`);
-    else s.cells[i] = { ...goal.item };
+    else for (let n = 0; n < (goal.quantity ?? 1); n++) s.cells[cell++] = { ...goal.item };
   }
-  for (const goal of chapter.goals) if (goal.kind === 'supply') expect(supplyStudio(s, goal.id)).toBe(true);
+  for (const goal of chapter.goals) if (goal.kind === 'supply') for (let n = 0; n < (goal.quantity ?? 1); n++) expect(supplyStudio(s, goal.id)).toBe(true);
   return chapter;
 }
 
 describe('studio restoration', () => {
+  test('completed studio saves keep their ending, rewards and free play until opting into the harbour', () => {
+    const s = newState(7, T);
+    s.coins = 600; s.studio = { version: 1, restored: 4, supplied: [], finishedAt: T - 1, freePlay: true };
+    s.cells[0] = { chain: 'paper', tier: 7 };
+    const board = JSON.stringify(s.cells);
+    expect(studioStatus(s)).toMatchObject({ actComplete: true, complete: false, chapter: undefined });
+    expect(s.studio.activeAct).toBe(1);
+    expect(s.studio.freePlay).toBe(true);
+    expect(restoreStudio(s, 'harbour-gate', T)).toBe(false);
+    expect(continueStory(s)).toBe(true);
+    expect(studioStatus(s).chapter.id).toBe('harbour-gate');
+    expect(s.studio.freePlay).toBe(false);
+    expect(s.studio.finishedAt).toBe(T - 1);
+    expect(s.coins).toBe(600);
+    expect(JSON.stringify(s.cells)).toBe(board);
+    expect(continueStory(s)).toBe(false);
+  });
+
+  test('multi-item supplies save partial progress and cannot consume an extra item', () => {
+    let s = newState(7, T);
+    s.studio = { version: 1, restored: 4, activeAct: 2, supplied: [] };
+    s.cells[0] = { chain: 'paper', tier: 4 };
+    s.cells[1] = { chain: 'paper', tier: 4 };
+    s.cells[2] = { chain: 'paper', tier: 4 };
+    expect(supplyStudio(s, 'landing-books')).toBe(true);
+    expect(studioStatus(s).goals.find(g => g.id === 'landing-books')).toMatchObject({ supplied: 1, needed: 2, done: false });
+    s = JSON.parse(JSON.stringify(s));
+    expect(supplyStudio(s, 'landing-books')).toBe(true);
+    expect(studioStatus(s).goals.find(g => g.id === 'landing-books')).toMatchObject({ supplied: 2, done: true });
+    expect(supplyStudio(s, 'landing-books')).toBe(false);
+    expect(s.cells[2]).not.toBeNull();
+  });
   test('old saves retain every board, currency, order and random-state field', () => {
     const s = newState(42, T);
     draw(s, T); s.coins = 150; s.level = 8; s.ink = 35;
@@ -68,10 +101,11 @@ describe('studio restoration', () => {
     expect(saved).not.toBe(original);
   });
 
-  test('all four chapters finish once, rewards persist, and free play remains playable', () => {
+  test('all twelve chapters finish once, rewards persist, and free play remains playable', () => {
     let s = newState(3, T);
     let expectedCoins = 0;
     for (const [i, chapter] of studioChapters.entries()) {
+      if (studioStatus(s).actComplete) expect(continueStory(s)).toBe(true);
       prepareChapter(s);
       expect(studioStatus(s).canRestore).toBe(true);
       const before = s.ink;
@@ -84,8 +118,9 @@ describe('studio restoration', () => {
       if (i === 0) expect(s.level).toBeGreaterThanOrEqual(3);
       if (i === 1) expect(s.level).toBeGreaterThanOrEqual(5);
     }
-    expect(studioStatus(s)).toMatchObject({ complete: true, doneGoals: 12, totalGoals: 12 });
+    expect(studioStatus(s)).toMatchObject({ complete: true, doneGoals: 36, totalGoals: 36 });
     expect(s.studio.finishedAt).toBe(T + 3);
+    expect(s.studio.islandFinishedAt).toBe(T + 11);
     expect(continueFreePlay(s)).toBe(true);
     const coins = s.coins;
     expect(continueFreePlay(s)).toBe(false);
@@ -101,7 +136,7 @@ describe('studio restoration', () => {
   test('malformed story fields normalize without touching a legacy board', () => {
     const s = newState(1, T);
     s.studio = { version: 1, restored: NaN, supplied: ['unknown', 'workshop-ink', 'workshop-ink'] };
-    expect(studioProgress(s)).toEqual({ version: 1, restored: 0, supplied: ['workshop-ink'] });
+    expect(studioProgress(s)).toEqual({ version: 1, restored: 0, activeAct: 1, supplied: ['workshop-ink'] });
     expect(s.cells.every(c => c === null)).toBe(true);
     expect(s.coins).toBe(0);
   });
@@ -112,6 +147,9 @@ test.each([1, 42, 2026])('story is reachable using real seeded draws and merges 
   let now = T, draws = 0;
   for (let turn = 0; turn < 10_000 && !studioStatus(s).complete; turn++) {
     const status = studioStatus(s);
+    if (status.actComplete) { continueStory(s); continue; }
+    const needed = status.goals.find(g => !g.done)?.item.chain;
+    if (s.studio!.restored >= 5) s.focus = needed;
     if (status.canRestore) { expect(restoreStudio(s, status.chapter.id, now)).toBe(true); continue; }
     const supply = status.goals.find(g => g.kind === 'supply' && g.ready);
     if (supply) { supplyStudio(s, supply.id); continue; }
@@ -125,7 +163,6 @@ test.each([1, 42, 2026])('story is reachable using real seeded draws and merges 
     if (combined) continue;
     if (!s.cells.includes(null)) {
       // Clear an unrelated chain first, retaining the active story chain.
-      const needed = status.goals[0].item.chain;
       const other = s.cells.findIndex(c => c?.chain !== needed);
       erase(s, other >= 0 ? other : s.cells.findIndex(Boolean));
     }
@@ -133,6 +170,6 @@ test.each([1, 42, 2026])('story is reachable using real seeded draws and merges 
     if (draw(s, now) != null) draws++;
   }
   expect(studioStatus(s).complete).toBe(true);
-  expect(draws).toBeLessThan(1500);
+  expect(draws).toBeLessThan(3000);
   expect(chainIds.every(chain => s.discovered.some(k => k.startsWith(chain + ':')))).toBe(true);
 });

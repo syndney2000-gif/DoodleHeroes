@@ -110,19 +110,33 @@ renders, with the production prompts preserved in `prompts.json`. Item IDs,
 chains and tier progression match the original saves. Image generation used
 the built-in image_gen tool; WebP encoding used ImageMagick.
 
-Margin Merge has a finite four-chapter restoration story: Workshop, Library,
-Art room and Sanctuary. Each chapter has one discovery and two exact-item
-supplies. Supplies consume one item; discoveries use the existing collection
-history and keep the item. Restoration is explicit, changes the studio scene,
-and awards coins, ink and XP exactly once. Completing the sanctuary unlocks the
-ending and optional free play. The Journal records all four restored corners.
+Margin Merge has **12 chapters in three four-chapter stories**: A place to
+begin (studio), Letters from the harbour, and A festival of little wonders.
+Mara, Finn, Ada and Jun send letters for each project; completed letters and
+outcomes remain in the story journal. Studio, harbour and festival scenes
+change as projects finish. Each story has a real ending and optional free play;
+the next story starts only when the player chooses it.
+
+Every chapter has one discovery and two exact-item supply goals. Later goals
+may require multiple items, supplied one at a time with saved partial progress.
+Discoveries use the existing collection history and keep the item. Project
+completion awards coins, ink and XP exactly once. The main Journal reports
+progress across all 12 projects and retains the studio achievement.
+
+Useful project rewards:
+- Chapter 5: focused drawing chooses an unlocked chain at the normal ink cost.
+- Chapter 6: a three-item satchel; chapters 8 and 10 expand it to six and nine.
+- Chapters 7 and 9: ink refill improves from 30 seconds to 25, then 20 seconds.
 
 Story state is additive under `studio` inside the existing
-`dh:margin-merge:state` save. Loading a legacy save preserves its board,
-currencies, orders, random seed, level and collection; discoveries carry over,
-while studio supplies are new deliveries. Story progress and rewards save
-together with the board. Level-ups preserve ink held above the normal cap.
-The Merge card now shows two paper pieces combining into a sticky note.
+`dh:margin-merge:state` save. A legacy save keeps its board, currencies, orders,
+random seed, XP level and collection. Completed studio saves keep their original
+completion timestamp and free-play choice; the harbour is an opt-in invitation.
+`activeAct` records that choice, `contributions` records partial deliveries,
+and `islandFinishedAt` records the final festival ending. `focus` and `satchel`
+are optional fields on the same save. Story progress, tool actions and rewards
+save together with the board. Level-ups preserve ink held above the normal cap.
+The Merge card shows two paper pieces combining into a sticky note.
 
 Sound preferences are saved under `dh:settings:*`. The old Siege sound
 preference is respected on first use. A shared Web Audio context caches the
@@ -134,9 +148,9 @@ the system preference or the in-app setting.
 
 `scripts/check-ui.mjs` checks mobile layout, tap/drag merges, canceled drops,
 orders, saved progress, sound/motion preferences, all six game pages, asset
-decoding and retired-route redirects. It also completes all four studio
-chapters, tests legacy-save migration and single-claim rewards across reloads,
-and continues into free play. It expects the Astro development server
+decoding and retired-route redirects. It also completes all 12 chapters, tests story transitions, legacy-save
+migration, partial supplies and single-claim rewards across reloads, and checks
+focused drawing, satchel storage and free play. It expects the Astro development server
 and a Playwright installation. Use `PLAYWRIGHT_MODULE` to point at an existing
 Playwright ESM installation, or make `playwright` available normally. Set
 `CHROMIUM_EXECUTABLE` if using a locally installed Chromium. Screenshots default

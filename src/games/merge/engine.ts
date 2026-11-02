@@ -2,9 +2,10 @@
    saved as JSON, and randomness comes from a seed kept in the state. */
 
 import {
-  BOARD_H, BOARD_W, INK_BASE, INK_PER_LEVEL, INK_SECONDS, TOP_TIER, chainIds, chains,
+  BOARD_H, BOARD_W, INK_BASE, INK_PER_LEVEL, TOP_TIER, chainIds, chains,
   orderValue, sellValue, xpToNext, type ChainId,
 } from './data';
+import { mergePerks } from './perks';
 
 export interface Item { chain: ChainId; tier: number }
 
@@ -18,6 +19,8 @@ export interface Order {
 export interface MergeState {
   /** Additive story save; absent on saves made before studio restoration. */
   studio?: StudioProgress;
+  focus?: ChainId;
+  satchel?: Item[];
   cells: (Item | null)[];
   ink: number;
   /** When ink last refilled (ms); refills are counted from here. */
@@ -38,7 +41,11 @@ export interface StudioProgress {
   restored: number;
   supplied: string[];
   finishedAt?: number;
+  islandFinishedAt?: number;
   freePlay?: boolean;
+  /** Existing four-chapter completions default to act one, not a reset. */
+  activeAct?: number;
+  contributions?: Record<string, number>;
 }
 
 /* ---------- randomness that survives a save ---------- */
@@ -72,16 +79,17 @@ export function refillInk(s: MergeState, now: number) {
   const max = inkMax(s);
   if (now < s.inkAt) { s.inkAt = now; return; } // clock went backwards
   if (s.ink >= max) { s.inkAt = now; return; }
-  const drops = Math.floor((now - s.inkAt) / (INK_SECONDS * 1000));
+  const interval = mergePerks(s).inkSeconds * 1000;
+  const drops = Math.floor((now - s.inkAt) / interval);
   if (drops <= 0) return;
   s.ink = Math.min(max, s.ink + drops);
-  s.inkAt = s.ink >= max ? now : s.inkAt + drops * INK_SECONDS * 1000;
+  s.inkAt = s.ink >= max ? now : s.inkAt + drops * interval;
 }
 
 /** Seconds until the next drop of ink, or 0 when full. */
 export function nextInkIn(s: MergeState, now: number): number {
   if (s.ink >= inkMax(s)) return 0;
-  return Math.max(0, Math.ceil((s.inkAt + INK_SECONDS * 1000 - now) / 1000));
+  return Math.max(0, Math.ceil((s.inkAt + mergePerks(s).inkSeconds * 1000 - now) / 1000));
 }
 
 /* ---------- the board ---------- */
@@ -100,7 +108,8 @@ export function draw(s: MergeState, now: number): number | null {
   const wasFull = s.ink >= inkMax(s);
   s.ink--;
   if (wasFull) s.inkAt = now; // refilling starts from the moment it dips below full
-  const chainsNow = unlockedChains(s);
+  const available = unlockedChains(s);
+  const chainsNow = mergePerks(s).focus && s.focus && available.includes(s.focus) ? [s.focus] : available;
   const item: Item = { chain: chainsNow[Math.floor(rand(s) * chainsNow.length)], tier: rand(s) < 0.12 ? 2 : 1 };
   const cell = empty[Math.floor(rand(s) * empty.length)];
   s.cells[cell] = item;

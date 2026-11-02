@@ -1,34 +1,39 @@
 ---
 import Base from '../../layouts/Base.astro';
-import StudioScene from '../../components/StudioScene.astro';
+import JourneyScenes from '../../components/JourneyScenes.astro';
+import { studioChapters } from '../../games/merge/studio';
 import '../../games/merge/studio.css';
 ---
 <Base
   title="Play Margin Merge"
-  description="Play Margin Merge: draw doodles from your sketchbook, merge matching ones into something better, and fill orders to unlock new chains."
+  description="Play twelve chapters of island stories. Merge discoveries, help your neighbours, earn useful tools and prepare a festival."
   ads={false}
   section="merge"
   wide
 >
   <p class="eyebrow">Your little workshop</p>
   <h1>Margin Merge</h1>
-  <p class="lede">Merge little wonders and bring an abandoned island studio back to life. Four corners. One place to call your own.</p>
+  <p class="lede">From a quiet studio to a harbour full of lights. Twelve chapters, four neighbours, and an island to bring together.</p>
   <noscript><p class="note">Margin Merge needs JavaScript. The <a href="/margin-merge">guide</a> works without it.</p></noscript>
 
   <div class="mm" id="mm" hidden>
     <section class="studio-card" id="mm-studio" aria-labelledby="studio-title">
-      <div class="studio-top"><p class="eyebrow">The island studio</p><small data-studio-count>0 of 4 corners restored</small></div>
+      <div class="studio-top"><p class="eyebrow" data-story-act>Story 1 of 3 · A place to begin</p><small data-studio-count>0 of {studioChapters.length} projects complete</small></div>
       <h2 id="studio-title" data-studio-title tabindex="-1">Prepare the workshop</h2>
       <p class="studio-story" data-studio-story></p>
-      <progress class="studio-progress" data-studio-progress max="16" value="0" aria-label="Overall studio restoration"></progress>
-      <details class="studio-visual" data-studio-visual open><summary>Your island studio</summary><StudioScene /></details>
+      <blockquote class="story-letter" data-story-letter><p data-story-letter-text></p><cite data-story-speaker></cite></blockquote>
+      <progress class="studio-progress" data-studio-progress max="48" value="0" aria-label="Overall island story progress"></progress>
+      <details class="studio-visual" data-studio-visual open><summary data-scene-caption>Island studio</summary><JourneyScenes /></details>
       <ol class="studio-chapters" data-studio-chapters aria-label="Restoration chapters"></ol>
       <ul class="studio-goals" data-studio-goals aria-label="Current chapter goals"></ul>
       <p class="studio-supply-note" data-studio-supply-note>Discoveries count automatically. Supplying an item removes it from your board.</p>
       <button class="btn studio-restore" type="button" data-studio-restore disabled>Restore the workshop →</button>
       <p class="studio-reward" data-studio-reward></p>
-      <div class="studio-ending" data-studio-ending hidden><p class="eyebrow">Restoration complete</p><h3>The studio is home again.</h3><p>You repaired the workshop, filled the library, opened the art room, and gave the creatures a home. You’ve finished the story.</p><button class="btn" type="button" data-studio-continue>Continue in free play →</button><a href="/progress">See your achievement in the Journal</a></div>
-      <p class="studio-free-play" data-studio-free-play hidden>Free play · Your restoration is complete. Collect all 32 items or fill optional orders at your own pace.</p>
+      <div class="studio-ending" data-studio-ending hidden><p class="eyebrow">Story complete</p><h3 data-ending-title>The studio is home again.</h3><p data-ending-text></p><section class="next-story" data-next-story><p data-next-story-text></p><button class="btn" type="button" data-story-continue>Read Mara’s letter →</button></section><button class="btn secondary" type="button" data-studio-continue>Stay in free play</button><a href="/progress">See your achievements in the Journal</a></div>
+      <p class="studio-free-play" data-studio-free-play hidden></p>
+      <button class="btn" type="button" data-story-resume hidden>Start the next story →</button>
+      <p class="story-perks" data-perks-summary></p>
+      <details class="story-journal"><summary>Letters &amp; memories</summary><div data-story-archive></div></details>
       <p class="studio-status" data-studio-status role="status" aria-live="polite"></p>
       <a class="studio-board-link" href="#mm-board">Back to merging ↓</a>
     </section>
@@ -39,6 +44,11 @@ import '../../games/merge/studio.css';
       <span class="mm-pill" title="Coins"><span class="resource-coin" aria-hidden="true">●</span> <b id="mm-coins">0</b></span>
     </div>
 
+    <section class="mm-tools" aria-label="Earned workshop tools">
+      <label for="mm-focus">Sketchbook focus <select id="mm-focus" disabled><option value="">All unlocked chains</option></select></label>
+      <p class="muted" id="mm-tools-help">Complete harbour projects to unlock focused drawing and a satchel.</p>
+      <details id="mm-satchel-panel"><summary id="mm-satchel-title">Satchel · unlocks in chapter 6</summary><div class="mm-satchel" id="mm-satchel"></div><p class="muted">Select a board item and choose Store selected. Retrieve puts it in the first empty square.</p></details>
+    </section>
     <p class="mm-orders-label">Optional orders <a href="#mm-studio">Studio goals ↑</a></p>
     <section class="mm-orders" id="mm-orders" aria-label="Optional orders"></section>
 
@@ -48,6 +58,7 @@ import '../../games/merge/studio.css';
       <button class="btn mm-draw" type="button" id="mm-draw">＋ Draw an item <small>· 1 ink</small></button>
       <button class="btn secondary" type="button" id="mm-erase" disabled>Erase</button>
       <button class="btn secondary" type="button" id="mm-buy">＋ 10 ink · 25 coins</button>
+      <button class="btn secondary" type="button" id="mm-store" disabled>Store selected</button>
       <button class="btn secondary" type="button" id="mm-book">Collection book</button>
     </div>
     <p class="mm-status" id="mm-status" role="status" aria-live="polite">Tap the sketchbook to draw your first doodle.</p>
@@ -65,7 +76,7 @@ import '../../games/merge/studio.css';
       <li><strong>Draw</strong> puts a new doodle on the board for one drop of ink. Ink refills over time.</li>
       <li><strong>Drag</strong> a doodle onto a matching one to merge them — or tap one, then tap where it should go.</li>
       <li>Fill <strong>orders</strong> for coins and experience. Levelling up unlocks new chains.</li>
-      <li>Follow your <strong>studio goals</strong>, supply the requested items, then restore each corner. Finish all four chapters to complete the story.</li>
+      <li>Follow your <strong>story goals</strong> and supply the requested items. Each four-chapter story has an ending; choose when to start the next one. Later chapters unlock focused drawing, a satchel, and faster ink.</li>
       <li>Board full? Select a doodle and <strong>Erase</strong> it for a few coins.</li>
     </ul>
     <p>More tips in the <a href="/margin-merge">Margin Merge guide</a>.</p>
@@ -82,6 +93,7 @@ import '../../games/merge/studio.css';
   import { playSound } from '../../lib/audio';
   import { reducedMotion } from '../../lib/site-shell';
   import { itemMarkup } from '../../games/merge/art';
+  import { mergePerks, storeItem, retrieveItem } from '../../games/merge/perks';
   import { setupStudio } from '../../games/merge/studio-ui';
 
   const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -131,6 +143,7 @@ import '../../games/merge/studio.css';
       b.setAttribute('aria-label', `${ch.items[c.tier - 1].name}, ${ch.name} level ${c.tier}`);
     });
     $<HTMLButtonElement>('mm-erase').disabled = selected == null || !s.cells[selected];
+    $<HTMLButtonElement>('mm-store').disabled = selected == null || !s.cells[selected] || (s.satchel?.length ?? 0) >= mergePerks(s).satchel;
   }
 
   // Motion is presentation only: rules and saves commit before effects run.
@@ -319,7 +332,34 @@ import '../../games/merge/studio.css';
     $<HTMLButtonElement>('mm-buy').disabled = s.coins < INK_POT.cost;
   }
 
-  function render(flash?: number) { paintBar(); paintOrders(); paintBoard(flash); studio.render(); }
+  function paintTools() {
+    const perks = mergePerks(s);
+    const focus = $<HTMLSelectElement>('mm-focus');
+    focus.innerHTML = '<option value="">All unlocked chains</option>' + unlockedChains(s).map(chain => `<option value="${chain}">${chains[chain].name}</option>`).join('');
+    focus.disabled = !perks.focus; focus.value = s.focus ?? '';
+    $('mm-tools-help').textContent = `${perks.focus ? 'Choose a chain to draw, at the same one-ink cost.' : 'Chapter 5 unlocks focused drawing.'} Ink refills every ${perks.inkSeconds} seconds.`;
+    $('mm-satchel-title').textContent = perks.satchel ? `Satchel · ${s.satchel?.length ?? 0} / ${perks.satchel} items` : 'Satchel · unlocks in chapter 6';
+    $('mm-satchel').innerHTML = s.satchel?.length ? s.satchel.map((item, index) => `<button type="button" class="mm-pocket" data-retrieve="${index}" aria-label="Retrieve ${itemName(item)}"${s.cells.includes(null) ? '' : ' disabled'}>${itemMarkup(item)}<small>${itemName(item)} · ${item.tier}</small></button>`).join('') : '<p class="muted">A little extra space for the things you want to keep.</p>';
+  }
+  function render(flash?: number) { paintBar(); paintOrders(); paintBoard(flash); studio.render(); paintTools(); }
+  $('mm-focus').addEventListener('change', () => {
+    const value = $<HTMLSelectElement>('mm-focus').value as keyof typeof chains;
+    if (!mergePerks(s).focus || (value && !unlockedChains(s).includes(value))) return;
+    s.focus = value || undefined;
+    persist(); playSound('tap'); render();
+    status(value ? `Drawing ${chains[value].name}. Change focus whenever you like.` : 'Drawing from all unlocked chains.');
+  });
+  $('mm-store').addEventListener('click', () => {
+    if (selected == null || !storeItem(s, selected)) return;
+    selected = null; persist(); playSound('place'); render();
+    $<HTMLDetailsElement>('mm-satchel-panel').open = true;
+    status('Item tucked safely into your satchel.');
+  });
+  $('mm-satchel').addEventListener('click', event => {
+    const button = (event.target as Element).closest<HTMLButtonElement>('[data-retrieve]');
+    if (!button || button.disabled || !retrieveItem(s, Number(button.dataset.retrieve))) return;
+    selected = null; persist(); playSound('place'); render(); status('Item returned to the board.');
+  });
 
   $('mm-draw').addEventListener('click', () => {
     const cell = draw(s, Date.now());
@@ -373,6 +413,17 @@ import '../../games/merge/studio.css';
   .mm { position:relative; max-width:840px; margin:auto; }
   .mm-orders-label { display:flex; justify-content:space-between; gap:10px; max-width:660px; margin:0 auto 10px; font-size:12px; font-weight:800; }
   .mm-orders-label span { font-size:10px; font-weight:500; color:var(--ink-soft); text-align:right; }
+  .mm-tools { max-width:660px; margin:0 auto 22px; padding:15px 18px; background:var(--paper); border:1px solid var(--rule); border-radius:18px; }
+  .mm-tools label { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; font-weight:800; }
+  .mm-tools select { min-width:0; max-width:65%; font-size:12px; }
+  .mm-tools p { font-size:10px; margin:8px 0 0; }
+  .mm-tools summary { font-size:12px; cursor:pointer; padding-top:10px; }
+  .mm-satchel { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:12px; }
+  .mm-satchel>p { grid-column:1/-1; }
+  .mm-pocket { display:flex; flex-direction:column; align-items:center; padding:8px; border:1px solid var(--rule); border-radius:12px; background:var(--soft); }
+  .mm-pocket img { width:50px; height:50px; }
+  .mm-pocket small { font-size:9px; text-align:center; }
+  .mm-pocket:disabled { opacity:.5; }
   .mm-bar { display:flex; align-items:center; gap:12px; margin:0 auto 22px; max-width:660px; flex-wrap:wrap; }
   .mm-level { width:42px; height:42px; display:grid; place-items:center; background:var(--green); color:var(--paper); font-weight:900; border-radius:15px; }
   .mm-xp { flex:1; min-width:60px; height:9px; border-radius:10px; background:var(--soft); overflow:hidden; }

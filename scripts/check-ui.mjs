@@ -117,17 +117,18 @@ try {
   // Complete the entire studio story through real UI actions, starting with
   // a legacy save. Fixture setup is away from the game (no pagehide overwrite).
   await open('/games');
-  const legacy = await page.evaluate(async () => {
+  const storyFixture = await page.evaluate(async () => {
     const { newState } = await import('/src/games/merge/engine.ts');
     const { studioChapters } = await import('/src/games/merge/studio.ts');
     const s = newState(88, Date.now()); s.level = 5; s.coins = 40; s.ink = 18;
     let cell = 0;
     for (const chapter of studioChapters) for (const goal of chapter.goals) {
       if (goal.kind === 'discover') s.discovered.push(`${goal.item.chain}:${goal.item.tier}`);
-      else s.cells[cell++] = { ...goal.item };
+      else for (let n = 0; n < (goal.quantity ?? 1); n++) s.cells[cell++] = { ...goal.item };
     }
-    localStorage.setItem('dh:margin-merge:state', JSON.stringify(s)); return s;
+    localStorage.setItem('dh:margin-merge:state', JSON.stringify(s)); return { state: s, chapters: studioChapters.map(c => ({ id: c.id, coins: c.reward.coins })) };
   });
+  const legacy = storyFixture.state;
   await open('/margin-merge/play');
   const migrated = await save();
   assert.deepEqual(migrated.cells, legacy.cells);
@@ -138,22 +139,40 @@ try {
   assert.equal(await page.locator('.studio-goal.done').count(), 1);
   await noOverflow();
   await page.screenshot({ path: `${output}/studio-start-mobile.png`, fullPage: true });
-  const chapters = ['workshop', 'library', 'art-room', 'sanctuary'];
-  const rewardCoins = [25, 45, 65, 100];
+  const chapters = storyFixture.chapters;
   let expectedCoins = legacy.coins;
   for (let i = 0; i < chapters.length; i++) {
     assert.equal(await page.locator('[data-studio-restore]').isEnabled(), false);
     await page.locator('[data-studio-supply]').first().click();
     const supplied = (await save()).studio.supplied;
+    const partial = (await save()).studio.contributions;
     await page.reload();
     assert.deepEqual((await save()).studio.supplied, supplied);
-    await page.locator('[data-studio-supply]').first().click();
+    assert.deepEqual((await save()).studio.contributions, partial);
+    while (await page.locator('[data-studio-supply]').count()) await page.locator('[data-studio-supply]').first().click();
     assert.equal(await page.locator('[data-studio-restore]').isEnabled(), true);
     await page.locator('[data-studio-restore]').click();
-    expectedCoins += rewardCoins[i];
+    expectedCoins += chapters[i].coins;
     assert.equal((await save()).coins, expectedCoins);
     assert.equal((await save()).studio.restored, i + 1);
-    assert.equal(await page.locator('[data-studio-scene]').getAttribute('data-restored'), String(i + 1));
+    assert.equal(await page.locator('[data-studio-scene]').getAttribute('data-act'), String(Math.floor(i / 4) + 1));
+    assert.equal(await page.locator('[data-studio-scene]').getAttribute('data-local-restored'), String(i % 4 + 1));
+    if (i === 4) assert.equal(await page.locator('#mm-focus').isEnabled(), true);
+    if (i === 3) {
+      assert.equal(await page.locator('[data-studio-ending]').isVisible(), true);
+      await page.locator('[data-studio-continue]').click(); await page.reload();
+      assert.equal((await save()).studio.freePlay, true);
+      assert.equal((await save()).studio.restored, 4);
+      await page.locator('[data-story-resume]').click();
+      assert.equal((await save()).studio.activeAct, 2);
+      assert.equal((await save()).coins, expectedCoins);
+      await page.screenshot({ path: `${output}/harbour-start-mobile.png`, fullPage: true });
+    }
+    if (i === 7) {
+      await page.screenshot({ path: `${output}/harbour-complete-mobile.png`, fullPage: true });
+      await page.locator('[data-story-continue]').click();
+      assert.equal((await save()).studio.activeAct, 3);
+    }
     if (i === 0) {
       await page.screenshot({ path: `${output}/studio-workshop-mobile.png`, fullPage: true });
       await page.setViewportSize({ width: 320, height: 740 }); await noOverflow();
@@ -162,7 +181,7 @@ try {
   }
   assert.equal(await page.locator('[data-studio-ending]').isVisible(), true);
   assert.equal(await page.locator('[data-studio-restore]').isVisible(), false);
-  assert.equal(await page.locator('[data-studio-progress]').getAttribute('value'), '16');
+  assert.equal(await page.locator('[data-studio-progress]').getAttribute('value'), '48');
   await page.screenshot({ path: `${output}/studio-ending-mobile.png`, fullPage: true });
   const finished = await save(); await page.reload();
   assert.equal((await save()).coins, expectedCoins);
@@ -170,8 +189,23 @@ try {
   await page.locator('[data-studio-continue]').click();
   assert.equal((await save()).studio.freePlay, true);
   assert.equal(await page.locator('[data-studio-visual]').evaluate(el => el.open), false);
+  await page.locator('#mm-focus').selectOption('paper');
   await page.locator('#mm-draw').click();
   assert.equal((await save()).cells.filter(Boolean).length, 1);
+  const drawnCell = (await save()).cells.findIndex(Boolean);
+  assert.equal((await save()).cells[drawnCell].chain, 'paper');
+  await page.locator('.mm-cell').nth(drawnCell).click(); await page.locator('#mm-store').click();
+  assert.equal((await save()).satchel.length, 1);
+  assert.equal((await save()).cells.filter(Boolean).length, 0);
+  await page.reload();
+  await page.locator('#mm-satchel-panel').evaluate(el => { el.open = true; });
+  await page.locator('[data-retrieve]').click();
+  assert.equal((await save()).satchel.length, 0);
+  assert.equal((await save()).cells.filter(Boolean).length, 1);
+  assert.equal((await save()).focus, 'paper');
+  await page.locator('.story-journal summary').click();
+  assert.equal(await page.locator('.story-memory').count(), 12);
+  await page.locator('.story-journal summary').click();
   await page.reload();
   assert.equal((await save()).studio.freePlay, true);
   assert.equal((await save()).coins, expectedCoins);
@@ -182,7 +216,7 @@ try {
   for (const path of ['/games', '/progress', '/island-sketch/play?p=sun', '/isle-spans/play?p=two-coves', '/lighthouse-wiring/play?p=first-light', '/doodle-guess/play', '/scribble-siege/play']) {
     await open(path); await noOverflow();
     if (path === '/progress') {
-      assert.ok((await page.locator('#summary').innerText()).includes('Studio restored'));
+      assert.ok((await page.locator('#summary').innerText()).includes('Island stories complete'));
       await page.screenshot({ path: `${output}/journal-mobile.png`, fullPage: true });
     }
   }

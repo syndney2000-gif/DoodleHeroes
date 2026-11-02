@@ -70,8 +70,14 @@ async function startMusic() {
   if (!musicBuffer) {
     musicPending ??= (async () => {
       try {
-        const response = await fetch('/audio/meadow-loop.wav');
-        if (response.ok) musicBuffer = await c.decodeAudioData(await response.arrayBuffer());
+        for (const path of ['/audio/meadow-loop.ogg', '/audio/meadow-loop.wav']) {
+          try {
+            const response = await fetch(path);
+            if (!response.ok) continue;
+            musicBuffer = await c.decodeAudioData(await response.arrayBuffer());
+            break;
+          } catch { /* Try the PCM master if this browser cannot decode Vorbis. */ }
+        }
       } catch { /* Music is optional; a failed load never interrupts play. */ }
       finally { musicPending = undefined; }
     })();

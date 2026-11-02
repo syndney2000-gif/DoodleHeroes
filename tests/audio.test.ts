@@ -76,7 +76,7 @@ test('music is off by default and never fetched until enabled after a gesture', 
   audio.setMusic(true); await ready();
   expect(contexts).toBe(0); expect(fetch).not.toHaveBeenCalled();
   audio.unlockAudio(); await ready();
-  expect(fetch).toHaveBeenCalledWith('/audio/meadow-loop.wav');
+  expect(fetch).toHaveBeenCalledWith('/audio/meadow-loop.ogg');
   expect(sources.filter(source => source.loop)).toHaveLength(1);
 });
 
@@ -86,7 +86,7 @@ test('effects mute is independent of music; repeated unlocks share one loop', as
   audio.setMusic(true); audio.unlockAudio(); await ready();
   audio.unlockAudio(); audio.playSound('merge'); await ready();
   expect(sources).toHaveLength(1); expect(sources[0].loop).toBe(true);
-  expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === '/audio/meadow-loop.wav')).toHaveLength(1);
+  expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === '/audio/meadow-loop.ogg')).toHaveLength(1);
   audio.setMusic(false);
   expect(sources[0].stop).toHaveBeenCalledOnce(); expect(sources[0].disconnect).toHaveBeenCalledOnce();
   audio.setMusic(true); audio.setMusic(false); audio.setMusic(true); await ready();
@@ -96,7 +96,7 @@ test('effects mute is independent of music; repeated unlocks share one loop', as
 
 test('music decoding cannot start a loop after disable or while hidden', async () => {
   let finish: ((value: unknown) => void) | undefined;
-  vi.stubGlobal('fetch', vi.fn((url: string) => url === '/audio/meadow-loop.wav'
+  vi.stubGlobal('fetch', vi.fn((url: string) => url === '/audio/meadow-loop.ogg'
     ? new Promise(resolve => { finish = resolve; })
     : Promise.resolve({ ok: true, arrayBuffer: async () => new ArrayBuffer(8) })));
   const audio = await import('../src/lib/audio');
@@ -117,4 +117,24 @@ test('music suspends on pagehide and resumes from a restored page without duplic
   expect(suspended).toBe(1);
   listeners.pageshow.forEach(fn => fn()); await ready();
   expect(resumes).toBe(2); expect(sources).toHaveLength(1);
+});
+
+
+test('music falls back to the PCM master when Vorbis cannot be decoded', async () => {
+  const decode = vi.spyOn(window.AudioContext.prototype, 'decodeAudioData');
+  decode.mockImplementation((buffer: ArrayBuffer) => new Uint8Array(buffer)[0] === 1
+    ? Promise.reject(new Error('Unsupported codec'))
+    : Promise.resolve({} as AudioBuffer));
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => ({
+    ok: true, arrayBuffer: async () => {
+      const bytes = new Uint8Array(8);
+      if (url.endsWith('.ogg')) bytes[0] = 1;
+      return bytes.buffer;
+    },
+  })));
+  const audio = await import('../src/lib/audio');
+  audio.unlockAudio(); audio.setMusic(true); await ready();
+  expect(fetch).toHaveBeenCalledWith('/audio/meadow-loop.ogg');
+  expect(fetch).toHaveBeenCalledWith('/audio/meadow-loop.wav');
+  expect(sources.filter(source => source.loop)).toHaveLength(1);
 });

@@ -110,6 +110,20 @@ renders, with the production prompts preserved in `prompts.json`. Item IDs,
 chains and tier progression match the original saves. Image generation used
 the built-in image_gen tool; WebP encoding used ImageMagick.
 
+Margin Merge has a finite four-chapter restoration story: Workshop, Library,
+Art room and Sanctuary. Each chapter has one discovery and two exact-item
+supplies. Supplies consume one item; discoveries use the existing collection
+history and keep the item. Restoration is explicit, changes the studio scene,
+and awards coins, ink and XP exactly once. Completing the sanctuary unlocks the
+ending and optional free play. The Journal records all four restored corners.
+
+Story state is additive under `studio` inside the existing
+`dh:margin-merge:state` save. Loading a legacy save preserves its board,
+currencies, orders, random seed, level and collection; discoveries carry over,
+while studio supplies are new deliveries. Story progress and rewards save
+together with the board. Level-ups preserve ink held above the normal cap.
+The Merge card now shows two paper pieces combining into a sticky note.
+
 Sound preferences are saved under `dh:settings:*`. The old Siege sound
 preference is respected on first use. A shared Web Audio context caches the
 original WAV buffers and controls both the cues and Siege synthesis. Audio
@@ -120,7 +134,9 @@ the system preference or the in-app setting.
 
 `scripts/check-ui.mjs` checks mobile layout, tap/drag merges, canceled drops,
 orders, saved progress, sound/motion preferences, all six game pages, asset
-decoding and retired-route redirects. It expects the Astro development server
+decoding and retired-route redirects. It also completes all four studio
+chapters, tests legacy-save migration and single-claim rewards across reloads,
+and continues into free play. It expects the Astro development server
 and a Playwright installation. Use `PLAYWRIGHT_MODULE` to point at an existing
 Playwright ESM installation, or make `playwright` available normally. Set
 `CHROMIUM_EXECUTABLE` if using a locally installed Chromium. Screenshots default

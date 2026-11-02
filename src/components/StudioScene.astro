@@ -1,0 +1,56 @@
+---
+/* Original code-drawn room scene, using the existing item artwork as props. */
+---
+<svg class="studio-scene" data-studio-scene data-restored="0" viewBox="0 0 640 235" role="img" aria-label="An abandoned island studio. Four corners are waiting to be restored.">
+  <defs><pattern id="studio-floor" width="58" height="13" patternUnits="userSpaceOnUse"><path d="M0 13h58M29 0v13" fill="none" stroke="#D9CDB2" stroke-width=".7" /></pattern></defs>
+  <rect width="640" height="235" rx="20" fill="#EDF0E5" />
+  <circle cx="571" cy="42" r="24" fill="#EBD18E" />
+  <path d="M10 193Q75 167 142 190M485 191Q565 163 630 191" fill="none" stroke="#BDCEA4" stroke-width="3" />
+  <path d="M49 58 320 12 591 58" fill="#C5D1B8" stroke="#526C51" stroke-width="2" stroke-linejoin="round" />
+  <path d="M65 60h510v142H65z" fill="#FFF9E9" stroke="#849578" stroke-width="2" />
+  <path d="M65 170h510v32H65z" fill="#E9DDC3" />
+  <path d="M65 170h510v32H65z" fill="url(#studio-floor)" />
+  <path d="M65 170h510" stroke="#D9CDB2" />
+  <g fill="#DDEBED" stroke="#A9BCA9" stroke-width="1.5"><rect x="112" y="76" width="48" height="45" rx="19" /><rect x="470" y="76" width="48" height="45" rx="19" /><path d="M136 76v45m-24-21h48M494 76v45m-24-21h48" fill="none" /></g>
+  <g class="studio-zone" data-room="1">
+    <rect x="86" y="146" width="107" height="12" rx="4" fill="#B9956D" stroke="#846F52" />
+    <path d="M96 158v30m86-30v30m-86-12h86" stroke="#846F52" stroke-width="5" />
+    <path d="M178 144v-25l-17-15" stroke="#52734F" stroke-width="3" fill="none" />
+    <path d="m149 112 9-13 16 11z" fill="#7E9D71" />
+    <image href="/images/merge/heroes-3.webp" x="103" y="112" width="34" height="36" />
+    <image href="/images/merge/heroes-2.webp" x="139" y="125" width="26" height="25" />
+  </g>
+  <g class="studio-zone" data-room="2">
+    <rect x="221" y="86" width="85" height="101" rx="4" fill="#C7AD85" stroke="#937D5C" stroke-width="2" />
+    <path d="M229 94h69v85h-69z" fill="#E5D6B8" />
+    <path d="M226 124h76m-76 30h76" stroke="#937D5C" stroke-width="4" />
+    <g stroke="#304C3B" stroke-width=".7"><path d="M234 99h9v23h-9z" fill="#9CAF87" /><path d="M246 101h9v21h-9z" fill="#BC8A83" /><path d="M259 96h10v26h-10z" fill="#D5B869" /><path d="m274 101 9-3 7 24h-10z" fill="#9DBEC0" /></g>
+    <image href="/images/merge/paper-6.webp" x="236" y="127" width="49" height="29" />
+    <image href="/images/merge/paper-4.webp" x="239" y="157" width="42" height="25" />
+  </g>
+  <g class="studio-zone" data-room="3">
+    <path d="m341 190 20-98 23 98m-32-7h25" stroke="#9F8057" stroke-width="4" fill="none" stroke-linecap="round" />
+    <rect x="333" y="102" width="57" height="60" rx="3" fill="#FFFDF2" stroke="#AA926D" stroke-width="2" />
+    <path d="M339 148q12-24 22-8t23-10v25h-45z" fill="#B9CBA0" />
+    <circle cx="372" cy="117" r="6" fill="#E6CB85" />
+    <image href="/images/merge/tools-5.webp" x="389" y="153" width="35" height="35" />
+    <image href="/images/merge/tools-4.webp" x="390" y="115" width="26" height="44" />
+  </g>
+  <g class="studio-zone" data-room="4">
+    <ellipse cx="491" cy="184" rx="51" ry="11" fill="#D2BFD0" />
+    <path d="M538 181v-37m0 13q-20-5-18-18 18 1 18 18m0-3q18-3 17-16-16 0-17 16" fill="#8CA17D" stroke="#65825F" stroke-width="1.5" />
+    <path d="M529 170h19l-3 20h-13z" fill="#C49477" />
+    <image href="/images/merge/creatures-4.webp" x="468" y="145" width="35" height="40" />
+    <image href="/images/merge/creatures-3.webp" x="494" y="110" width="25" height="25" />
+    <image href="/images/merge/creatures-6.webp" x="439" y="151" width="34" height="35" />
+  </g>
+  <g font-family="Nunito,system-ui,sans-serif" font-size="9" fill="#626F60" text-anchor="middle"><text x="141" y="220">WORKSHOP</text><text x="263" y="220">LIBRARY</text><text x="369" y="220">ART ROOM</text><text x="492" y="220">SANCTUARY</text></g>
+</svg>
+<style>
+  .studio-scene { display:block; width:100%; height:auto; margin:16px 0; }
+  .studio-zone { opacity:.13; filter:grayscale(1); transition:opacity .7s,filter .7s; }
+  .studio-scene:not([data-restored="0"]) [data-room="1"],
+  .studio-scene:is([data-restored="2"],[data-restored="3"],[data-restored="4"]) [data-room="2"],
+  .studio-scene:is([data-restored="3"],[data-restored="4"]) [data-room="3"],
+  .studio-scene[data-restored="4"] [data-room="4"] { opacity:1; filter:none; }
+</style>

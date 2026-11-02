@@ -16,6 +16,8 @@ export interface Order {
 }
 
 export interface MergeState {
+  /** Additive story save; absent on saves made before studio restoration. */
+  studio?: StudioProgress;
   cells: (Item | null)[];
   ink: number;
   /** When ink last refilled (ms); refills are counted from here. */
@@ -29,6 +31,14 @@ export interface MergeState {
   seed: number;
   merges: number;
   delivered: number;
+}
+
+export interface StudioProgress {
+  version: 1;
+  restored: number;
+  supplied: string[];
+  finishedAt?: number;
+  freePlay?: boolean;
 }
 
 /* ---------- randomness that survives a save ---------- */
@@ -130,12 +140,14 @@ export function erase(s: MergeState, cell: number): number {
 
 /* ---------- levels and orders ---------- */
 
-function gainXp(s: MergeState, amount: number) {
+export function gainXp(s: MergeState, amount: number) {
   s.xp += amount;
   while (s.xp >= xpToNext(s.level)) {
     s.xp -= xpToNext(s.level);
     s.level++;
-    s.ink = Math.min(inkMax(s), s.ink + INK_PER_LEVEL); // a level-up tops up the ink a little
+    // Purchased and story-reward ink may exceed the cap. A level-up can add
+    // ink, but must never take that saved surplus away.
+    s.ink = Math.max(s.ink, Math.min(inkMax(s), s.ink + INK_PER_LEVEL));
   }
 }
 

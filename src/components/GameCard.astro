@@ -5,8 +5,19 @@ interface Props { game: typeof games[number]; }
 const { game } = Astro.props;
 ---
 <article class={`world-card ${game.color}`}>
-  <div class="world-card-top"><span class={`world-icon ${game.color}`}><Icon name={game.symbol} size={30} /></span><span class="game-kind">{game.kind}</span></div>
+  <div class="world-card-top"><span class={`world-icon ${game.color}`}>
+    {game.id === 'margin-merge' ? <span class="merge-symbol" aria-hidden="true"><img class="merge-source first" src="/images/merge/paper-1.webp" width="32" height="32" alt="" /><img class="merge-source second" src="/images/merge/paper-1.webp" width="32" height="32" alt="" /><span>›</span><img class="merge-result" src="/images/merge/paper-2.webp" width="40" height="40" alt="" /></span> : <Icon name={game.symbol} size={30} />}
+  </span><span class="game-kind">{game.kind}</span></div>
   <h3><a href={`/${game.id}/play${game.first}`}>{game.name}<Icon name="arrow" size={20} /></a></h3>
   <p>{game.copy}</p>
   <div class="world-links"><a href={`/${game.id}/play${game.first}`}>Play now <span aria-hidden="true">↗</span></a><a href={`/${game.id}`}>How to play</a></div>
 </article>
+<style>
+  .merge-symbol { position:relative; display:block; width:100%; height:100%; }
+  .merge-symbol img { position:absolute; object-fit:contain; }
+  .merge-source { width:42%; height:42%; left:2%; }
+  .merge-source.first { top:6%; transform:rotate(-12deg); }
+  .merge-source.second { bottom:6%; transform:rotate(8deg); }
+  .merge-symbol>span { position:absolute; left:42%; top:22%; font-size:23px; }
+  .merge-result { width:49%; height:64%; right:1%; top:18%; }
+</style>

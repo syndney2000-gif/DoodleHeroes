@@ -28,6 +28,9 @@ const noOverflow = async () => assert.ok(await page.evaluate(() => document.docu
 try {
   await open('/');
   assert.equal(await page.locator('.world-card').count(), 6);
+  const mergeIcon = page.locator('.world-card').filter({ has: page.getByRole('heading', { name: 'Margin Merge' }) }).locator('.world-icon');
+  assert.equal(await mergeIcon.locator('svg').count(), 0);
+  assert.equal(await mergeIcon.locator('img').count(), 3);
   assert.equal(await page.locator('a[href*="draw-party"]').count(), 0);
   await noOverflow();
   await page.screenshot({ path: `${output}/home-mobile.png`, fullPage: true });
@@ -111,9 +114,77 @@ try {
   assert.equal((await save()).cells[1].tier, 2);
   assert.equal(await cells.nth(1).evaluate(el => getComputedStyle(el.querySelector('img')).animationDuration), '0s');
 
+  // Complete the entire studio story through real UI actions, starting with
+  // a legacy save. Fixture setup is away from the game (no pagehide overwrite).
+  await open('/games');
+  const legacy = await page.evaluate(async () => {
+    const { newState } = await import('/src/games/merge/engine.ts');
+    const { studioChapters } = await import('/src/games/merge/studio.ts');
+    const s = newState(88, Date.now()); s.level = 5; s.coins = 40; s.ink = 18;
+    let cell = 0;
+    for (const chapter of studioChapters) for (const goal of chapter.goals) {
+      if (goal.kind === 'discover') s.discovered.push(`${goal.item.chain}:${goal.item.tier}`);
+      else s.cells[cell++] = { ...goal.item };
+    }
+    localStorage.setItem('dh:margin-merge:state', JSON.stringify(s)); return s;
+  });
+  await open('/margin-merge/play');
+  const migrated = await save();
+  assert.deepEqual(migrated.cells, legacy.cells);
+  assert.deepEqual(migrated.orders, legacy.orders);
+  assert.equal(migrated.coins, legacy.coins);
+  assert.equal(migrated.seed, legacy.seed);
+  assert.equal(migrated.studio.restored, 0);
+  assert.equal(await page.locator('.studio-goal.done').count(), 1);
+  await noOverflow();
+  await page.screenshot({ path: `${output}/studio-start-mobile.png`, fullPage: true });
+  const chapters = ['workshop', 'library', 'art-room', 'sanctuary'];
+  const rewardCoins = [25, 45, 65, 100];
+  let expectedCoins = legacy.coins;
+  for (let i = 0; i < chapters.length; i++) {
+    assert.equal(await page.locator('[data-studio-restore]').isEnabled(), false);
+    await page.locator('[data-studio-supply]').first().click();
+    const supplied = (await save()).studio.supplied;
+    await page.reload();
+    assert.deepEqual((await save()).studio.supplied, supplied);
+    await page.locator('[data-studio-supply]').first().click();
+    assert.equal(await page.locator('[data-studio-restore]').isEnabled(), true);
+    await page.locator('[data-studio-restore]').click();
+    expectedCoins += rewardCoins[i];
+    assert.equal((await save()).coins, expectedCoins);
+    assert.equal((await save()).studio.restored, i + 1);
+    assert.equal(await page.locator('[data-studio-scene]').getAttribute('data-restored'), String(i + 1));
+    if (i === 0) {
+      await page.screenshot({ path: `${output}/studio-workshop-mobile.png`, fullPage: true });
+      await page.setViewportSize({ width: 320, height: 740 }); await noOverflow();
+      await page.setViewportSize({ width: 390, height: 844 });
+    }
+  }
+  assert.equal(await page.locator('[data-studio-ending]').isVisible(), true);
+  assert.equal(await page.locator('[data-studio-restore]').isVisible(), false);
+  assert.equal(await page.locator('[data-studio-progress]').getAttribute('value'), '16');
+  await page.screenshot({ path: `${output}/studio-ending-mobile.png`, fullPage: true });
+  const finished = await save(); await page.reload();
+  assert.equal((await save()).coins, expectedCoins);
+  assert.equal((await save()).studio.finishedAt, finished.studio.finishedAt);
+  await page.locator('[data-studio-continue]').click();
+  assert.equal((await save()).studio.freePlay, true);
+  assert.equal(await page.locator('[data-studio-visual]').evaluate(el => el.open), false);
+  await page.locator('#mm-draw').click();
+  assert.equal((await save()).cells.filter(Boolean).length, 1);
+  await page.reload();
+  assert.equal((await save()).studio.freePlay, true);
+  assert.equal((await save()).coins, expectedCoins);
+  await page.setViewportSize({ width: 1280, height: 900 }); await noOverflow();
+  await page.screenshot({ path: `${output}/studio-free-play-desktop.png`, fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+
   for (const path of ['/games', '/progress', '/island-sketch/play?p=sun', '/isle-spans/play?p=two-coves', '/lighthouse-wiring/play?p=first-light', '/doodle-guess/play', '/scribble-siege/play']) {
     await open(path); await noOverflow();
-    if (path === '/progress') await page.screenshot({ path: `${output}/journal-mobile.png`, fullPage: true });
+    if (path === '/progress') {
+      assert.ok((await page.locator('#summary').innerText()).includes('Studio restored'));
+      await page.screenshot({ path: `${output}/journal-mobile.png`, fullPage: true });
+    }
   }
   // All 32 local assets decode successfully in the browser.
   const images = await page.evaluate(async () => {

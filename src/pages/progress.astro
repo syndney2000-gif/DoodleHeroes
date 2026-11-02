@@ -45,6 +45,7 @@ import { stickers } from '../lib/achievements';
   import { earnedIds } from '../lib/achievements';
   import { loadProfile } from '../games/survivor/meta';
   import type { MergeState } from '../games/merge/engine';
+  import { studioStatus } from '../games/merge/studio';
   import { dailyDrawing, isRight, MAX_GUESSES } from '../games/doodle-guess/game';
   import { playSound } from '../lib/audio';
 
@@ -73,7 +74,8 @@ import { stickers } from '../lib/achievements';
       const link = el('a', 'Keep exploring →'); link.href = href;
       card.append(el('h3', title), count, el('p', detail), link); cards.append(card);
     }
-    record('Margin Merge', `${merge?.discovered?.length ?? 0} / 32`, `${merge?.merges ?? 0} merges · ${merge?.delivered ?? 0} orders · Level ${merge?.level ?? 1}`, '/margin-merge/play');
+    const studio = merge ? studioStatus(merge) : null;
+    record('Margin Merge', `${studio?.progress.restored ?? 0} / 4`, `${studio?.complete ? 'Studio restored' : 'Studio corners restored'} · ${merge?.discovered?.length ?? 0} of 32 discoveries · ${merge?.merges ?? 0} merges · Level ${merge?.level ?? 1}`, '/margin-merge/play');
     const guessDays = keys().filter(k => k.startsWith('doodle-guess:day:')).flatMap(k => {
       const guesses = load<string[]>(k);
       if (!Array.isArray(guesses)) return [];

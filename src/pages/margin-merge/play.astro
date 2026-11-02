@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import StudioScene from '../../components/StudioScene.astro';
+import '../../games/merge/studio.css';
 ---
 <Base
   title="Play Margin Merge"
@@ -10,10 +12,26 @@ import Base from '../../layouts/Base.astro';
 >
   <p class="eyebrow">Your little workshop</p>
   <h1>Margin Merge</h1>
-  <p class="lede">Draw, combine, and see what happens next. A collection of little wonders is waiting.</p>
+  <p class="lede">Merge little wonders and bring an abandoned island studio back to life. Four corners. One place to call your own.</p>
   <noscript><p class="note">Margin Merge needs JavaScript. The <a href="/margin-merge">guide</a> works without it.</p></noscript>
 
   <div class="mm" id="mm" hidden>
+    <section class="studio-card" id="mm-studio" aria-labelledby="studio-title">
+      <div class="studio-top"><p class="eyebrow">The island studio</p><small data-studio-count>0 of 4 corners restored</small></div>
+      <h2 id="studio-title" data-studio-title tabindex="-1">Prepare the workshop</h2>
+      <p class="studio-story" data-studio-story></p>
+      <progress class="studio-progress" data-studio-progress max="16" value="0" aria-label="Overall studio restoration"></progress>
+      <details class="studio-visual" data-studio-visual open><summary>Your island studio</summary><StudioScene /></details>
+      <ol class="studio-chapters" data-studio-chapters aria-label="Restoration chapters"></ol>
+      <ul class="studio-goals" data-studio-goals aria-label="Current chapter goals"></ul>
+      <p class="studio-supply-note" data-studio-supply-note>Discoveries count automatically. Supplying an item removes it from your board.</p>
+      <button class="btn studio-restore" type="button" data-studio-restore disabled>Restore the workshop →</button>
+      <p class="studio-reward" data-studio-reward></p>
+      <div class="studio-ending" data-studio-ending hidden><p class="eyebrow">Restoration complete</p><h3>The studio is home again.</h3><p>You repaired the workshop, filled the library, opened the art room, and gave the creatures a home. You’ve finished the story.</p><button class="btn" type="button" data-studio-continue>Continue in free play →</button><a href="/progress">See your achievement in the Journal</a></div>
+      <p class="studio-free-play" data-studio-free-play hidden>Free play · Your restoration is complete. Collect all 32 items or fill optional orders at your own pace.</p>
+      <p class="studio-status" data-studio-status role="status" aria-live="polite"></p>
+      <a class="studio-board-link" href="#mm-board">Back to merging ↓</a>
+    </section>
     <div class="mm-bar">
       <span class="mm-level" id="mm-level" title="Level">1</span>
       <div class="mm-xp"><i id="mm-xp"></i></div>
@@ -21,7 +39,8 @@ import Base from '../../layouts/Base.astro';
       <span class="mm-pill" title="Coins"><span class="resource-coin" aria-hidden="true">●</span> <b id="mm-coins">0</b></span>
     </div>
 
-    <section class="mm-orders" id="mm-orders" aria-label="Orders"></section>
+    <p class="mm-orders-label">Optional orders <a href="#mm-studio">Studio goals ↑</a></p>
+    <section class="mm-orders" id="mm-orders" aria-label="Optional orders"></section>
 
     <div class="mm-board" id="mm-board" role="grid" aria-label="Merge board"></div>
 
@@ -46,6 +65,7 @@ import Base from '../../layouts/Base.astro';
       <li><strong>Draw</strong> puts a new doodle on the board for one drop of ink. Ink refills over time.</li>
       <li><strong>Drag</strong> a doodle onto a matching one to merge them — or tap one, then tap where it should go.</li>
       <li>Fill <strong>orders</strong> for coins and experience. Levelling up unlocks new chains.</li>
+      <li>Follow your <strong>studio goals</strong>, supply the requested items, then restore each corner. Finish all four chapters to complete the story.</li>
       <li>Board full? Select a doodle and <strong>Erase</strong> it for a few coins.</li>
     </ul>
     <p>More tips in the <a href="/margin-merge">Margin Merge guide</a>.</p>
@@ -62,6 +82,7 @@ import Base from '../../layouts/Base.astro';
   import { playSound } from '../../lib/audio';
   import { reducedMotion } from '../../lib/site-shell';
   import { itemMarkup } from '../../games/merge/art';
+  import { setupStudio } from '../../games/merge/studio-ui';
 
   const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
   const SAVE = 'margin-merge:state';
@@ -72,6 +93,7 @@ import Base from '../../layouts/Base.astro';
   const status = (m: string) => { $('mm-status').textContent = m; };
   const itemName = (c: { chain: keyof typeof chains; tier: number }) => chains[c.chain].items[c.tier - 1].name;
   $('mm').hidden = false;
+  const studio = setupStudio($('mm-studio'), s, () => { selected = null; persist(); render(); });
 
   /* ---------- board ---------- */
 
@@ -297,7 +319,7 @@ import Base from '../../layouts/Base.astro';
     $<HTMLButtonElement>('mm-buy').disabled = s.coins < INK_POT.cost;
   }
 
-  function render(flash?: number) { paintBar(); paintOrders(); paintBoard(flash); }
+  function render(flash?: number) { paintBar(); paintOrders(); paintBoard(flash); studio.render(); }
 
   $('mm-draw').addEventListener('click', () => {
     const cell = draw(s, Date.now());
@@ -342,12 +364,15 @@ import Base from '../../layouts/Base.astro';
   const clock = setInterval(paintBar, 1000);
   window.addEventListener('pagehide', () => { persist(); clearInterval(clock); });
   render();
+  persist(); // Persist the additive story migration without resetting old play.
 </script>
 
 <!-- Global: the board, orders and collection are built by the script. Every
      selector is prefixed mm-. -->
 <style is:global>
   .mm { position:relative; max-width:840px; margin:auto; }
+  .mm-orders-label { display:flex; justify-content:space-between; gap:10px; max-width:660px; margin:0 auto 10px; font-size:12px; font-weight:800; }
+  .mm-orders-label span { font-size:10px; font-weight:500; color:var(--ink-soft); text-align:right; }
   .mm-bar { display:flex; align-items:center; gap:12px; margin:0 auto 22px; max-width:660px; flex-wrap:wrap; }
   .mm-level { width:42px; height:42px; display:grid; place-items:center; background:var(--green); color:var(--paper); font-weight:900; border-radius:15px; }
   .mm-xp { flex:1; min-width:60px; height:9px; border-radius:10px; background:var(--soft); overflow:hidden; }

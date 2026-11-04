@@ -8,7 +8,7 @@
      and the phone thumb bar, up to a comfortable 54px. */
   --cell: max(16px, min(54px,
     calc((min(100vw, 1000px) - 68px) / (var(--n) + var(--rc) * 0.62)),
-    calc((100dvh - 330px) / (var(--n) + var(--cc) * 0.62))));
+    calc((100dvh - 280px) / (var(--n) + var(--cc) * 0.62))));
   display:grid;
   grid-template-columns: var(--clue-w) repeat(var(--n), var(--cell));
   width:max-content; max-width:100%;
@@ -95,3 +95,16 @@
   100%{ transform:scale(1); }
 }
 @media (prefers-reduced-motion:reduce){ .ns-cell, .ns-cell::after{ animation:none!important; } }
+
+/* Crosshair: the row and column under the finger (or mouse), and their clues. */
+.ns-cell.xh:not(.filled){ background:#EEF4E6; }
+.ns-clue.xh{ color:var(--teal); font-weight:900; background:#E3EFE9; border-radius:8px; }
+.ns-board.solved .ns-cell.xh{ background:var(--paper); }
+
+/* How many squares the current drag covers. */
+.ns-count{
+  position:fixed; left:-24px; top:-24px; z-index:95; pointer-events:none;
+  min-width:48px; height:48px; padding:0 10px; display:grid; place-items:center;
+  border-radius:24px; background:var(--ink); color:var(--paper);
+  font:700 24px var(--hand); box-shadow:0 6px 18px rgba(48,76,59,.3);
+}

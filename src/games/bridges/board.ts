@@ -31,6 +31,7 @@ export class SpansBoard implements PlayableBoard {
 
   private svg!: SVGSVGElement;
   private bridgeLayer!: SVGGElement;
+  private previewLayer!: SVGGElement;
   private islandEls: SVGGElement[] = [];
   private press: { island: number; x: number; y: number } | null = null;
   /** Which islands were complete at the last redraw, to spot new ones. */
@@ -109,6 +110,9 @@ export class SpansBoard implements PlayableBoard {
     this.bridgeLayer = document.createElementNS(NS, 'g');
     this.bridgeLayer.setAttribute('class', 'sp-bridges');
     svg.append(this.bridgeLayer);
+    this.previewLayer = document.createElementNS(NS, 'g');
+    this.previewLayer.setAttribute('class', 'sp-previews');
+    svg.append(this.previewLayer);
 
     for (const isl of islands) {
       const g = document.createElementNS(NS, 'g');
@@ -132,8 +136,9 @@ export class SpansBoard implements PlayableBoard {
     }
 
     svg.addEventListener('pointerdown', (e) => this.onPointerDown(e));
+    svg.addEventListener('pointermove', (e) => this.onPointerMove(e));
     svg.addEventListener('pointerup', (e) => this.onPointerUp(e));
-    svg.addEventListener('pointercancel', () => { this.press = null; });
+    svg.addEventListener('pointercancel', () => { this.press = null; this.showReach(null); });
     svg.addEventListener('contextmenu', (e) => e.preventDefault());
     svg.addEventListener('keydown', (e) => this.onKey(e));
     this.root.textContent = '';
@@ -261,6 +266,7 @@ export class SpansBoard implements PlayableBoard {
       this.press = { island: Number(isl.dataset.island), x, y };
       this.svg.setPointerCapture(e.pointerId);
       this.moveFocus(Number(isl.dataset.island), false);
+      this.showReach(this.press.island);
       return;
     }
     const hit = target.closest<SVGRectElement>('.sp-hit');
@@ -270,9 +276,41 @@ export class SpansBoard implements PlayableBoard {
     }
   }
 
+  /** While an island is pressed: its reachable neighbours glow, and the
+      bridge the drag points at is previewed. */
+  private showReach(island: number | null, toward?: Span) {
+    this.previewLayer.textContent = '';
+    this.islandEls.forEach((g) => g.classList.remove('reach', 'pressed'));
+    if (island == null) return;
+    this.islandEls[island].classList.add('pressed');
+    for (const sid of this.board.spansOf[island]) {
+      const span = this.board.spans[sid];
+      const blocked = span.crosses.some((t) => this.counts[t] > 0);
+      this.islandEls[span.a === island ? span.b : span.a].classList.toggle('reach', !blocked);
+      if (blocked) continue;
+      const [x1, y1, x2, y2] = this.ends(span);
+      const line = document.createElementNS(NS, 'line');
+      line.setAttribute('x1', String(x1)); line.setAttribute('y1', String(y1));
+      line.setAttribute('x2', String(x2)); line.setAttribute('y2', String(y2));
+      line.setAttribute('class', `sp-preview${toward?.id === sid ? ' aim' : ''}`);
+      this.previewLayer.append(line);
+    }
+  }
+
+  private onPointerMove(e: PointerEvent) {
+    const press = this.press;
+    if (!press) return;
+    const { x, y } = this.point(e);
+    const dx = x - press.x, dy = y - press.y;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < S * 0.35) { this.showReach(press.island); return; }
+    const dir: Dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+    this.showReach(press.island, this.spanToward(press.island, dir));
+  }
+
   private onPointerUp(e: PointerEvent) {
     const press = this.press;
     this.press = null;
+    this.showReach(null);
     if (!press) return;
     const { x, y } = this.point(e);
     const dx = x - press.x, dy = y - press.y;

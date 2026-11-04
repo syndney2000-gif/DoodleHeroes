@@ -38,6 +38,10 @@ export class NonogramBoard implements PlayableBoard {
   private timer: number | undefined;
   /** A hint that pointed at a line but hasn't revealed its cells yet. */
   private pendingHint: Step | null = null;
+  /** The cell whose row and column are highlighted, or -1. */
+  private cross = -1;
+  /** Floating count shown beside the finger while dragging a line. */
+  private countEl: HTMLElement | null = null;
 
   /* drag state */
   private drag: {
@@ -142,8 +146,9 @@ export class NonogramBoard implements PlayableBoard {
 
     this.root.addEventListener('pointerdown', (e) => this.onPointerDown(e));
     this.root.addEventListener('pointermove', (e) => this.onPointerMove(e));
-    this.root.addEventListener('pointerup', () => this.endDrag());
-    this.root.addEventListener('pointercancel', () => this.endDrag());
+    this.root.addEventListener('pointerup', (e) => { this.endDrag(); if (e.pointerType !== 'mouse') this.crosshair(-1); });
+    this.root.addEventListener('pointercancel', () => { this.endDrag(); this.crosshair(-1); });
+    this.root.addEventListener('pointerleave', () => { if (!this.drag) this.crosshair(-1); });
     this.root.addEventListener('lostpointercapture', () => this.endDrag());
     this.root.addEventListener('contextmenu', (e) => e.preventDefault());
     this.root.addEventListener('keydown', (e) => this.onKey(e));
@@ -247,6 +252,41 @@ export class NonogramBoard implements PlayableBoard {
 
   setMode(mode: 'fill' | 'cross') { this.mode = mode; }
 
+  /* ---------- crosshair ---------- */
+
+  /** Highlights the row and column through cell i (or clears with -1). */
+  private crosshair(i: number) {
+    if (i === this.cross) return;
+    const { n } = this;
+    const mark = (at: number, on: boolean) => {
+      if (at < 0) return;
+      const r = Math.floor(at / n), c = at % n;
+      for (let k = 0; k < n; k++) {
+        this.cellEls[r * n + k].classList.toggle('xh', on);
+        this.cellEls[k * n + c].classList.toggle('xh', on);
+      }
+      this.rowClueEls[r].classList.toggle('xh', on);
+      this.colClueEls[c].classList.toggle('xh', on);
+    };
+    mark(this.cross, false);
+    this.cross = i;
+    mark(i, true);
+  }
+
+  private showCount(count: number, x: number, y: number) {
+    if (count < 2) { this.hideCount(); return; }
+    if (!this.countEl) {
+      this.countEl = el('div', 'ns-count');
+      this.countEl.setAttribute('aria-hidden', 'true');
+      document.body.append(this.countEl);
+    }
+    this.countEl.textContent = String(count);
+    this.countEl.style.transform = `translate(${x}px, ${y}px)`;
+    this.countEl.hidden = false;
+  }
+
+  private hideCount() { if (this.countEl) this.countEl.hidden = true; }
+
   /* ---------- pointer ---------- */
 
   private cellAt(x: number, y: number): number | null {
@@ -262,6 +302,7 @@ export class NonogramBoard implements PlayableBoard {
     e.preventDefault();
     this.root.setPointerCapture(e.pointerId);
     this.moveFocus(i, false);
+    this.crosshair(i);
     const tool: Cell = e.button === 2 || this.mode === 'cross' || e.shiftKey ? EMPTY : FILLED;
     const from = this.cells[i];
     // Pressing on a cell that already holds the tool's mark clears it, and the
@@ -274,9 +315,14 @@ export class NonogramBoard implements PlayableBoard {
 
   private onPointerMove(e: PointerEvent) {
     const d = this.drag;
-    if (!d) return;
+    if (!d) {
+      // A mouse hovering shows its row and column too.
+      if (e.pointerType === 'mouse' && !this.solved) this.crosshair(this.cellAt(e.clientX, e.clientY) ?? -1);
+      return;
+    }
     const i = this.cellAt(e.clientX, e.clientY);
     if (i == null) return;
+    this.crosshair(i);
     const { n } = this;
     const sr = Math.floor(d.start / n), sc = d.start % n;
     const r = Math.floor(i / n), c = i % n;
@@ -292,12 +338,15 @@ export class NonogramBoard implements PlayableBoard {
       const j = d.axis === 'row' ? sr * n + k : k * n + sc;
       if (this.cells[j] === d.from) this.set(j, d.paint, d.batch);
     }
+    // Above the finger, so it isn't hidden by it.
+    this.showCount(hi - lo + 1, e.clientX, e.clientY - 64);
   }
 
   private endDrag() {
     const d = this.drag;
     if (!d) return;
     this.drag = null;
+    this.hideCount();
     this.commit(d.batch);
   }
 
@@ -447,6 +496,7 @@ export class NonogramBoard implements PlayableBoard {
   }
 
   private showSolved(announce: boolean) {
+    this.crosshair(-1);
     this.root.classList.add('solved');
     this.clearMarks();
     if (!announce) this.opts.onSolved({ stars: starsFor(this.hints), seconds: this.seconds, hints: this.hints });

@@ -45,7 +45,9 @@ export function resize(v: View) {
   v.canvas.height = Math.round(rect.height * v.dpr);
   // Zoom so the hero and scribbles stay big enough to read on a phone,
   // while still showing a fair stretch of paper around you.
-  v.zoom = Math.max(0.8, Math.min(1.25, Math.min(v.w, v.h) / 520));
+  // Phones see a slightly closer view so heroes and scribbles read clearly;
+  // enemies still spawn beyond the screen edge (SPAWN_RING in engine.ts).
+  v.zoom = Math.max(0.95, Math.min(1.25, Math.min(v.w, v.h) / 400));
 }
 
 function blit(c: CanvasRenderingContext2D, s: Sprite, x: number, y: number, frame: number, scale = 1, rot = 0, alpha = 1) {

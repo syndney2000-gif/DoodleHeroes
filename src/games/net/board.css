@@ -3,7 +3,7 @@
 
 .nw-board{
   display:block; margin:0 auto;
-  width:min(100%, calc(var(--w) * 64px), calc((100dvh - 300px) * var(--w) / var(--h))); min-width:min(100%, 280px); height:auto;
+  width:min(100%, calc(var(--w) * 64px), calc((100dvh - 260px) * var(--w) / var(--h))); min-width:min(100%, 280px); height:auto;
   background:#D9D2BF; border:2.5px solid var(--ink); border-radius:var(--wobble-soft);
   touch-action:manipulation; user-select:none; -webkit-user-select:none;
 }

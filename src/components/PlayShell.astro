@@ -16,10 +16,12 @@ const { game, description, section, listHref } = Astro.props;
 ---
 <Base title={`Play ${game}`} description={description} ads={false} section={section} wide play>
   <header class="pl-head">
-    <div>
+    <a class="icon-button pl-back" href={listHref} aria-label={`Back to ${game}`}><Icon name="back" size={20} /></a>
+    <div class="pl-titles">
       <p class="eyebrow" id="pl-eyebrow">{game}</p>
       <h1 id="pl-title">{game}</h1>
     </div>
+    <button class="icon-button pl-sound" type="button" data-sound-toggle aria-label="Mute sound effects" aria-pressed="true"><Icon name="sound" size={18} /></button>
     <p class="pl-meta">
       <span class="pl-chip pl-chip-time"><Icon name="clock" size={15} /><span id="pl-time">0:00</span></span>
       <span class="pl-chip"><Icon name="bulb" size={15} /><span id="pl-hints">no hints used</span></span>
@@ -103,6 +105,7 @@ const { game, description, section, listHref } = Astro.props;
 <style is:global>
   .pl-head{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:6px 18px; max-width:780px; margin:0 auto; }
   .pl-head h1{ margin:2px 0 6px; }
+  .pl-back, .pl-sound{ display:none; }
   .pl-meta{ display:flex; gap:8px; margin:0 0 10px; font-variant-numeric:tabular-nums; }
   .pl-chip{ display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; background:var(--paper); border:2px solid var(--rule); color:var(--ink-soft); font-size:13px; font-weight:800; }
 
@@ -173,10 +176,18 @@ const { game, description, section, listHref } = Astro.props;
   /* Phones: the tools sit in a thumb bar where the bottom nav would be, and
      the rarely needed ones fold into a menu. */
   @media (max-width:760px){
-    .pl-head h1{ font-size:28px; margin-bottom:4px; }
-    .pl-head{ align-items:center; }
-    .pl-meta{ margin:0 0 4px; }
+    /* The site header folds into one compact row so the board gets the room. */
+    body.play-page:has(.pl-head) .topbar, body.play-page:has(.pl-head) .play-back{ display:none; }
+    body.play-page:has(.pl-head) main.wrap{ padding-top:12px; }
+    .pl-head{ display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:4px 12px; }
+    .pl-back, .pl-sound{ display:inline-flex; }
+    .pl-titles .eyebrow{ margin:0; font-size:11px; letter-spacing:1.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pl-head h1{ font-size:24px; margin:0; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pl-meta{ grid-column:1 / -1; margin:6px 0 0; }
     .pl-chip{ padding:3px 10px; font-size:12px; }
+    .pl-progress{ margin:8px auto 10px; }
+    .pl-zoom-tools{ margin-bottom:8px; }
+    .pl-zoom-tools .btn{ min-height:36px; padding:4px 14px; }
     .pl-toolbar{
       position:fixed; left:0; right:0; bottom:0; z-index:40; margin:0;
       display:flex; flex-wrap:nowrap; justify-content:space-between; align-items:center; gap:8px;

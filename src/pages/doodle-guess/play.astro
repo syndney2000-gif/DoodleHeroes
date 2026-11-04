@@ -6,6 +6,7 @@ import Base from '../../layouts/Base.astro';
   description="Today's Doodle Guess: a doodle draws itself line by line — name it in as few guesses as you can."
   ads={false}
   section="doodle-guess"
+  play
 >
   <p class="eyebrow" id="dg-eyebrow">Daily doodle</p>
   <h1>Doodle Guess</h1>
@@ -54,6 +55,8 @@ import Base from '../../layouts/Base.astro';
 </Base>
 
 <script>
+  import { iconSvg } from '../../lib/icons';
+  import { buzz, confetti, fanfare, pop, sparkle, wiggle } from '../../lib/juice';
   import { drawings } from '../../games/doodle-guess/drawings';
   import { categoryHint } from '../../games/doodle-guess/drawings';
   import {
@@ -111,7 +114,8 @@ import Base from '../../layouts/Base.astro';
       if (g) {
         const right = isRight(drawing, g);
         li.className = right ? 'right' : 'wrong';
-        li.textContent = `${right ? '✅' : '✏️'} ${g}`;
+        li.innerHTML = iconSvg(right ? 'check' : 'x', 18);
+        li.append(` ${g}`);
       } else li.textContent = ' ';
       list.append(li);
     }
@@ -173,8 +177,8 @@ import Base from '../../layouts/Base.astro';
     const word = input.value;
     const status = $('dg-status');
     if (!word.trim()) return;
-    if (!isKnownWord(word)) { status.textContent = `“${word.trim()}” isn’t in the word list — try another word for it.`; return; }
-    if (!guess(round, word)) { status.textContent = 'You’ve already tried that one.'; return; }
+    if (!isKnownWord(word)) { status.textContent = `“${word.trim()}” isn’t in the word list — try another word for it.`; wiggle(input); playSound('invalid'); return; }
+    if (!guess(round, word)) { status.textContent = 'You’ve already tried that one.'; wiggle(input); return; }
     playSound(round.solved ? 'solved' : over(round) ? 'invalid' : 'draw');
     input.value = '';
     if (!practice) {
@@ -183,6 +187,12 @@ import Base from '../../layouts/Base.astro';
     }
     status.textContent = round.solved ? 'Yes! That’s it.' : over(round) ? 'Out of guesses.' : 'Not quite — here’s a bit more of the drawing.';
     render();
+    const chip = $('dg-guesses').children[round.guesses.length - 1];
+    if (round.solved) {
+      fanfare(); buzz([18, 60, 18, 60, 40]);
+      if (chip) { pop(chip, 1.2); sparkle(chip, 14); }
+      window.setTimeout(() => confetti(), 300);
+    } else if (chip) { wiggle(chip); buzz(20); }
   });
 
   $('dg-share').addEventListener('click', async () => {
@@ -218,6 +228,12 @@ import Base from '../../layouts/Base.astro';
   .dg-guesses li.right{ border-style:solid; border-color:var(--green); background:#E6F4E9; }
   .dg-hint{ text-align:center; font-family:var(--hand); font-size:21px; background:var(--highlight); max-width:420px; margin:0 auto 8px; border-radius:var(--wobble-soft); }
   .dg-form{ display:flex; gap:8px; max-width:420px; margin:0 auto; }
+  .dg-guesses li svg{ vertical-align:-3px; }
+  /* Phones: the guess box stays in thumb reach above the keyboard. */
+  @media (max-width:760px){
+    .dg-form{ position:sticky; bottom:0; z-index:20; max-width:none; margin:0 -22px; padding:10px 16px max(10px, env(safe-area-inset-bottom));
+      background:color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter:blur(8px); border-top:2px solid var(--rule); }
+  }
   .dg-form input{
     flex:1; min-width:0; font:inherit; font-size:18px; padding:8px 12px; min-height:48px;
     border:2px solid var(--ink); border-radius:var(--wobble-soft); background:var(--paper); color:var(--ink);

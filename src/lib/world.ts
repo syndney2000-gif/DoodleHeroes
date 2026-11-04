@@ -18,8 +18,9 @@ export interface Snapshot {
   merges: number;
   siegeRuns: number;
   siegeWins: number;
-  /** Doodle Guess days solved. */
+  /** Doodle Guess days solved, and their dates (YYYY-MM-DD). */
   guessSolved: number;
+  guessDates: string[];
 }
 
 export interface World {
@@ -75,24 +76,26 @@ export function worldFrom(s: Snapshot): World {
   };
 }
 
-/** Days of Doodle Guess solved, from the per-day guess lists. */
-export function guessDaysSolved(): number {
+/** Dates (YYYY-MM-DD) on which the Doodle Guess drawing was guessed. */
+export function guessDatesSolved(): string[] {
   return keys().filter((k) => k.startsWith('doodle-guess:day:')).filter((k) => {
     const guesses = load<string[]>(k);
     const drawing = dailyDrawing(k.slice('doodle-guess:day:'.length));
     return Array.isArray(guesses) && guesses.some((g) => isRight(drawing, g));
-  }).length;
+  }).map((k) => k.slice('doodle-guess:day:'.length));
 }
 
 export function readSnapshot(): Snapshot {
   const merge = load<MergeState>('margin-merge:state');
   const siege = loadProfile();
+  const guessDates = guessDatesSolved();
   return {
     results: results(),
     mergeRestored: Math.max(0, Math.min(12, Number(merge?.studio?.restored) || 0)),
     merges: Number(merge?.merges) || 0,
     siegeRuns: Number(siege.runs) || 0,
     siegeWins: Number(siege.wins) || 0,
-    guessSolved: guessDaysSolved(),
+    guessSolved: guessDates.length,
+    guessDates,
   };
 }

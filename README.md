@@ -88,6 +88,24 @@ Shared pieces:
 for bridges and wiring a brute-force search proves each catalogue puzzle has
 exactly one solution. Run it after changing any puzzle.
 
+## Game feel, the island and progression
+
+- `src/lib/juice.ts`: sparkles, confetti, chimes and vibration. Boards call
+  `onProgress` (via `lib/play-ui.ts`) as lines, islands or cottages are
+  finished, and `onSolved({ fresh: true })` for a new solve.
+- `src/components/IslandWorld.astro` + `src/lib/world.ts`: the home-page
+  island. Landmarks are worked out from saved progress in every game;
+  nothing extra is stored. The sky follows the local clock.
+- `src/lib/pip.ts`, `src/components/Pip.astro`: Pip the Pencil's lines and
+  art. `src/lib/tours.ts`: Pip's how-to-play steps for each puzzle.
+- `src/lib/prefs.ts`: play style (Sprout / Explorer / Master), text size and
+  Clearer patterns, mirrored onto `<html>` data attributes. `Base.astro`
+  applies them, and the Night theme, before first paint.
+- `src/lib/lantern.ts`: lantern light, earned from saved progress and spent
+  on island decorations (`dh:lantern:owned`), plus the daily mix.
+- `src/lib/events.ts`: the weekly island event, chosen from the date.
+- Streaks forgive one missed day a week (`streakDays` in `achievements.ts`).
+
 ## Advertising rules
 
 - `Base.astro` loads AdSense only when `ads` is true (the default).

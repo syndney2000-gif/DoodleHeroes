@@ -38,6 +38,12 @@ const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(2)}%`;
       <path class="iw-cloud second" d="M420 52c-9-3-7-15 3-15 1-12 20-13 23-2 13-3 17 16 3 17Z" />
     </g>
 
+    <g class="iw-decor" data-decor="rainbow" fill="none" stroke-width="9" stroke-linecap="round" opacity=".85">
+      <path d="M40 262A170 170 0 0 1 380 262" stroke="#E98A6A" /><path d="M49 262A161 161 0 0 1 371 262" stroke="#F2C14E" />
+      <path d="M58 262A152 152 0 0 1 362 262" stroke="#7FB685" /><path d="M67 262A143 143 0 0 1 353 262" stroke="#6CB4C4" />
+      <path d="M76 262A134 134 0 0 1 344 262" stroke="#B79CD9" />
+    </g>
+
     <g class="iw-waves" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="3" stroke-linecap="round" fill="none">
       <path d="M30 230q12-6 24 0M720 300q12-6 24 0M420 440q12-6 24 0M600 420q12-6 24 0M40 330q12-6 24 0" />
     </g>
@@ -115,6 +121,28 @@ const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(2)}%`;
         <path data-on="tent" d="M650 344l18-28 18 28Z" fill="#F2C14E" />
       </g>
 
+      <!-- Decorations bought with lantern light -->
+      <g class="iw-decor" data-decor="flowers" stroke="#304C3B" stroke-width="1.2">
+        <circle cx="244" cy="338" r="4" fill="#F6A5C0" /><circle cx="252" cy="341" r="4" fill="#F2C14E" /><circle cx="296" cy="338" r="4" fill="#B79CD9" />
+        <circle cx="288" cy="341" r="4" fill="#F6A5C0" /><circle cx="342" cy="327" r="4" fill="#F2C14E" /><circle cx="350" cy="330" r="4" fill="#E98A6A" />
+        <circle cx="392" cy="327" r="4" fill="#F6A5C0" /><circle cx="496" cy="338" r="4" fill="#B79CD9" /><circle cx="504" cy="341" r="4" fill="#F2C14E" />
+        <circle cx="544" cy="338" r="4" fill="#E98A6A" /><circle cx="536" cy="341" r="4" fill="#F6A5C0" />
+      </g>
+      <g class="iw-decor" data-decor="picnic" stroke="#304C3B" stroke-width="2" stroke-linejoin="round">
+        <path d="M120 318l40-7 7 18-40 7Z" fill="#F6A5C0" /><path d="M140 314l7 18M123 327l40-7" stroke="#FFFEF8" stroke-width="3" />
+        <rect x="146" y="306" width="14" height="10" rx="2" fill="#C98A4A" /><path d="M148 306q5-7 10 0" fill="none" />
+      </g>
+      <g class="iw-decor" data-decor="lights">
+        <path d="M368 182Q404 208 440 198" fill="none" stroke="#304C3B" stroke-width="1.5" />
+        <g class="iw-bulbs" stroke="#304C3B" stroke-width="1"><circle cx="380" cy="192" r="4" fill="#F6A5C0" /><circle cx="394" cy="198" r="4" fill="#F2C14E" />
+          <circle cx="408" cy="200" r="4" fill="#7FB685" /><circle cx="422" cy="200" r="4" fill="#6CB4C4" /><circle cx="434" cy="199" r="4" fill="#E98A6A" /></g>
+      </g>
+      <g class="iw-decor" data-decor="windmill" stroke="#304C3B" stroke-width="2.5" stroke-linejoin="round">
+        <path d="M394 186 399 146h12l5 40Z" fill="#F6E7D0" />
+        <g class="iw-blades"><path d="M405 146 405 116M405 146 435 146M405 146 405 176M405 146 375 146" stroke-width="5" stroke="#B98A5A" /></g>
+        <circle cx="405" cy="146" r="4" fill="#304C3B" />
+      </g>
+
       <!-- The lighthouse -->
       <g stroke="#304C3B" stroke-width="3" stroke-linejoin="round">
         <path d="M630 182 638 92H666L674 182Z" fill="#FFF7DC" />
@@ -138,6 +166,39 @@ const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(2)}%`;
       </g>
     </g>
 
+    <!-- Sky decorations and this week's event -->
+    <g class="iw-decor iw-kite" data-decor="kite" stroke="#304C3B" stroke-width="2">
+      <path d="M560 70Q540 140 500 186" fill="none" stroke-width="1.2" />
+      <path d="M560 26l16 22-16 22-16-22Z" fill="#E98A6A" /><path d="M560 26v44M544 48h32" stroke-width="1.5" />
+      <path d="M552 92l6 4-6 4M544 114l6 4-6 4" fill="#F2C14E" stroke-width="1.2" />
+    </g>
+    <g class="iw-decor iw-balloon" data-decor="balloon" stroke="#304C3B" stroke-width="2.5" stroke-linejoin="round">
+      <path d="M250 40a26 26 0 0 0-26 26c0 16 16 28 20 32h12c4-4 20-16 20-32a26 26 0 0 0-26-26Z" fill="#F2C14E" />
+      <path d="M250 40c-8 8-10 40-6 58M250 40c8 8 10 40 6 58" fill="none" stroke-width="2" /><path d="M224 66h52" stroke="#E98A6A" stroke-width="4" />
+      <rect x="243" y="104" width="14" height="10" rx="2" fill="#B98A5A" /><path d="M244 98v6m12-6v6" stroke-width="1.5" />
+    </g>
+    <g class="iw-decor iw-whale" data-decor="whale" stroke="#304C3B" stroke-width="2.5" stroke-linejoin="round">
+      <path d="M700 462c0-14 18-20 36-20 20 0 32 10 34 20l10-10v22l-10-6c-6 8-20 12-36 12-20 0-34-6-34-18Z" fill="#7FA9C9" />
+      <circle cx="716" cy="456" r="2.2" fill="#304C3B" stroke="none" />
+      <path class="iw-spout" d="M732 440c-2-8-8-10-12-8m12 8c2-8 8-10 12-8m-12 8v-10" fill="none" stroke="#FFFFFF" stroke-width="2.5" />
+    </g>
+    <g class="iw-event" data-event="bloom" fill="#F6A5C0" stroke="#D97A9A" stroke-width="1">
+      <ellipse class="iw-petal" cx="80" cy="-10" rx="5" ry="3" /><ellipse class="iw-petal p2" cx="240" cy="-10" rx="5" ry="3" />
+      <ellipse class="iw-petal p3" cx="400" cy="-10" rx="5" ry="3" /><ellipse class="iw-petal p4" cx="560" cy="-10" rx="5" ry="3" />
+      <ellipse class="iw-petal p5" cx="160" cy="-10" rx="5" ry="3" /><ellipse class="iw-petal p6" cx="480" cy="-10" rx="5" ry="3" />
+    </g>
+    <g class="iw-event" data-event="kites" stroke="#304C3B" stroke-width="2">
+      <g class="iw-kite"><path d="M120 120Q130 170 150 230" fill="none" stroke-width="1.2" /><path d="M120 78l14 20-14 20-14-20Z" fill="#7FB685" /></g>
+      <g class="iw-kite b"><path d="M690 230Q680 260 660 290" fill="none" stroke-width="1.2" /><path d="M700 190l12 18-12 18-12-18Z" fill="#B79CD9" /></g>
+    </g>
+    <g class="iw-event" data-event="starfall" stroke="#FFF6D6" stroke-width="3" stroke-linecap="round">
+      <path class="iw-shoot" d="M200 20l-40 24" /><path class="iw-shoot s2" d="M520 30l-40 24" /><path class="iw-shoot s3" d="M700 90l-40 24" />
+    </g>
+    <g class="iw-event" data-event="lanterns" stroke="#304C3B" stroke-width="1.5">
+      <rect class="iw-float" x="420" y="440" width="12" height="16" rx="3" fill="#F2A65A" /><rect class="iw-float f2" x="540" y="460" width="12" height="16" rx="3" fill="#F2C14E" />
+      <rect class="iw-float f3" x="640" y="440" width="12" height="16" rx="3" fill="#E98A6A" /><rect class="iw-float f4" x="380" y="470" width="12" height="16" rx="3" fill="#F2A65A" />
+    </g>
+
     <!-- Boats from Margin Merge's finished stories -->
     <g class="iw-boats" stroke="#304C3B" stroke-width="2.5" stroke-linejoin="round">
       <g class="iw-boat" data-on="boat-1"><path d="M440 420h44l-8 12h-28Z" fill="#D37B5C" /><path d="M462 420v-30l16 26Z" fill="#FFFEF8" /></g>
@@ -156,37 +217,48 @@ const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(2)}%`;
 
 <script>
   import { readSnapshot, worldFrom } from '../lib/world';
+  import { owned } from '../lib/lantern';
+  import { eventFor } from '../lib/events';
 
-  const hour = new Date().getHours();
-  const time = hour >= 6 && hour < 17 ? 'day' : hour >= 17 && hour < 20 ? 'dusk' : 'night';
-  const w = worldFrom(readSnapshot());
-  const on = new Set<string>();
-  if (w.easel) on.add('easel');
-  if (w.bunting) on.add('bunting');
-  if (w.lamp) on.add('lamp');
-  if (w.beam) on.add('beam');
-  if (w.smoke) on.add('smoke');
-  if (w.flag) on.add('flag');
-  if (w.tent) on.add('tent');
-  for (let k = 1; k <= w.bridges; k++) on.add(`bridge-${k}`);
-  for (let k = 1; k <= w.frames; k++) on.add(`frame-${k}`);
-  for (let k = 1; k <= w.boats; k++) on.add(`boat-${k}`);
-  for (let k = 1; k <= w.lanterns; k++) on.add(`lantern-${k}`);
-  // Two workshop windows light once it's in use; cottages follow the wiring.
-  const lit = new Set<number>(w.smoke ? [0, 1] : []);
-  for (let k = 0; k < w.litCottages; k++) lit.add(2 + k);
-  const progress: Record<string, string> = {
-    'island-sketch': `${w.sketches}/12 sketches`, 'isle-spans': `${w.spans}/12 maps`, 'lighthouse-wiring': `${w.wiring}/12 grids`,
-    'doodle-guess': w.frames ? `${w.frames}+ guessed` : 'Daily', 'margin-merge': w.boats ? `${w.boats} of 3 stories` : 'Stories', 'scribble-siege': w.flag ? 'Fort held' : 'Adventure',
-  };
-  for (const root of document.querySelectorAll<HTMLElement>('[data-island-world]')) {
-    root.dataset.time = time;
-    root.querySelectorAll<SVGElement>('[data-on]').forEach((el) => el.classList.toggle('on', on.has(el.dataset.on!)));
-    root.querySelectorAll<SVGElement>('[data-window]').forEach((el) => el.classList.toggle('lit', lit.has(Number(el.dataset.window))));
-    root.querySelectorAll<HTMLElement>('[data-place]').forEach((a) => {
-      a.querySelector('[data-place-progress]')!.textContent = progress[a.dataset.place!] ?? '';
-    });
+  /** Shows what's been built. Runs on load and after a purchase. */
+  function paint() {
+    const hour = new Date().getHours();
+    const time = hour >= 6 && hour < 17 ? 'day' : hour >= 17 && hour < 20 ? 'dusk' : 'night';
+    const w = worldFrom(readSnapshot());
+    const on = new Set<string>();
+    if (w.easel) on.add('easel');
+    if (w.bunting) on.add('bunting');
+    if (w.lamp) on.add('lamp');
+    if (w.beam) on.add('beam');
+    if (w.smoke) on.add('smoke');
+    if (w.flag) on.add('flag');
+    if (w.tent) on.add('tent');
+    for (let k = 1; k <= w.bridges; k++) on.add(`bridge-${k}`);
+    for (let k = 1; k <= w.frames; k++) on.add(`frame-${k}`);
+    for (let k = 1; k <= w.boats; k++) on.add(`boat-${k}`);
+    for (let k = 1; k <= w.lanterns; k++) on.add(`lantern-${k}`);
+    // Two workshop windows light once it's in use; cottages follow the wiring.
+    const lit = new Set<number>(w.smoke ? [0, 1] : []);
+    for (let k = 0; k < w.litCottages; k++) lit.add(2 + k);
+    const decor = new Set(owned());
+    const event = eventFor(new Date()).id;
+    const progress: Record<string, string> = {
+      'island-sketch': `${w.sketches}/12 sketches`, 'isle-spans': `${w.spans}/12 maps`, 'lighthouse-wiring': `${w.wiring}/12 grids`,
+      'doodle-guess': w.frames ? `${w.frames}+ guessed` : 'Daily', 'margin-merge': w.boats ? `${w.boats} of 3 stories` : 'Stories', 'scribble-siege': w.flag ? 'Fort held' : 'Adventure',
+    };
+    for (const root of document.querySelectorAll<HTMLElement>('[data-island-world]')) {
+      root.dataset.time = time;
+      root.querySelectorAll<SVGElement>('[data-on]').forEach((el) => el.classList.toggle('on', on.has(el.dataset.on!)));
+      root.querySelectorAll<SVGElement>('[data-decor]').forEach((el) => el.classList.toggle('on', decor.has(el.dataset.decor!)));
+      root.querySelectorAll<SVGElement>('[data-event]').forEach((el) => el.classList.toggle('on', el.dataset.event === event));
+      root.querySelectorAll<SVGElement>('[data-window]').forEach((el) => el.classList.toggle('lit', lit.has(Number(el.dataset.window))));
+      root.querySelectorAll<HTMLElement>('[data-place]').forEach((a) => {
+        a.querySelector('[data-place-progress]')!.textContent = progress[a.dataset.place!] ?? '';
+      });
+    }
   }
+  paint();
+  window.addEventListener('dh:island-change', paint);
 </script>
 
 <style>
@@ -202,7 +274,32 @@ const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(2)}%`;
   .iw-lights:has(.iw-lamp-glow.on) .iw-lamp { fill:#FFD45C; }
   .iw-lanterns path { stroke:#304C3B; stroke-width:2.5; }
   .iw-lanterns circle { fill:#FFD45C; stroke:#304C3B; stroke-width:2; }
-  [data-on]:not(.on) { display:none; }
+  [data-on]:not(.on), [data-decor]:not(.on), [data-event]:not(.on) { display:none; }
+  .iw-blades { transform-origin:405px 146px; animation:iw-spin 6s linear infinite; }
+  .iw-bulbs circle { animation:iw-twinkle 1.6s ease-in-out infinite; }
+  .iw-bulbs circle:nth-child(even) { animation-delay:-.8s; }
+  .iw-kite { animation:iw-kite 4s ease-in-out infinite; transform-box:fill-box; transform-origin:bottom; }
+  .iw-kite.b { animation-delay:-2s; }
+  .iw-balloon { animation:iw-balloon 14s ease-in-out infinite alternate; }
+  .iw-whale { animation:iw-bob 4s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
+  .iw-spout { animation:iw-spout 3s ease-out infinite; transform-box:fill-box; transform-origin:bottom; }
+  .iw-petal { animation:iw-petal 9s linear infinite; }
+  .iw-petal.p2 { animation-delay:-2s; } .iw-petal.p3 { animation-delay:-4s; } .iw-petal.p4 { animation-delay:-6s; } .iw-petal.p5 { animation-delay:-7.5s; } .iw-petal.p6 { animation-delay:-3s; }
+  .iw-shoot { opacity:0; animation:iw-shoot 6s ease-in infinite; }
+  .iw-shoot.s2 { animation-delay:-2s; } .iw-shoot.s3 { animation-delay:-4s; }
+  .iw-float { animation:iw-float 10s linear infinite; }
+  .iw-float.f2 { animation-delay:-2.5s; } .iw-float.f3 { animation-delay:-5s; } .iw-float.f4 { animation-delay:-7.5s; }
+  .iw-decor.just-built { animation:iw-built .9s var(--ease-bounce); transform-box:fill-box; transform-origin:center; }
+  @keyframes iw-spin { to { transform:rotate(360deg); } }
+  @keyframes iw-kite { 50% { transform:rotate(6deg) translateX(6px); } }
+  @keyframes iw-balloon { to { transform:translate(90px,14px); } }
+  @keyframes iw-spout { 0%,40% { opacity:0; transform:scaleY(.2); } 60% { opacity:1; transform:scaleY(1); } 100% { opacity:0; } }
+  @keyframes iw-petal { from { transform:translate(0,0) rotate(0); } to { transform:translate(140px,500px) rotate(720deg); } }
+  @keyframes iw-shoot { 0%,85% { opacity:0; transform:translate(0,0); } 88% { opacity:1; } 100% { opacity:0; transform:translate(-120px,72px); } }
+  @keyframes iw-float { from { transform:translateY(0); opacity:0; } 10% { opacity:1; } to { transform:translateY(-420px); opacity:0; } }
+  @keyframes iw-built { 0% { transform:scale(.2); opacity:0; } 60% { transform:scale(1.15); opacity:1; } }
+  .iw[data-time=night] [data-decor=rainbow] { opacity:.3; }
+  .iw[data-time=night] .iw-float { filter:drop-shadow(0 0 6px #F2C14E); }
 
   /* Ambient motion. */
   .iw-cloud { animation:iw-drift 18s ease-in-out infinite alternate; }

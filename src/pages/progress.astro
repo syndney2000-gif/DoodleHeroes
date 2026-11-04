@@ -17,7 +17,7 @@ import Icon from '../components/Icon.astro';
 
   <StreakStrip />
 
-  <h2>Little milestones</h2>
+  <div class="album-head"><h2>Sticker album</h2><span class="album-count" data-album-count></span></div>
   <ul class="stickers">
     {stickers.map((x) => (
       <li data-sticker={x.id}>
@@ -49,6 +49,8 @@ import Icon from '../components/Icon.astro';
   import { studioChapters, studioStatus } from '../games/merge/studio';
   import { dailyDrawing, isRight, MAX_GUESSES } from '../games/doodle-guess/game';
   import { playSound } from '../lib/audio';
+  import { decorations, lightBalance, lightEarned, owned } from '../lib/lantern';
+  import { readSnapshot } from '../lib/world';
 
   const games = [
     { key: 'island-sketch', name: 'Island Sketch', noun: 'sketches', puzzles: sketches },
@@ -86,6 +88,7 @@ import Icon from '../components/Icon.astro';
     });
     record('Doodle Guess', String(guessDays.filter(day => day.solved).length), `${guessDays.length} daily doodles played · ${guessDays.filter(day => day.solved).length} discovered`, '/doodle-guess/play');
     const siege = loadProfile();
+    record('Lantern light', String(lightBalance(readSnapshot())), `${lightEarned(readSnapshot())} earned in all · ${owned().length} of ${decorations.length} decorations on the island`, '/');
     record('Scribble Siege', String(siege.wins), `${siege.runs} adventures · ${siege.totalKills.toLocaleString()} scribbles defeated`, '/scribble-siege/play');
     root.append(cards);
     const longest = Math.max(0, ...Object.values(siege.bestTime).map((t) => t ?? 0));
@@ -123,15 +126,20 @@ import Icon from '../components/Icon.astro';
 
   function renderStickers() {
     const earned = earnedIds(results());
+    // Stickers earned since the album was last opened peel on with a flourish.
+    const seen = new Set(load<string[]>('stickers:seen') ?? []);
+    document.querySelector('[data-album-count]')!.textContent = `${earned.size} of ${document.querySelectorAll('[data-sticker]').length} collected`;
     for (const li of document.querySelectorAll<HTMLElement>('[data-sticker]')) {
       const on = earned.has(li.dataset.sticker!);
       li.classList.toggle('earned', on);
+      li.classList.toggle('new', on && !seen.has(li.dataset.sticker!));
       li.setAttribute('aria-label', `${li.querySelector('.name')!.textContent}: ${on ? 'earned' : 'not yet earned'}`);
     }
   }
 
   render();
   renderStickers();
+  save('stickers:seen', [...earnedIds(results())]);
   document.getElementById('reset')!.addEventListener('click', () => {
     if (!confirm('Reset all saved progress on this device?')) return;
     const retained = keys().filter(k => k.startsWith('settings:')).map(k => [k, load<unknown>(k)] as const);
@@ -158,4 +166,10 @@ import Icon from '../components/Icon.astro';
   .stickers li.earned:nth-child(even){  }
   .stickers li.earned .badge{ filter:none; opacity:1; }
   .stickers li.earned .name{ color:var(--ink); }
+  .stickers li.earned:nth-child(3n+1){ transform:rotate(-1.5deg); } .stickers li.earned:nth-child(3n+2){ transform:rotate(1deg); }
+  .stickers li.new{ animation:album-peel .8s var(--ease-bounce) both; position:relative; }
+  .stickers li.new::after{ content:'New!'; position:absolute; top:-10px; right:-6px; padding:2px 8px; border-radius:999px; background:var(--red); color:#fff; font:700 12px var(--hand); transform:rotate(8deg); }
+  @keyframes album-peel{ from{ transform:rotate(-14deg) scale(.6); opacity:0; } }
+  .album-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  .album-count{ font-weight:900; color:var(--ink-soft); }
 </style>

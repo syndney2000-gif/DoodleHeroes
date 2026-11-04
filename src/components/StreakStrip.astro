@@ -5,12 +5,14 @@
 <div class="streak card" data-streak>
   <p class="streak-title">Your week <span class="streak-count" data-streak-count></span></p>
   <ol class="streak-days" data-streak-days aria-label="Daily puzzles solved over the last seven days"></ol>
+  <p class="streak-note">Miss a day? Once a week, a lantern keeps your streak alight.</p>
   <p class="streak-links">Today’s dailies: <a href="/island-sketch/play?p=daily">sketch</a> · <a href="/isle-spans/play?p=daily">map</a> · <a href="/lighthouse-wiring/play?p=daily">grid</a></p>
 </div>
 
 <script>
   import { results } from '../lib/storage';
   import { lastWeek, streak } from '../lib/achievements';
+  import { iconSvg } from '../lib/icons';
   const r = results();
   const s = streak(r);
   for (const strip of document.querySelectorAll<HTMLElement>('[data-streak]')) {
@@ -19,10 +21,10 @@
     list.textContent = '';
     for (const day of lastWeek(r)) {
       const li = document.createElement('li');
-      li.className = day.done ? 'done' : '';
-      li.innerHTML = `<span class="box" aria-hidden="true">${day.done ? '✓' : ''}</span><span class="day"></span>`;
+      li.className = day.done ? 'done' : day.frozen ? 'frozen' : '';
+      li.innerHTML = `<span class="box" aria-hidden="true">${day.done ? '✓' : day.frozen ? iconSvg('lighthouse', 18) : ''}</span><span class="day"></span>`;
       li.querySelector('.day')!.textContent = day.label;
-      li.setAttribute('aria-label', `${day.label}: ${day.done ? 'solved' : 'not solved'}`);
+      li.setAttribute('aria-label', `${day.label}: ${day.done ? 'solved' : day.frozen ? 'kept by your weekly lantern freeze' : 'not solved'}`);
       list.append(li);
     }
   }
@@ -40,6 +42,8 @@
     font-family:var(--hand); font-size:24px; color:var(--green); background:var(--paper);
   }
   .streak-days :global(li.done .box){ background:#E6F4E9; }
+  .streak-days :global(li.frozen .box){ background:#FFF3B8; border-style:dashed; color:#946B25; }
   .streak-days :global(.day){ font-size:13px; color:var(--ink-soft); }
+  .streak-note{ font-size:13px; color:var(--ink-soft); margin:0 0 4px; }
   .streak-links{ font-size:15px; margin:0; color:var(--ink-soft); }
 </style>

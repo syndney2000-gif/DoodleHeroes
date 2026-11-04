@@ -6,13 +6,12 @@ import Icon from '../components/Icon.astro';
 import GameCard from '../components/GameCard.astro';
 import StreakStrip from '../components/StreakStrip.astro';
 import { games } from '../lib/games';
-const dailyGames = games.filter(g => g.daily !== null && g.id !== 'scribble-siege');
 ---
 <Base title="Doodle Heroes" description="Six single-player worlds of cozy puzzles, little adventures and wonderful discoveries. Free to play, with progress saved in your browser." section="home">
   <section class="home-world">
     <div class="hw-intro">
       <div>
-        <p class="eyebrow hero-tag">✦ The Lantern Isles</p>
+        <p class="eyebrow hero-tag" data-event-tag>✦ The Lantern Isles</p>
         <h1>A little wonder.<br />One tile at a time.</h1>
         <p class="hw-lede">Every puzzle you solve brings a little more light to the island. Tap a place on the map to play.</p>
         <a class="btn" href="/island-sketch/play?p=sun" data-continue>Start a little adventure →</a>
@@ -33,11 +32,32 @@ const dailyGames = games.filter(g => g.daily !== null && g.id !== 'scribble-sieg
       </div>
     </section>
     <IslandWorld />
+    <p class="event-note" data-event-note></p>
   </section>
+
+  <div class="home-columns">
+    <section class="card mix" aria-labelledby="mix-title">
+      <h2 id="mix-title">Today on the island</h2>
+      <p class="muted">Do all three today for a bonus of 20 lantern light.</p>
+      <ol class="mix-list">
+        <li data-mix="puzzle"><span class="mix-box" aria-hidden="true"></span><span><b>Solve a daily puzzle</b><small><a href="/island-sketch/play?p=daily">Sketch</a> · <a href="/isle-spans/play?p=daily">Map</a> · <a href="/lighthouse-wiring/play?p=daily">Grid</a></small></span></li>
+        <li data-mix="guess"><span class="mix-box" aria-hidden="true"></span><span><b>Guess today’s doodle</b><small><a href="/doodle-guess/play">Doodle Guess</a></small></span></li>
+        <li data-mix="siege"><span class="mix-box" aria-hidden="true"></span><span><b>Survive a daily siege</b><small><a href="/scribble-siege/play">Scribble Siege → Daily siege</a></small></span></li>
+      </ol>
+    </section>
+
+    <section class="card shop" aria-labelledby="shop-title">
+      <div class="shop-head">
+        <h2 id="shop-title">Decorate your island</h2>
+        <span class="light-pill" title="Lantern light"><Icon name="lantern" size={18} /><b data-light>0</b><span class="sr-only"> lantern light</span></span>
+      </div>
+      <p class="muted">Earn lantern light in every game — stars, stories, sieges and guesses — and spend it here.</p>
+      <ul class="shop-grid" data-shop></ul>
+      <p class="shop-status" data-shop-status role="status" aria-live="polite"></p>
+    </section>
+  </div>
   <div class="section-heading"><h2>Your little worlds</h2><span class="eyebrow">Or pick from the list</span></div>
   <div class="world-grid">{games.map(game => <GameCard game={game} />)}</div>
-  <div class="section-heading"><h2>A fresh little challenge</h2><span class="eyebrow">Made for today</span></div>
-  <div class="daily-grid">{dailyGames.map(game => <a class="daily-card" href={`/${game.id}/play${game.daily}`}><span class={`world-icon ${game.color}`}><Icon name={game.symbol} size={22} /></span><b>{game.name}</b><small>Today’s daily <span aria-hidden="true">↗</span></small></a>)}</div>
   <StreakStrip />
   <section class="card expedition-link"><div><p class="eyebrow">A story to wander through</p><h2>A little more light.</h2><p>Sketch the map, rebuild the bridges, and bring the Lantern Isles back to life.</p></div><a class="btn secondary" href="/expedition">Explore the island →</a></section>
   <p class="muted" style="font-size:13px">Free to play. No account needed. Progress stays in this browser. New to a puzzle? Our <a href="/guides">illustrated guides</a> will help you find your way.</p>
@@ -53,6 +73,61 @@ const dailyGames = games.filter(g => g.daily !== null && g.id !== 'scribble-sieg
   import { hasChosenStyle, setPlayStyle, type PlayStyle } from '../lib/prefs';
   import { playSound } from '../lib/audio';
   import { confetti } from '../lib/juice';
+  import { reducedMotion } from '../lib/site-shell';
+
+  import { buy, dailyMix, decorations, lightBalance, owned } from '../lib/lantern';
+  import { eventFor } from '../lib/events';
+  import { iconSvg } from '../lib/icons';
+  import { buzz, fanfare, sparkle } from '../lib/juice';
+
+  /* This week's event, today's mix and the decoration shop. */
+  const event = eventFor(new Date());
+  document.querySelector('[data-event-tag]')!.textContent = `✦ This week: ${event.name}`;
+  document.querySelector('[data-event-note]')!.textContent = `${event.name}: ${event.blurb} A new event arrives every Monday.`;
+  const today = localDateKey();
+  const mix = dailyMix(readSnapshot(), today);
+  for (const li of document.querySelectorAll<HTMLElement>('[data-mix]')) {
+    const ok = mix[li.dataset.mix as keyof typeof mix];
+    li.classList.toggle('done', ok);
+    li.querySelector('.mix-box')!.innerHTML = ok ? iconSvg('check', 18) : '';
+  }
+  const shop = document.querySelector<HTMLElement>('[data-shop]')!;
+  const shopStatus = document.querySelector<HTMLElement>('[data-shop-status]')!;
+  function paintShop() {
+    const snap = readSnapshot();
+    const have = owned();
+    const balance = lightBalance(snap, have);
+    document.querySelector('[data-light]')!.textContent = String(balance);
+    shop.replaceChildren(...decorations.map((d) => {
+      const li = document.createElement('li');
+      const mine = have.includes(d.id);
+      li.className = `shop-item${mine ? ' owned' : ''}`;
+      li.innerHTML = `<span class="badge gold">${iconSvg(d.icon, 22)}</span><span class="shop-text"><b></b><small></small></span><button class="btn secondary" type="button"></button>`;
+      li.querySelector('b')!.textContent = d.name;
+      li.querySelector('small')!.textContent = d.blurb;
+      const button = li.querySelector('button')!;
+      button.textContent = mine ? 'On the island' : `${d.price} light`;
+      button.disabled = mine || balance < d.price;
+      button.setAttribute('aria-label', mine ? `${d.name}: on the island` : `Buy ${d.name} for ${d.price} lantern light`);
+      button.addEventListener('click', () => {
+        if (!buy(readSnapshot(), d.id)) return;
+        window.dispatchEvent(new Event('dh:island-change'));
+        paintShop();
+        shopStatus.textContent = `${d.name} added to the island!`;
+        fanfare(); buzz([15, 40, 15]);
+        const built = document.querySelector<SVGElement>(`[data-decor="${d.id}"]`);
+        const map = document.querySelector('[data-island-world]')!;
+        map.scrollIntoView({ behavior: reducedMotion() ? 'instant' : 'smooth', block: 'center' });
+        window.setTimeout(() => {
+          if (!built) return;
+          built.classList.add('just-built');
+          sparkle(built, 18);
+        }, 500);
+      });
+      return li;
+    }));
+  }
+  paintShop();
 
   const pick = document.querySelector<HTMLElement>('[data-style-pick]')!;
   pick.hidden = hasChosenStyle();
@@ -97,6 +172,27 @@ const dailyGames = games.filter(g => g.daily !== null && g.id !== 'scribble-sieg
   .pip-bubble p { margin:0; font-size:15px; line-height:1.5; }
   .pip-cta { display:inline-block; margin-top:8px; font:600 15px var(--hand); }
   @keyframes pip-pop { from { opacity:0; transform:scale(.8) translateY(10px); } }
+  .event-note { margin:10px 4px 0; font-size:13px; color:var(--ink-soft); text-align:center; }
+  .home-columns { display:grid; grid-template-columns:1fr 1.4fr; gap:20px; margin-top:26px; align-items:start; }
+  .home-columns .card { margin:0; }
+  .home-columns h2 { margin:0 0 4px; }
+  .mix-list { list-style:none; padding:0; margin:14px 0 0; display:grid; gap:10px; }
+  .mix-list li { display:flex; gap:12px; align-items:center; margin:0; padding:10px 12px; border-radius:16px; background:var(--soft); }
+  .mix-list li span:last-child { display:flex; flex-direction:column; line-height:1.35; }
+  .mix-list small { font-size:13px; }
+  .mix-box { display:grid; place-items:center; flex:none; width:30px; height:30px; border:2.5px solid var(--ink); border-radius:10px; background:var(--paper); color:var(--green); }
+  .mix-list li.done { background:#E6F4E9; }
+  .mix-list li.done b { text-decoration:line-through; text-decoration-color:var(--gold); text-decoration-thickness:2px; }
+  .shop-head { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .light-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; background:#FFF3B8; border:2px solid var(--gold); color:#6B4E14; font-weight:900; }
+  .shop-grid { list-style:none; padding:0; margin:14px 0 0; display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .shop-grid :global(.shop-item) { display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto; gap:4px 10px; align-items:center; margin:0; padding:12px; border:2px solid var(--rule); border-radius:18px; background:var(--paper); }
+  .shop-grid :global(.shop-item .badge) { grid-row:span 2; }
+  .shop-grid :global(.shop-text) { display:flex; flex-direction:column; line-height:1.3; }
+  .shop-grid :global(.shop-text small) { font-size:12px; color:var(--ink-soft); }
+  .shop-grid :global(.shop-item .btn) { grid-column:2; justify-self:start; min-height:36px; padding:4px 12px; font-size:13px; }
+  .shop-grid :global(.shop-item.owned) { background:#F3F7EC; border-style:dashed; }
+  .shop-status { min-height:1.5em; margin:10px 0 0; font-weight:800; }
   .style-pick { margin:0 0 20px; text-align:center; }
   .style-pick h2 { margin:0 0 4px; }
   .style-options { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px; }
@@ -105,7 +201,9 @@ const dailyGames = games.filter(g => g.daily !== null && g.id !== 'scribble-sieg
   .style-option:hover { transform:translateY(-4px) rotate(-1deg); }
   .style-option b { font:600 20px var(--hand); }
   .style-option small { font-size:13px; line-height:1.4; }
+  @media (max-width:900px) { .home-columns { grid-template-columns:1fr; } }
   @media (max-width:760px) {
+    .shop-grid { grid-template-columns:1fr; }
     .style-options { grid-template-columns:1fr; }
     .style-option { display:grid; grid-template-columns:auto 1fr; column-gap:14px; row-gap:0; align-items:center; text-align:left; }
     .style-option .badge { grid-row:span 2; }

@@ -35,6 +35,9 @@ export const stickers: Sticker[] = [
   { id: 'sketchbook', icon: 'book', tint: 'rose', name: 'Full Sketchbook', how: 'Solve all 12 Island Sketch puzzles.', earned: (r) => allOf(r, 'island-sketch', sketches) },
   { id: 'master-builder', icon: 'hammer', tint: 'sage', name: 'Master Builder', how: 'Solve all 12 Isle Spans maps.', earned: (r) => allOf(r, 'isle-spans', maps) },
   { id: 'electrician', icon: 'plug', tint: 'gold', name: 'Island Electrician', how: 'Solve all 12 Lighthouse Wiring grids.', earned: (r) => allOf(r, 'lighthouse-wiring', grids) },
+  { id: 'all-rounder', icon: 'spark', tint: 'lavender', name: 'All-Rounder', how: 'Solve one puzzle in each of the three puzzle games.', earned: (r) => ['island-sketch', 'isle-spans', 'lighthouse-wiring'].every((g) => solvedIn(r, g).length > 0) },
+  { id: 'star-collector', icon: 'star', tint: 'peach', name: 'Star Collector', how: 'Earn three stars on ten different puzzles.', earned: (r) => Object.entries(r).filter(([k, x]) => x.stars === 3 && !k.startsWith('scribble-siege/')).length >= 10 },
+  { id: 'fort-defender', icon: 'swords', tint: 'peach', name: 'Fort Defender', how: 'Survive a whole Daily siege in Scribble Siege.', earned: (r) => Object.entries(r).some(([k, x]) => k.startsWith('scribble-siege/daily-') && x.stars === 3) },
   { id: 'keeper', icon: 'lighthouse', tint: 'peach', name: 'Lighthouse Keeper', how: 'Finish the whole Lantern Isles expedition.', earned: (r) => expedition.every((_, k) => chapterDone(r, k)) },
 ];
 
@@ -53,23 +56,42 @@ function dayKey(d: Date): string {
 }
 
 /** Consecutive days with a daily solved, ending today — or yesterday, so a
-    streak isn't shown as broken before today's puzzle is done. */
-export function streak(r: Results, today = new Date()): number {
+    streak isn't shown as broken before today's puzzle is done. One missed
+    day a week is forgiven (a "lantern freeze"): it keeps the streak alive
+    but doesn't add to it. */
+export function streakDays(r: Results, today = new Date()): { count: number; frozen: Set<string> } {
   const dates = dailyDates(r);
+  const frozen = new Set<string>();
   const d = new Date(today);
   if (!dates.has(dayKey(d))) d.setDate(d.getDate() - 1);
   let n = 0;
-  while (dates.has(dayKey(d))) { n++; d.setDate(d.getDate() - 1); }
-  return n;
+  let lastFreeze = -Infinity;
+  for (let k = 0; ; k++) {
+    if (dates.has(dayKey(d))) n++;
+    else {
+      const before = new Date(d);
+      before.setDate(before.getDate() - 1);
+      if (n > 0 && dates.has(dayKey(before)) && k - lastFreeze >= 7) { frozen.add(dayKey(d)); lastFreeze = k; }
+      else break;
+    }
+    d.setDate(d.getDate() - 1);
+  }
+  return { count: n, frozen };
 }
 
-/** The last seven days, oldest first, with whether a daily was solved. */
-export function lastWeek(r: Results, today = new Date()): { key: string; label: string; done: boolean }[] {
+export function streak(r: Results, today = new Date()): number {
+  return streakDays(r, today).count;
+}
+
+/** The last seven days, oldest first, with whether a daily was solved or
+    the day was covered by a freeze. */
+export function lastWeek(r: Results, today = new Date()): { key: string; label: string; done: boolean; frozen: boolean }[] {
   const dates = dailyDates(r);
+  const { frozen } = streakDays(r, today);
   return Array.from({ length: 7 }, (_, k) => {
     const d = new Date(today);
     d.setDate(d.getDate() - (6 - k));
-    return { key: dayKey(d), label: d.toLocaleDateString(undefined, { weekday: 'short' }), done: dates.has(dayKey(d)) };
+    return { key: dayKey(d), label: d.toLocaleDateString(undefined, { weekday: 'short' }), done: dates.has(dayKey(d)), frozen: frozen.has(dayKey(d)) };
   });
 }
 

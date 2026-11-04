@@ -21,6 +21,17 @@ describe('streak', () => {
     expect(streak(r, today)).toBe(1);
   });
 
+  test('one missed day a week is forgiven', () => {
+    const r = solved(['island-sketch/daily-2026-10-21', 'island-sketch/daily-2026-10-23']);
+    expect(streak(r, today)).toBe(2);
+    expect(lastWeek(r, today).map((d) => d.frozen)).toEqual([false, false, false, false, false, true, false]);
+  });
+
+  test('but only once a week', () => {
+    const r = solved(['island-sketch/daily-2026-10-19', 'island-sketch/daily-2026-10-21', 'island-sketch/daily-2026-10-23']);
+    expect(streak(r, today)).toBe(2);
+  });
+
   test('several dailies on one day count once', () => {
     const r = solved(['island-sketch/daily-2026-10-23', 'isle-spans/daily-2026-10-23']);
     expect(streak(r, today)).toBe(1);
@@ -38,6 +49,8 @@ describe('stickers', () => {
     expect(ids.has('first-sketch')).toBe(true);
     expect(ids.has('clean-sheet')).toBe(true);
     expect(ids.has('first-bridge')).toBe(false);
+    expect(ids.has('all-rounder')).toBe(false);
+    expect(earnedIds(solved(['island-sketch/sun', 'isle-spans/two-coves', 'lighthouse-wiring/first-light']), today).has('all-rounder')).toBe(true);
   });
 
   test('expedition chapter 1 needs all three of its puzzles', () => {

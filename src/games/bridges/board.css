@@ -44,3 +44,20 @@
 .sp-island.pressed circle{ stroke:var(--teal); stroke-width:4; transform-box:fill-box; transform-origin:center; transform:scale(1.12); }
 .sp-island.reach circle{ stroke:var(--teal); stroke-width:3.5; fill:#E7F4F1; }
 .sp-island circle{ transition:fill .15s, transform .18s cubic-bezier(.3,1.6,.5,1); }
+
+/* ---------- Soft 3D look ---------- */
+.sp-board{
+  background:radial-gradient(120% 90% at 30% 10%, #E4F6F8, #B9DFE8 60%, #9CCFDC);
+  border:3px solid #2F5240; border-radius:26px;
+  box-shadow:inset 0 3px 0 #ffffff80, 0 6px 0 #6E9FAE, 0 16px 28px rgba(40,90,110,.22);
+}
+.sp-dot{ fill:#ffffff; opacity:.55; }
+/* Islands: glossy discs with a solid base. */
+.sp-island circle{ fill:url(#sp-isl); stroke:#2F5240; stroke-width:2.6; filter:drop-shadow(0 3px 0 rgba(47,82,64,.45)); }
+.sp-island.done circle{ fill:url(#sp-isl-done); }
+.sp-island.over circle{ fill:url(#sp-isl-over); }
+.sp-board.solved .sp-island circle{ fill:url(#sp-isl-gold); }
+.sp-island text{ font-family:'Fredoka','Nunito',system-ui,sans-serif; font-weight:600; }
+/* Bridges: wooden planks. */
+.sp-bridge:not(.sp-ghost):not(.hint):not(.wrong){ stroke:#9A6236; stroke-width:5.5; stroke-linecap:butt; stroke-dasharray:3.2 1.6; filter:drop-shadow(0 1.5px 0 rgba(80,45,15,.4)); }
+.sp-board.solved .sp-bridge:not(.sp-ghost){ stroke:#C98A1E; }

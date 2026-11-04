@@ -56,7 +56,7 @@ import Base from '../../layouts/Base.astro';
 
 <script>
   import { iconSvg } from '../../lib/icons';
-  import { buzz, confetti, fanfare, pop, sparkle, wiggle } from '../../lib/juice';
+  import { buzz, confetti, pop, sparkle, wiggle } from '../../lib/juice';
   import { drawings } from '../../games/doodle-guess/drawings';
   import { categoryHint } from '../../games/doodle-guess/drawings';
   import {
@@ -189,7 +189,7 @@ import Base from '../../layouts/Base.astro';
     render();
     const chip = $('dg-guesses').children[round.guesses.length - 1];
     if (round.solved) {
-      fanfare(); buzz([18, 60, 18, 60, 40]);
+      buzz([18, 60, 18, 60, 40]);
       if (chip) { pop(chip, 1.2); sparkle(chip, 14); }
       window.setTimeout(() => confetti(), 300);
     } else if (chip) { wiggle(chip); buzz(20); }
@@ -211,7 +211,7 @@ import Base from '../../layouts/Base.astro';
 <!-- Global because the guess list and stats are built by the script, which
      scoped styles don't reach. Every selector is prefixed dg-. -->
 <style is:global>
-  .dg-page{ max-width:420px; margin:12px auto 10px; padding:10px; }
+  .dg-page{ max-width:440px; margin:12px auto 10px; padding:10px; }
   .dg-page canvas{
     display:block; width:100%; height:auto; aspect-ratio:1; border-radius:6px;
     background:var(--paper);
@@ -227,8 +227,21 @@ import Base from '../../layouts/Base.astro';
   .dg-guesses li.wrong{ border-style:solid; border-color:var(--ink-soft); color:var(--ink-soft); text-decoration:line-through; text-decoration-color:var(--red); }
   .dg-guesses li.right{ border-style:solid; border-color:var(--green); background:#E6F4E9; }
   .dg-hint{ text-align:center; font-family:var(--hand); font-size:21px; background:var(--highlight); max-width:420px; margin:0 auto 8px; border-radius:var(--wobble-soft); }
-  .dg-form{ display:flex; gap:8px; max-width:420px; margin:0 auto; }
+  body.play-page:has(#dg) main.wrap{ max-width:calc(440px + 56px); }
+  .dg-form{ display:flex; gap:8px; max-width:440px; margin:0 auto; }
   .dg-guesses li svg{ vertical-align:-3px; }
+  /* Soft 3D look: a spiral-bound sketchbook page and puffy guess pills. */
+  .dg-page{ position:relative; padding:26px 14px 14px; border:0; border-radius:22px;
+    background:linear-gradient(180deg,#FFFDF6,#F5ECD8); box-shadow:inset 0 2px 0 #fff, 0 6px 0 #DCCDA8, 0 16px 30px rgba(96,58,26,.18); }
+  .dg-page::before{ content:''; position:absolute; left:24px; right:24px; top:8px; height:12px;
+    background:radial-gradient(circle at 6px 6px, #8E9AA0 0 4px, #5E6A70 4.5px 5.5px, transparent 6px) 0 0 / 22px 12px repeat-x; }
+  .dg-page canvas{ border-radius:10px; box-shadow:inset 0 0 0 1px #EDE3CC;
+    background:repeating-linear-gradient(180deg, transparent 0 31px, #E3ECF2 31px 32px), var(--paper); }
+  .dg-guesses li{ border-radius:999px; }
+  .dg-guesses li.wrong, .dg-guesses li.right{ border:0; background:linear-gradient(180deg,#FFFFFF,#F3EAD6); box-shadow:inset 0 -2px 0 #E5D6B6, 0 4px 0 #CDB88E; }
+  .dg-guesses li.right{ background:linear-gradient(180deg,#F2FFEA,#C9EDB6); box-shadow:inset 0 -2px 0 #A9D894, 0 4px 0 #7FB86A; }
+  .dg-form .btn{ background:linear-gradient(180deg,#5CC27A,#2E8A4C); border-color:#26703F; box-shadow:inset 0 2px 0 #ffffff66, 0 4px 0 #1E5A31; }
+  .dg-form input{ border-radius:999px; }
   /* Phones: the guess box stays in thumb reach above the keyboard. */
   @media (max-width:760px){
     .dg-form{ position:sticky; bottom:0; z-index:20; max-width:none; margin:0 -22px; padding:10px 16px max(10px, env(safe-area-inset-bottom));

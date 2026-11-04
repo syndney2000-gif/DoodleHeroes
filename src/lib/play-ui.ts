@@ -6,7 +6,7 @@ import { playSound } from './audio';
 import { reducedMotion } from './site-shell';
 import { results } from './storage';
 import { earnedIds, stickers } from './achievements';
-import { buzz, chime, confetti, fanfare, pop, sparkle } from './juice';
+import { buzz, chime, confetti, pop, sparkle } from './juice';
 import { iconSvg } from './icons';
 import { load, save } from './storage';
 import { playStyle } from './prefs';
@@ -158,7 +158,6 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
       $('pl-progress').style.setProperty('--p', '1');
       if (justSolved) {
         playSound('solved');
-        fanfare();
         buzz([18, 60, 18, 60, 40]);
         $('pl-board').classList.add('celebrate');
         window.setTimeout(() => confetti(), 380);

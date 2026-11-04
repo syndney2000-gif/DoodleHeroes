@@ -275,7 +275,7 @@ try {
   }
   // All 32 local assets decode successfully in the browser.
   const images = await page.evaluate(async () => {
-    const urls = ['heroes','paper','tools','creatures'].flatMap(chain => Array.from({ length: 8 }, (_, i) => `/images/merge/cartoon/${chain}-${i + 1}.svg`));
+    const urls = ['heroes','paper','tools','creatures'].flatMap(chain => Array.from({ length: 8 }, (_, i) => `/images/merge/cartoon/${chain}-${i + 1}.webp`));
     return Promise.all(urls.map(url => new Promise(resolve => { const i = new Image(); i.onload = () => resolve(i.naturalWidth > 0); i.onerror = () => resolve(false); i.src = url; })));
   });
   assert.ok(images.every(Boolean));

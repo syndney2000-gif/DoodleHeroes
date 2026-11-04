@@ -77,6 +77,13 @@ export class SpansBoard implements PlayableBoard {
     svg.style.setProperty('--w', String(w));
     svg.style.setProperty('--h', String(h));
     this.svg = svg;
+    // Gradients for the glossy islands (board.css picks them by id).
+    svg.innerHTML = `<defs>
+      <radialGradient id="sp-isl" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".5" stop-color="#FFF3D2"/><stop offset="1" stop-color="#E9C98A"/></radialGradient>
+      <radialGradient id="sp-isl-done" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#F4FFEE"/><stop offset=".5" stop-color="#B9E8A8"/><stop offset="1" stop-color="#6FBF6E"/></radialGradient>
+      <radialGradient id="sp-isl-over" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFF4F4"/><stop offset=".5" stop-color="#FFC9C9"/><stop offset="1" stop-color="#E58C8C"/></radialGradient>
+      <radialGradient id="sp-isl-gold" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFFBE6"/><stop offset=".5" stop-color="#FFE17A"/><stop offset="1" stop-color="#E7AE2E"/></radialGradient>
+    </defs>`;
 
     const water = document.createElementNS(NS, 'g');
     for (let r = 0; r < h; r++) {

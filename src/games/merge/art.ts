@@ -4,5 +4,5 @@ export function itemImage(item: { chain: ChainId; tier: number }) {
 }
 /** Artwork is decorative; parent board cells and order labels name the item. */
 export function itemMarkup(item: { chain: ChainId; tier: number }) {
-  return `<img class="merge-art" src="${itemImage(item)}" alt="" draggable="false" width="160" height="160" decoding="async" />`;
+  return `<img class="merge-art" src="${itemImage(item)}" alt="" draggable="false" width="160" height="160" decoding="sync" />`;
 }

@@ -2,7 +2,7 @@
    and phone haptics. Everything is optional decoration — each effect checks
    reduced motion (or the haptics setting) and quietly does nothing. */
 
-import { tone } from './audio';
+import { playSound, tone } from './audio';
 import { load } from './storage';
 
 const calm = () => document.documentElement.hasAttribute('data-reduced-motion');
@@ -42,17 +42,17 @@ export function wiggle(el: Element): void {
 // A major pentatonic run, so any sequence of chimes sounds like a tune.
 const SCALE = [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.51, 1567.98, 1760];
 
-/** One bright note; higher steps climb the scale, so a streak becomes a melody. */
+/** One bright bell note; higher steps climb the scale, so a streak becomes a melody. */
 export function chime(step: number): void {
   const f = SCALE[Math.min(SCALE.length - 1, Math.max(0, step))];
-  tone(f, .22, 'triangle', .05);
-  tone(f * 2, .12, 'sine', .015, undefined, .01);
+  tone(f, .32, 'triangle', .09);
+  tone(f * 2, .18, 'sine', .035, undefined, .005);
+  tone(f * 2.76, .1, 'sine', .02, undefined, .005);
 }
 
-/** A little rising arpeggio for a finished puzzle. */
+/** A celebration for moments without their own sound (like a purchase). */
 export function fanfare(): void {
-  [0, 2, 4, 5, 7].forEach((s, k) => tone(SCALE[s], .3, 'triangle', .055, undefined, k * .09));
-  tone(SCALE[9], .6, 'sine', .03, undefined, .5);
+  playSound('levelup');
 }
 
 /* ---------- particles ---------- */

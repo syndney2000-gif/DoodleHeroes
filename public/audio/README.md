@@ -15,8 +15,11 @@ for seamless looping. The master is stereo 24 kHz PCM WAV.
 `meadow-loop.ogg` is the compact Vorbis playback version. The browser falls back
 to the WAV master if Vorbis is unavailable. Regeneration also creates the Ogg
 when `ffmpeg` with `libvorbis` is installed; Python alone reproduces the master.
-The other eleven files are short cartoon pops, pitch swoops and discovery/reward
-chimes, stored as mono 24 kHz PCM WAV. All instrument sounds are synthesized
+The other eleven files are layered game effects, stored as mono 32 kHz PCM
+WAV: filtered-noise transients and pencil scribbles, pitch-dropping "thumps"
+for weight, inharmonic bell partials and plucks for tone, sparkle runs, and a
+small synthetic room on reward sounds. They are mastered to a -1 dBFS peak
+(UI ticks lower). All instrument sounds are synthesized
 from scratch, with no recordings, samples or borrowed melodies.
 
 Music is off by default, starts after a user gesture, and has its own volume

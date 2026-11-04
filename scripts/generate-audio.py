@@ -8,45 +8,220 @@ import wave
 from pathlib import Path
 
 OUT = Path(__file__).resolve().parents[1] / 'public' / 'audio'
-RATE = 24000
-# (frequency, duration, start, gain); original short tonal gestures.
-CUES = {
-    'tap': [(620, .055, 0, .16)],
-    'place': [(330, .09, 0, .16), (495, .07, .025, .08)],
-    'draw': [(440, .09, 0, .13), (660, .13, .055, .15)],
-    'merge': [(523.25, .12, 0, .14), (659.25, .13, .055, .14), (783.99, .19, .11, .16)],
-    'discover': [(659.25, .17, 0, .12), (783.99, .17, .09, .13), (1046.5, .3, .18, .13)],
-    'deliver': [(783.99, .12, 0, .12), (1046.5, .16, .08, .13), (1318.51, .23, .16, .1)],
-    'levelup': [(523.25, .17, 0, .12), (659.25, .17, .09, .12), (783.99, .17, .18, .12), (1046.5, .3, .27, .12)],
-    'invalid': [(180, .10, 0, .08)],
-    'erase': [(280, .08, 0, .10), (210, .09, .04, .07)],
-    'hint': [(587.33, .14, 0, .12), (880, .18, .09, .10)],
-    'solved': [(523.25, .2, 0, .12), (659.25, .2, .12, .12), (783.99, .2, .24, .12), (1046.5, .45, .36, .12)],
-}
+RATE = 24000  # the music master
 OUT.mkdir(parents=True, exist_ok=True)
-for name, notes in CUES.items():
-    duration = max(start + length for _, length, start, _ in notes) + .02
-    data = []
-    for i in range(math.ceil(duration * RATE)):
-        t = i / RATE
-        value = 0.
-        for freq, length, start, gain in notes:
-            u = t - start
-            if 0 <= u < length:
-                envelope = min(1., u / .007) * (1 - u / length) ** 2
-                # A rounded cartoon pop: a short pitch swoop, soft overtones,
-                # and no harsh square waves. The phase is continuous.
-                direction = -1 if name in ('invalid', 'erase') else 1
-                bend = .22 * direction
-                phase = math.tau * freq * ((1 - bend) * u + bend * u * u / (2 * length))
-                value += gain * envelope * (math.sin(phase) + .12 * math.sin(phase * 2))
-        data.append(struct.pack('<h', round(max(-1, min(1, value)) * 32767)))
+
+# ---------- sound effects ----------
+# Each cue is layered like a produced game sound: a short transient click,
+# a pitch-dropping "thump" for weight, bell partials or plucks for tone,
+# sparkles, filtered-noise scribbles, and a small room. Mastered to a
+# -1 dBFS peak (UI ticks lower) so they cut through on phone speakers.
+import random as _random
+
+SFX_RATE = 32000
+_rng = _random.Random(1337)
+
+
+def _buf(seconds):
+    return [0.] * int(seconds * SFX_RATE)
+
+
+def _add(buf, start, samples, gain=1.):
+    # Every layer tapers over its last 25 ms, so nothing stops with a click.
+    i0 = int(start * SFX_RATE)
+    n = len(samples)
+    tail = min(n, int(.025 * SFX_RATE))
+    for k, v in enumerate(samples):
+        if 0 <= i0 + k < len(buf):
+            taper = min(1., (n - k) / tail) if tail else 1.
+            buf[i0 + k] += v * gain * taper
+
+
+def _env(n, attack, decay_tau):
+    a = max(1, int(attack * SFX_RATE))
+    return [min(1., k / a) * math.exp(-k / (decay_tau * SFX_RATE)) for k in range(n)]
+
+
+def thump(f0, f1, length, gain=1.):
+    """A sine that falls in pitch: the weight under an impact."""
+    n = int(length * SFX_RATE)
+    out, phase = [], 0.
+    env = _env(n, .002, length / 4)
+    for k in range(n):
+        f = f1 + (f0 - f1) * math.exp(-k / (length / 6 * SFX_RATE))
+        phase += math.tau * f / SFX_RATE
+        out.append(math.sin(phase) * env[k] * gain)
+    return out
+
+
+def click(length=.006, tone=.5, gain=1.):
+    """A filtered noise burst for the attack. tone 0 = dull, 1 = bright."""
+    n = int(length * SFX_RATE)
+    out, lp = [], 0.
+    for k in range(n):
+        x = _rng.uniform(-1, 1)
+        lp += (x - lp) * (.15 + .8 * tone)
+        out.append(lp * (1 - k / n) ** 2 * gain)
+    return out
+
+
+def bell(freq, length, gain=1., bright=1.):
+    """Inharmonic bell partials with fast-decaying highs."""
+    n = int(length * SFX_RATE)
+    parts = [(1, 1., 1.), (2.0, .45 * bright, .6), (2.76, .3 * bright, .35), (5.4, .12 * bright, .18)]
+    out = []
+    for k in range(n):
+        t = k / SFX_RATE
+        att = min(1., t / .002)
+        v = sum(g * math.exp(-t / (length * d)) * math.sin(math.tau * freq * r * t) for r, g, d in parts)
+        out.append(v * att * gain)
+    return out
+
+
+def pluck(freq, length, gain=1.):
+    """A rounded plucked note: triangle-ish with a quick decay."""
+    n = int(length * SFX_RATE)
+    out = []
+    for k in range(n):
+        t = k / SFX_RATE
+        x = math.sin(math.tau * freq * t) + .3 * math.sin(math.tau * freq * 2 * t) + .12 * math.sin(math.tau * freq * 3 * t)
+        out.append(x * min(1., t / .003) * math.exp(-t / (length / 3)) * gain)
+    return out
+
+
+def swoop(f0, f1, length, gain=1.):
+    """A bubbly pitch glide (pops, squeaks)."""
+    n = int(length * SFX_RATE)
+    out, phase = [], 0.
+    for k in range(n):
+        u = k / n
+        f = f0 * (f1 / f0) ** u
+        phase += math.tau * f / SFX_RATE
+        out.append((math.sin(phase) + .2 * math.sin(2 * phase)) * math.sin(math.pi * u) ** .6 * gain)
+    return out
+
+
+def scribble(length, strokes, gain=1., centre=3200):
+    """Pencil-on-paper: band-passed noise in quick strokes."""
+    n = int(length * SFX_RATE)
+    out = []
+    # Simple resonant band-pass (state-variable filter).
+    f = 2 * math.sin(math.pi * centre / SFX_RATE)
+    low = band = 0.
+    for k in range(n):
+        t = k / n
+        x = _rng.uniform(-1, 1)
+        low += f * band
+        high = x - low - .6 * band
+        band += f * high
+        stroke = abs(math.sin(math.pi * strokes * t)) ** 1.5
+        out.append(band * stroke * (1 - t) ** .5 * gain)
+    return out
+
+
+def sparkle(start_freq, notes, step, gain=1.):
+    """A quick rising run of tiny bells."""
+    out = _buf(step * notes + .5)
+    scale = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2, 9 / 4, 5 / 2, 3, 10 / 3]
+    for k in range(notes):
+        _add(out, k * step, bell(start_freq * scale[k % len(scale)] * (2 if k >= len(scale) else 1), .25, .35, 1.4), gain)
+    return out
+
+
+def room(buf, mix=.18, size=1.):
+    """A small Schroeder reverb so rewards ring out."""
+    out = buf + [0.] * int(.6 * SFX_RATE)
+    combs = [int(d * size * SFX_RATE) for d in (.0297, .0371, .0411, .0437)]
+    wet = [0.] * len(out)
+    for d in combs:
+        line = [0.] * d
+        idx = 0
+        for k in range(len(out)):
+            y = line[idx]
+            line[idx] = out[k] + y * .72
+            idx = (idx + 1) % d
+            wet[k] += y * .25
+    for d, g in ((int(.005 * SFX_RATE), .7), (int(.0017 * SFX_RATE), .7)):
+        line = [0.] * d
+        idx = 0
+        for k in range(len(wet)):
+            x = wet[k]
+            y = line[idx]
+            line[idx] = x + y * g
+            wet[k] = y - g * x
+            idx = (idx + 1) % d
+    return [a + b * mix for a, b in zip(out, wet)]
+
+
+def master(buf, peak_db=-1.):
+    # Gentle saturation for punch, then trim the silence and normalise.
+    buf = [math.tanh(1.4 * v) for v in buf]
+    while len(buf) > 1 and abs(buf[-1]) < 1e-4:
+        buf.pop()
+    top = max(1e-9, max(abs(v) for v in buf))
+    g = 10 ** (peak_db / 20) / top
+    fade = int(.01 * SFX_RATE)
+    return [v * g * (min(1., (len(buf) - k) / fade)) for k, v in enumerate(buf)]
+
+
+def cue(name):
+    b = _buf(1.6)
+    if name == 'tap':        # a soft wooden tick
+        _add(b, 0, click(.004, .7)); _add(b, 0, pluck(1200, .05, .5))
+        return master(b, -7)
+    if name == 'place':      # a satisfying tile "thock"
+        _add(b, 0, click(.005, .5)); _add(b, 0, thump(320, 140, .09, 1.)); _add(b, .002, pluck(660, .07, .35))
+        return master(b, -4)
+    if name == 'draw':       # pencil scribble, then the doodle pops onto the board
+        _add(b, 0, scribble(.16, 3, .9)); _add(b, .13, swoop(380, 900, .07, .8)); _add(b, .13, click(.004, .8, .6))
+        return master(b, -3)
+    if name == 'merge':      # a punchy thump with a bright chord on top
+        _add(b, 0, click(.006, .6)); _add(b, 0, thump(220, 70, .22, 1.2))
+        for f, d in ((1046.5, 0), (1318.5, .03), (1568, .06)):
+            _add(b, d, bell(f, .45, .32))
+        return master(room(b, .16), -1)
+    if name == 'discover':   # merge impact plus a shimmering rise
+        _add(b, 0, click(.006, .6)); _add(b, 0, thump(200, 65, .25, 1.2))
+        _add(b, .02, sparkle(880, 8, .045, .5)); _add(b, .38, bell(2093, .7, .3))
+        return master(room(b, .24, 1.1), -1)
+    if name == 'deliver':    # coins: two metallic chinks over a thump
+        _add(b, 0, thump(260, 90, .15, .9))
+        for d, f in ((0, 2637), (.09, 3136)):
+            _add(b, d, click(.003, 1., .8)); _add(b, d, bell(f, .35, .45, 1.6))
+        _add(b, .18, bell(1568, .5, .3))
+        return master(room(b, .18), -1)
+    if name == 'levelup':    # a bright rising fanfare that lands on a thump
+        for k, f in enumerate((523.25, 659.25, 783.99, 1046.5)):
+            _add(b, k * .085, pluck(f, .25, .7)); _add(b, k * .085, bell(f * 2, .3, .2))
+        _add(b, .34, thump(180, 60, .3, 1.1)); _add(b, .34, sparkle(1046.5, 7, .04, .45))
+        return master(room(b, .26, 1.2), -1)
+    if name == 'invalid':    # a soft rubbery "bonk" — friendly, not harsh
+        _add(b, 0, thump(260, 150, .14, 1.)); _add(b, 0, swoop(300, 190, .12, .45))
+        return master(b, -6)
+    if name == 'erase':      # rubber squeak and a little whoosh away
+        _add(b, 0, scribble(.12, 2, .7, 1800)); _add(b, .02, swoop(900, 420, .11, .5))
+        return master(b, -5)
+    if name == 'hint':       # a magical twinkle
+        for k, f in enumerate((1174.66, 1567.98, 2349.32)):
+            _add(b, k * .07, bell(f, .4, .45, 1.3))
+        return master(room(b, .3, 1.1), -3)
+    if name == 'solved':     # chord stab, thump, run of sparkles, ringing tail
+        _add(b, 0, click(.007, .6)); _add(b, 0, thump(180, 55, .35, 1.3))
+        for f in (523.25, 659.25, 783.99, 1046.5):
+            _add(b, 0, pluck(f, .5, .45)); _add(b, 0, bell(f * 2, .7, .16))
+        _add(b, .12, sparkle(1046.5, 10, .05, .45)); _add(b, .6, bell(2093, 1., .32))
+        return master(room(b, .3, 1.25), -1)
+    raise ValueError(name)
+
+
+for name in ('tap', 'place', 'draw', 'merge', 'discover', 'deliver', 'levelup', 'invalid', 'erase', 'hint', 'solved'):
+    samples = cue(name)
     with wave.open(str(OUT / f'{name}.wav'), 'wb') as f:
         f.setnchannels(1)
         f.setsampwidth(2)
-        f.setframerate(RATE)
-        f.writeframes(b''.join(data))
-    print(f'{name}.wav')
+        f.setframerate(SFX_RATE)
+        f.writeframes(b''.join(struct.pack('<h', round(max(-1, min(1, v)) * 32767)) for v in samples))
+    print(f'{name}.wav ({len(samples) / SFX_RATE:.2f}s)')
 
 # "A Stroll Around the Island": an original 24-bar miniature at 96 BPM.
 # Six four-bar phrases trade a plucked hook and a soft whistle response. Bass,

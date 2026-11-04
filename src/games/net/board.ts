@@ -84,6 +84,12 @@ export class WiringBoard implements PlayableBoard {
     svg.style.setProperty('--w', String(w));
     svg.style.setProperty('--h', String(h));
     this.svg = svg;
+    // Gradients for the raised tiles and cottages (board.css picks them by id).
+    svg.innerHTML = `<defs>
+      <linearGradient id="nw-tile-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFBEE"/><stop offset="1" stop-color="#EBDDB8"/></linearGradient>
+      <linearGradient id="nw-tile-lit" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF8DC"/><stop offset="1" stop-color="#F6DF9C"/></linearGradient>
+      <radialGradient id="nw-src" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFFBE0"/><stop offset=".5" stop-color="#FFD64F"/><stop offset="1" stop-color="#E39B12"/></radialGradient>
+    </defs>`;
 
     tiles.forEach((orig, i) => {
       const r = Math.floor(i / w), c = i % w;

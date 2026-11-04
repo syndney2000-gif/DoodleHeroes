@@ -50,3 +50,21 @@
 .celebrate .nw-board .nw-source{ transform-box:fill-box; transform-origin:center; animation:nw-beam 1.2s ease-in-out 2; }
 @keyframes nw-beam{ 50%{ transform:scale(1.35); fill:#FFF3B8; } }
 @media (prefers-reduced-motion:reduce){ .nw-board *{ animation:none!important; } }
+
+/* ---------- Soft 3D look ---------- */
+.nw-board{
+  background:linear-gradient(160deg,#B98B5C,#9C6E43); border:3px solid #2F5240; border-radius:26px;
+  box-shadow:inset 0 2px 0 #D9A56E, 0 6px 0 #6E4524, 0 16px 28px rgba(96,58,26,.25);
+}
+/* Raised tiles with a bevel. */
+.nw-bg{ fill:url(#nw-tile-g); stroke:#C9B183; stroke-width:1.5; filter:drop-shadow(0 2px 0 rgba(80,50,20,.45)); }
+.nw-tile.lit .nw-bg{ fill:url(#nw-tile-lit); }
+.nw-tile.locked .nw-bg{ fill:#E3D9BC; }
+.nw-wire{ stroke:#6A6480; stroke-width:6.5; }
+.nw-hub{ fill:#6A6480; }
+/* Powered wire glows like lamp light. */
+.nw-tile.lit .nw-wire{ stroke:#F59E1B; filter:drop-shadow(0 0 3px #FFCB5C); }
+.nw-tile.lit .nw-hub{ fill:#F59E1B; }
+.nw-source{ fill:url(#nw-src); filter:drop-shadow(0 0 6px #FFD24D); }
+.nw-house{ fill:#FFF6E2; }
+.nw-tile.lit .nw-house{ fill:#FFE27A; }

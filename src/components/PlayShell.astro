@@ -3,6 +3,7 @@
    board and its controls. Pair with setupPlay() from lib/play-ui. */
 import Base from '../layouts/Base.astro';
 import Icon from './Icon.astro';
+import Pip from './Pip.astro';
 
 interface Props {
   game: string;
@@ -53,6 +54,7 @@ const { game, description, section, listHref } = Astro.props;
     <p class="pl-status" id="pl-status" role="status" aria-live="polite"></p>
 
     <section class="card pl-done" id="pl-done" hidden>
+      <Pip size={84} mood="cheer" class="pl-pip" />
       <p class="pl-report">Saved to your journal</p>
       <h2>A little more light.</h2>
       <span class="pl-grade" id="pl-grade" aria-hidden="true">S</span>
@@ -118,6 +120,8 @@ const { game, description, section, listHref } = Astro.props;
   .pl-done.fresh{ animation:pl-rise .55s cubic-bezier(.3,1.4,.5,1) .7s both; }
   @keyframes pl-rise{ from{ opacity:0; transform:translateY(40px) scale(.94); } }
   .pl-done h2{ margin-top:0; }
+  .pl-pip{ position:absolute; left:14px; top:-46px; }
+  .pl-done.fresh .pl-pip{ animation:pl-rise .5s var(--ease-bounce) .9s both; }
   .pl-sticker{
     display:inline-block; font-family:var(--hand); font-size:21px; padding:4px 14px;
     background:#FFF3B8; border:2px dashed var(--orange); border-radius:var(--wobble-soft); transform:rotate(-1.5deg);

@@ -1,0 +1,265 @@
+---
+/* The Lantern Isles as the home page: one place per game, landmarks that
+   appear as the player progresses (lib/world.ts), and a day / dusk / night
+   sky from the local clock. Labels are HTML over the SVG so they stay
+   readable at phone width. */
+import Icon from './Icon.astro';
+
+const places = [
+  { id: 'island-sketch', name: 'Sketch Cove', icon: 'grid', tint: 'rose', x: 165, y: 232, href: '/island-sketch/play?p=sun' },
+  { id: 'isle-spans', name: 'Span Reef', icon: 'bridge', tint: 'sage', x: 205, y: 405, href: '/isle-spans/play?p=two-coves' },
+  { id: 'doodle-guess', name: 'Guess Gallery', icon: 'pencil', tint: 'blue', x: 332, y: 160, href: '/doodle-guess/play' },
+  { id: 'margin-merge', name: 'Merge Workshop', icon: 'merge', tint: 'lavender', x: 472, y: 200, href: '/margin-merge/play' },
+  { id: 'lighthouse-wiring', name: 'The Lighthouse', icon: 'lighthouse', tint: 'gold', x: 712, y: 150, href: '/lighthouse-wiring/play?p=first-light' },
+  { id: 'scribble-siege', name: 'Siege Fort', icon: 'swords', tint: 'peach', x: 612, y: 268, href: '/scribble-siege/play' },
+];
+const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(2)}%`;
+---
+<div class="iw" data-island-world data-time="day">
+  <svg class="iw-map" viewBox="0 0 800 480" role="img" aria-label="Map of the Lantern Isles. Each place on the island is one of the games.">
+    <defs>
+      <linearGradient id="iw-sea" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" class="iw-sea-top" /><stop offset="1" class="iw-sea-bottom" />
+      </linearGradient>
+      <radialGradient id="iw-glow"><stop offset="0" stop-color="#FFE38A" stop-opacity=".95" /><stop offset="1" stop-color="#FFE38A" stop-opacity="0" /></radialGradient>
+      <linearGradient id="iw-beam-fill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFF1B0" stop-opacity=".85" /><stop offset="1" stop-color="#FFF1B0" stop-opacity="0" /></linearGradient>
+    </defs>
+    <rect width="800" height="480" fill="url(#iw-sea)" />
+
+    <g class="iw-stars" fill="#FFF6D6">
+      <circle cx="60" cy="40" r="1.6" /><circle cx="140" cy="90" r="1.2" /><circle cx="250" cy="30" r="1.8" /><circle cx="390" cy="60" r="1.3" />
+      <circle cx="470" cy="24" r="1.6" /><circle cx="560" cy="70" r="1.2" /><circle cx="770" cy="150" r="1.5" /><circle cx="30" cy="160" r="1.3" />
+      <circle cx="300" cy="100" r="1" /><circle cx="520" cy="120" r="1.1" />
+    </g>
+    <g class="iw-sun"><circle cx="745" cy="52" r="26" fill="#F2D583" stroke="#B6934D" stroke-width="2.5" /><path d="M736 50h.01M754 50h.01M738 59q7 6 14 0" stroke="#765B31" stroke-width="3" stroke-linecap="round" fill="none" /></g>
+    <g class="iw-moon"><path d="M760 40a24 24 0 1 0 8 30 19 19 0 0 1-8-30Z" fill="#FFF3C4" stroke="#C9B57A" stroke-width="2" /></g>
+    <g class="iw-clouds" fill="#FFFEF8" stroke="#B8C9AD" stroke-width="2">
+      <path class="iw-cloud" d="M40 70c-12-4-8-20 4-18 1-17 27-18 31-3 17-4 23 22 4 23H43Z" />
+      <path class="iw-cloud second" d="M420 52c-9-3-7-15 3-15 1-12 20-13 23-2 13-3 17 16 3 17Z" />
+    </g>
+
+    <g class="iw-waves" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="3" stroke-linecap="round" fill="none">
+      <path d="M30 230q12-6 24 0M720 300q12-6 24 0M420 440q12-6 24 0M600 420q12-6 24 0M40 330q12-6 24 0" />
+    </g>
+
+    <!-- Span Reef: three islets, joined as Isle Spans maps are solved -->
+    <g class="iw-land">
+      <ellipse cx="115" cy="425" rx="40" ry="20" fill="#C9D8B0" stroke="#304C3B" stroke-width="3" />
+      <ellipse cx="225" cy="448" rx="34" ry="17" fill="#C9D8B0" stroke="#304C3B" stroke-width="3" />
+      <ellipse cx="330" cy="430" rx="30" ry="16" fill="#C9D8B0" stroke="#304C3B" stroke-width="3" />
+      <g class="iw-bridge" data-on="bridge-1"><path d="M152 432 190 443" /></g>
+      <g class="iw-bridge" data-on="bridge-2"><path d="M258 444 300 434" /></g>
+      <g class="iw-bridge" data-on="bridge-3"><path d="M330 414 340 372" /></g>
+      <circle cx="115" cy="418" r="5" fill="#67866A" /><circle cx="225" cy="442" r="4" fill="#67866A" />
+
+      <!-- The main island -->
+      <path d="M70 300C55 225 140 168 235 172 300 118 420 104 485 140 560 100 700 110 738 196 772 262 742 330 660 352 560 386 420 382 320 372 215 376 88 362 70 300Z" fill="#B8C9A0" stroke="#304C3B" stroke-width="4" stroke-linejoin="round" />
+      <path d="M86 304C100 342 176 356 248 352 205 336 150 326 118 300Z" fill="#F1DFAE" />
+      <path d="M560 196C590 112 700 106 724 196Z" fill="#A3B98A" stroke="#304C3B" stroke-width="3" stroke-linejoin="round" />
+      <path class="iw-path" d="M160 290C220 276 262 236 332 222S452 262 480 258 590 296 612 322M480 258C540 230 600 204 646 180" />
+
+      <!-- trees -->
+      <g class="iw-trees" fill="#67866A" stroke="#304C3B" stroke-width="2.5" stroke-linejoin="round">
+        <g class="iw-tree"><path d="M110 268V246M98 256q12-34 24 0Z" /></g>
+        <g class="iw-tree b"><path d="M262 180V158M250 168q12-34 24 0Z" /></g>
+        <g class="iw-tree"><path d="M545 300V278M533 288q12-34 24 0Z" /></g>
+        <g class="iw-tree b"><path d="M410 350V328M398 338q12-34 24 0Z" /></g>
+        <g class="iw-tree"><path d="M700 300V278M688 288q12-34 24 0Z" /></g>
+      </g>
+
+      <!-- Sketch Cove: an easel and, later, bunting -->
+      <g stroke="#304C3B" stroke-width="2.5" stroke-linecap="round">
+        <path d="M150 292 160 252M184 292 174 252M167 252V290" />
+        <rect x="146" y="234" width="42" height="30" rx="3" fill="#FFFEF8" />
+        <g data-on="easel"><circle cx="160" cy="246" r="5" fill="#F2C14E" stroke="none" /><path d="M150 258q8-6 14 0t14 0" stroke="#6CB4C4" fill="none" /></g>
+      </g>
+      <g data-on="bunting"><path d="M96 232Q150 252 220 226" stroke="#304C3B" stroke-width="1.6" fill="none" />
+        <path d="M108 238l6 12 6-10ZM132 245l6 12 6-11ZM156 247l6 12 6-12ZM180 243l6 12 6-13ZM203 235l6 11 6-13Z" fill="#E98A6A" stroke="#304C3B" stroke-width="1" /></g>
+
+      <!-- Guess Gallery -->
+      <g stroke="#304C3B" stroke-width="2.5" stroke-linejoin="round">
+        <rect x="300" y="178" width="66" height="44" fill="#F6E7D0" />
+        <path d="M294 180 333 154 372 180Z" fill="#6CB4C4" />
+        <rect x="326" y="200" width="14" height="22" fill="#B98A5A" />
+        <g data-on="frame-1"><rect x="306" y="186" width="14" height="11" fill="#FFFEF8" /><circle cx="313" cy="191" r="2.5" fill="#E98A6A" stroke="none" /></g>
+        <g data-on="frame-2"><rect x="346" y="186" width="14" height="11" fill="#FFFEF8" /><path d="M349 194l4-5 4 5" stroke-width="1.6" fill="none" /></g>
+        <g data-on="frame-3"><rect x="326" y="164" width="14" height="10" fill="#FFFEF8" stroke-width="2" /></g>
+      </g>
+
+      <!-- Merge Workshop, with chimney smoke once it's been used -->
+      <g stroke="#304C3B" stroke-width="2.5" stroke-linejoin="round">
+        <rect x="482" y="168" width="12" height="22" fill="#D37B5C" />
+        <rect x="440" y="196" width="66" height="50" fill="#EADCF2" />
+        <path d="M432 198 473 166 514 198Z" fill="#B79CD9" />
+        <rect x="465" y="220" width="16" height="26" fill="#B98A5A" />
+        <rect class="iw-window" data-window="0" x="447" y="206" width="12" height="12" />
+        <rect class="iw-window" data-window="1" x="489" y="206" width="12" height="12" />
+      </g>
+      <g class="iw-smoke" data-on="smoke" fill="#FFFFFF" stroke="#B8C9AD" stroke-width="1.5">
+        <circle cx="488" cy="158" r="6" /><circle cx="494" cy="146" r="8" /><circle cx="502" cy="130" r="10" />
+      </g>
+
+      <!-- Cottages, lit by Lighthouse Wiring -->
+      <g stroke="#304C3B" stroke-width="2.5" stroke-linejoin="round">
+        <g><rect x="250" y="300" width="40" height="32" fill="#FAF0D5" /><path d="M244 302 270 282 296 302Z" fill="#D37B5C" /><rect class="iw-window" data-window="2" x="263" y="310" width="12" height="11" /></g>
+        <g><rect x="348" y="290" width="40" height="32" fill="#F2DDB8" /><path d="M342 292 368 272 394 292Z" fill="#A76C51" /><rect class="iw-window" data-window="3" x="361" y="300" width="12" height="11" /></g>
+        <g><rect x="500" y="300" width="40" height="32" fill="#FAF0D5" /><path d="M494 302 520 282 546 302Z" fill="#D37B5C" /><rect class="iw-window" data-window="4" x="513" y="310" width="12" height="11" /></g>
+      </g>
+
+      <!-- Siege Fort -->
+      <g stroke="#304C3B" stroke-width="2.5" stroke-linejoin="round">
+        <path d="M592 340V296h8v-8h8v8h8v-8h8v8h8v44Z" fill="#E7D8C5" />
+        <rect x="604" y="318" width="12" height="22" rx="6" fill="#8A6A4A" />
+        <path d="M624 288V258" />
+        <path class="iw-flag" data-on="flag" d="M624 258h22l-6 7 6 7h-22Z" fill="#E98A6A" />
+        <path data-on="tent" d="M650 344l18-28 18 28Z" fill="#F2C14E" />
+      </g>
+
+      <!-- The lighthouse -->
+      <g stroke="#304C3B" stroke-width="3" stroke-linejoin="round">
+        <path d="M630 182 638 92H666L674 182Z" fill="#FFF7DC" />
+        <path d="M635 128H669L670 144H634Z" fill="#D37B5C" stroke="none" />
+        <rect x="634" y="72" width="36" height="22" fill="#CFE3E6" />
+        <path d="M630 74 652 54 674 74Z" fill="#D37B5C" />
+        <path d="M646 182V164H658V182" fill="#B98A5A" />
+      </g>
+    </g>
+
+    <!-- Lights sit above the land so night dims everything except them. -->
+    <g class="iw-lights">
+      <g class="iw-beam" data-on="beam"><path d="M652 83 800 40V126Z" fill="url(#iw-beam-fill)" /></g>
+      <circle class="iw-lamp" cx="652" cy="83" r="8" />
+      <circle class="iw-lamp-glow" data-on="lamp" cx="652" cy="83" r="34" fill="url(#iw-glow)" />
+      <g class="iw-lanterns">
+        <g data-on="lantern-1"><path d="M210 278v-16" /><circle cx="210" cy="258" r="5" /></g>
+        <g data-on="lantern-2"><path d="M300 236v-16" /><circle cx="300" cy="216" r="5" /></g>
+        <g data-on="lantern-3"><path d="M430 262v-16" /><circle cx="430" cy="242" r="5" /></g>
+        <g data-on="lantern-4"><path d="M590 214v-16" /><circle cx="590" cy="194" r="5" /></g>
+      </g>
+    </g>
+
+    <!-- Boats from Margin Merge's finished stories -->
+    <g class="iw-boats" stroke="#304C3B" stroke-width="2.5" stroke-linejoin="round">
+      <g class="iw-boat" data-on="boat-1"><path d="M440 420h44l-8 12h-28Z" fill="#D37B5C" /><path d="M462 420v-30l16 26Z" fill="#FFFEF8" /></g>
+      <g class="iw-boat b" data-on="boat-2"><path d="M560 440h40l-7 11h-26Z" fill="#6CB4C4" /><path d="M580 440v-26l14 22Z" fill="#FFFEF8" /></g>
+      <g class="iw-boat" data-on="boat-3"><path d="M690 400h40l-7 11h-26Z" fill="#F2C14E" /><path d="M710 400v-26l14 22Z" fill="#FFFEF8" /></g>
+    </g>
+  </svg>
+
+  {places.map((p) => (
+    <a class={`iw-spot ${p.tint}`} href={p.href} data-place={p.id} aria-label={p.name} style={`left:${pct(p.x, 800)};top:${pct(p.y, 480)}`}>
+      <span class="iw-pin"><Icon name={p.icon} size={20} /></span>
+      <span class="iw-label"><b>{p.name}</b><small data-place-progress></small></span>
+    </a>
+  ))}
+</div>
+
+<script>
+  import { readSnapshot, worldFrom } from '../lib/world';
+
+  const hour = new Date().getHours();
+  const time = hour >= 6 && hour < 17 ? 'day' : hour >= 17 && hour < 20 ? 'dusk' : 'night';
+  const w = worldFrom(readSnapshot());
+  const on = new Set<string>();
+  if (w.easel) on.add('easel');
+  if (w.bunting) on.add('bunting');
+  if (w.lamp) on.add('lamp');
+  if (w.beam) on.add('beam');
+  if (w.smoke) on.add('smoke');
+  if (w.flag) on.add('flag');
+  if (w.tent) on.add('tent');
+  for (let k = 1; k <= w.bridges; k++) on.add(`bridge-${k}`);
+  for (let k = 1; k <= w.frames; k++) on.add(`frame-${k}`);
+  for (let k = 1; k <= w.boats; k++) on.add(`boat-${k}`);
+  for (let k = 1; k <= w.lanterns; k++) on.add(`lantern-${k}`);
+  // Two workshop windows light once it's in use; cottages follow the wiring.
+  const lit = new Set<number>(w.smoke ? [0, 1] : []);
+  for (let k = 0; k < w.litCottages; k++) lit.add(2 + k);
+  const progress: Record<string, string> = {
+    'island-sketch': `${w.sketches}/12 sketches`, 'isle-spans': `${w.spans}/12 maps`, 'lighthouse-wiring': `${w.wiring}/12 grids`,
+    'doodle-guess': w.frames ? `${w.frames}+ guessed` : 'Daily', 'margin-merge': w.boats ? `${w.boats} of 3 stories` : 'Stories', 'scribble-siege': w.flag ? 'Fort held' : 'Adventure',
+  };
+  for (const root of document.querySelectorAll<HTMLElement>('[data-island-world]')) {
+    root.dataset.time = time;
+    root.querySelectorAll<SVGElement>('[data-on]').forEach((el) => el.classList.toggle('on', on.has(el.dataset.on!)));
+    root.querySelectorAll<SVGElement>('[data-window]').forEach((el) => el.classList.toggle('lit', lit.has(Number(el.dataset.window))));
+    root.querySelectorAll<HTMLElement>('[data-place]').forEach((a) => {
+      a.querySelector('[data-place-progress]')!.textContent = progress[a.dataset.place!] ?? '';
+    });
+  }
+</script>
+
+<style>
+  .iw { position:relative; border-radius:34px; overflow:hidden; border:3px solid #304C3B; box-shadow:var(--lift-2); background:#BFE0E3; }
+  .iw-map { display:block; width:100%; height:auto; }
+  .iw-sea-top { stop-color:#CBE7E8; } .iw-sea-bottom { stop-color:#9ACFD3; }
+  .iw-stars, .iw-moon { display:none; }
+  .iw-path { fill:none; stroke:#FFF6DC; stroke-width:12; stroke-linecap:round; }
+  .iw-bridge path { fill:none; stroke:#8A5A3A; stroke-width:7; stroke-linecap:round; }
+  .iw-window { fill:#7D8F95; }
+  .iw-window.lit { fill:#FFD45C; }
+  .iw-lamp { fill:#B9C4C6; stroke:#304C3B; stroke-width:2; }
+  .iw-lights:has(.iw-lamp-glow.on) .iw-lamp { fill:#FFD45C; }
+  .iw-lanterns path { stroke:#304C3B; stroke-width:2.5; }
+  .iw-lanterns circle { fill:#FFD45C; stroke:#304C3B; stroke-width:2; }
+  [data-on]:not(.on) { display:none; }
+
+  /* Ambient motion. */
+  .iw-cloud { animation:iw-drift 18s ease-in-out infinite alternate; }
+  .iw-cloud.second { animation-duration:24s; animation-delay:-6s; }
+  .iw-waves path { animation:iw-wave 4s ease-in-out infinite; }
+  .iw-tree { transform-box:fill-box; transform-origin:center bottom; animation:iw-sway 5s ease-in-out infinite; }
+  .iw-tree.b { animation-delay:-2.5s; }
+  .iw-boat { animation:iw-bob 3.4s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
+  .iw-boat.b { animation-delay:-1.4s; }
+  .iw-smoke circle { animation:iw-smoke 3s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+  .iw-smoke circle:nth-child(2) { animation-delay:-1s; } .iw-smoke circle:nth-child(3) { animation-delay:-2s; }
+  .iw-flag { animation:iw-flap 1.2s ease-in-out infinite; transform-box:fill-box; transform-origin:left center; }
+  .iw-beam { transform-origin:652px 83px; animation:iw-sweep 9s linear infinite; opacity:.55; }
+  .iw-lamp-glow { animation:iw-pulse 3s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
+  @keyframes iw-drift { to { transform:translateX(40px); } }
+  @keyframes iw-wave { 50% { transform:translateX(6px); opacity:.4; } }
+  @keyframes iw-sway { 50% { transform:rotate(3deg); } }
+  @keyframes iw-bob { 50% { transform:translateY(-4px) rotate(-2deg); } }
+  @keyframes iw-smoke { from { opacity:.9; transform:translateY(6px) scale(.7); } to { opacity:0; transform:translateY(-14px) scale(1.2); } }
+  @keyframes iw-flap { 50% { transform:skewY(-6deg) scaleX(.92); } }
+  @keyframes iw-sweep { to { transform:rotate(360deg); } }
+  @keyframes iw-pulse { 50% { transform:scale(1.18); opacity:.8; } }
+
+  /* Dusk and night: the land darkens, lights don't. */
+  .iw[data-time=dusk] { background:#E9B48F; }
+  .iw[data-time=dusk] .iw-sea-top { stop-color:#F3C9A0; } .iw[data-time=dusk] .iw-sea-bottom { stop-color:#7FB0BE; }
+  .iw[data-time=dusk] .iw-land { filter:saturate(.9) brightness(.92); }
+  .iw[data-time=night] { background:#14283A; }
+  .iw[data-time=night] .iw-sea-top { stop-color:#1A3247; } .iw[data-time=night] .iw-sea-bottom { stop-color:#10202F; }
+  .iw[data-time=night] .iw-land, .iw[data-time=night] .iw-boats { filter:brightness(.55) saturate(.75); }
+  .iw[data-time=night] .iw-stars, .iw[data-time=night] .iw-moon { display:block; }
+  .iw[data-time=night] .iw-sun { display:none; }
+  .iw[data-time=night] .iw-clouds { opacity:.35; }
+  .iw[data-time=night] .iw-beam { opacity:.9; }
+  .iw[data-time=night] .iw-window.lit { filter:drop-shadow(0 0 6px #FFD45C); }
+  .iw-stars circle { animation:iw-twinkle 3s ease-in-out infinite; }
+  .iw-stars circle:nth-child(3n) { animation-delay:-1s; } .iw-stars circle:nth-child(3n+1) { animation-delay:-2s; }
+  @keyframes iw-twinkle { 50% { opacity:.3; } }
+
+  /* Place labels. */
+  .iw-spot { position:absolute; transform:translate(-50%,-100%); display:flex; flex-direction:column; align-items:center; gap:2px; text-decoration:none; color:var(--ink); }
+  .iw-pin { display:grid; place-items:center; width:42px; height:42px; border-radius:50% 50% 50% 8px; transform:rotate(-45deg);
+    background:var(--tile); border:3px solid #304C3B; box-shadow:0 3px 0 #304C3B; transition:transform .3s var(--ease-bounce); }
+  .iw-pin :global(svg) { transform:rotate(45deg); color:#304C3B; }
+  .iw-label { display:flex; flex-direction:column; align-items:center; padding:3px 10px; border-radius:12px; background:#FFFEF8; border:2px solid #304C3B; line-height:1.15; white-space:nowrap; }
+  .iw-label b { font:600 14px var(--hand); color:#304C3B; }
+  .iw-label small { font-size:11px; font-weight:800; color:#626F60; }
+  .iw-spot:hover .iw-pin, .iw-spot:focus-visible .iw-pin { transform:rotate(-45deg) scale(1.15) translateY(-3px); }
+  .iw-spot:focus-visible { outline:none; }
+  .iw-spot:focus-visible .iw-label { outline:3px solid var(--teal); outline-offset:2px; }
+  @media (max-width:760px) {
+    .iw { border-radius:24px; }
+    .iw-pin { width:34px; height:34px; border-width:2.5px; }
+    .iw-pin :global(svg) { width:16px; height:16px; }
+    .iw-label { display:none; }
+  }
+  @media (prefers-reduced-motion:reduce) { .iw * { animation:none!important; } }
+  :global([data-reduced-motion]) .iw * { animation:none!important; }
+  :global([data-ambient-paused]) .iw * { animation-play-state:paused!important; }
+</style>

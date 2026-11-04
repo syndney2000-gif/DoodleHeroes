@@ -1,0 +1,59 @@
+---
+/* Pip the Pencil, the island's guide. Set data-mood on the svg to
+   wave, cheer, sleepy or think; the CSS does the rest. */
+interface Props { size?: number; mood?: 'wave' | 'cheer' | 'sleepy' | 'think'; class?: string; }
+const { size = 96, mood = 'wave', class: extra = '' } = Astro.props;
+---
+<svg class={`pip ${extra}`} data-mood={mood} width={size * 0.72} height={size} viewBox="0 0 80 112" aria-hidden="true">
+  <g class="pip-body">
+    <path class="pip-arm pip-arm-left" d="M22 62 Q12 66 9 74" />
+    <path class="pip-arm pip-arm-right" d="M58 60 Q68 52 72 42" />
+    <rect x="22" y="6" width="36" height="18" rx="7" fill="#F4A7B9" />
+    <rect x="22" y="22" width="36" height="8" fill="#C9D0D3" />
+    <rect x="22" y="30" width="36" height="52" fill="#F6C945" />
+    <path d="M34 30v52M46 30v52" stroke="#E0A92A" stroke-width="2" />
+    <path d="M22 82 40 108 58 82Z" fill="#F3D9B1" />
+    <path d="M35 101 40 108 45 101Z" fill="#304C3B" />
+    <rect x="22" y="6" width="36" height="76" rx="7" fill="none" stroke="#304C3B" stroke-width="3" />
+    <path d="M22 82 40 108 58 82" fill="none" stroke="#304C3B" stroke-width="3" stroke-linejoin="round" />
+    <g class="pip-face">
+      <g class="pip-eyes"><circle cx="33" cy="50" r="3.4" /><circle cx="47" cy="50" r="3.4" /></g>
+      <path class="pip-eyes-closed" d="M29 51q4 3 8 0M43 51q4 3 8 0" />
+      <circle cx="28" cy="58" r="3" fill="#F4A7B9" opacity=".75" />
+      <circle cx="52" cy="58" r="3" fill="#F4A7B9" opacity=".75" />
+      <path class="pip-mouth" d="M34 60q6 6 12 0" />
+    </g>
+  </g>
+  <text class="pip-zz" x="60" y="20">z</text>
+</svg>
+
+<style>
+  .pip { overflow:visible; flex:none; }
+  .pip-body { animation:pip-bob 3.2s ease-in-out infinite; transform-origin:40px 108px; }
+  .pip-arm { fill:none; stroke:#304C3B; stroke-width:3.2; stroke-linecap:round; }
+  .pip-arm-right { transform-origin:58px 60px; }
+  .pip-eyes circle { fill:#304C3B; }
+  .pip-eyes { animation:pip-blink 4.5s infinite; transform-origin:40px 50px; }
+  .pip-eyes-closed, .pip-mouth { fill:none; stroke:#304C3B; stroke-width:2.4; stroke-linecap:round; }
+  .pip-eyes-closed, .pip-zz { display:none; }
+  .pip-zz { font:700 14px var(--hand); fill:var(--ink-soft); }
+
+  .pip[data-mood=wave] .pip-arm-right { animation:pip-wave 1.6s ease-in-out infinite; }
+  .pip[data-mood=cheer] .pip-body { animation:pip-jump .9s cubic-bezier(.3,1.6,.5,1) infinite; }
+  .pip[data-mood=cheer] .pip-arm-left { d:path('M22 60 Q12 52 8 42'); }
+  .pip[data-mood=cheer] .pip-mouth { d:path('M33 59q7 9 14 0Z'); fill:#304C3B; }
+  .pip[data-mood=sleepy] .pip-eyes { display:none; }
+  .pip[data-mood=sleepy] .pip-eyes-closed, .pip[data-mood=sleepy] .pip-zz { display:block; }
+  .pip[data-mood=sleepy] .pip-zz { animation:pip-z 2.4s ease-in-out infinite; }
+  .pip[data-mood=sleepy] .pip-body { animation-duration:5s; }
+  .pip[data-mood=think] .pip-eyes { transform:translate(2px,-2px); animation:none; }
+  .pip[data-mood=think] .pip-arm-right { d:path('M58 64 Q60 58 50 60'); }
+
+  @keyframes pip-bob { 50% { transform:translateY(-3px) rotate(-1.5deg); } }
+  @keyframes pip-jump { 0%,100% { transform:translateY(0); } 40% { transform:translateY(-10px) rotate(3deg); } }
+  @keyframes pip-wave { 0%,100% { transform:rotate(0); } 25% { transform:rotate(-22deg); } 75% { transform:rotate(14deg); } }
+  @keyframes pip-blink { 0%,94%,100% { transform:scaleY(1); } 96% { transform:scaleY(.1); } }
+  @keyframes pip-z { 0% { opacity:0; transform:translate(0,6px); } 50% { opacity:1; } 100% { opacity:0; transform:translate(6px,-8px); } }
+  @media(prefers-reduced-motion:reduce) { .pip * { animation:none!important; } }
+  :global([data-reduced-motion]) .pip * { animation:none!important; }
+</style>

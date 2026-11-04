@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import Island from '../components/Island.astro';
+import IslandWorld from '../components/IslandWorld.astro';
+import Pip from '../components/Pip.astro';
 import Icon from '../components/Icon.astro';
 import GameCard from '../components/GameCard.astro';
 import StreakStrip from '../components/StreakStrip.astro';
@@ -8,17 +9,23 @@ import { games } from '../lib/games';
 const dailyGames = games.filter(g => g.daily !== null && g.id !== 'scribble-siege');
 ---
 <Base title="Doodle Heroes" description="Six single-player worlds of cozy puzzles, little adventures and wonderful discoveries. Free to play, with progress saved in your browser." section="home">
-  <section class="hero">
-    <div class="hero-copy">
-      <p class="eyebrow hero-tag">✦ Your pocket-sized happy place</p>
-      <h1>A little wonder.<br />One tile at a time.</h1>
-      <p>A tiny escape for your curious side. Solve a puzzle, make a discovery, and bring a little island to life.</p>
-      <a class="btn" href="/island-sketch/play?p=sun" data-continue>Start a little adventure →</a>
-      <span class="continue-caption" data-continue-caption>Island Sketch · A fresh page is waiting</span>
+  <section class="home-world">
+    <div class="hw-intro">
+      <div>
+        <p class="eyebrow hero-tag">✦ The Lantern Isles</p>
+        <h1>A little wonder.<br />One tile at a time.</h1>
+        <p class="hw-lede">Every puzzle you solve brings a little more light to the island. Tap a place on the map to play.</p>
+        <a class="btn" href="/island-sketch/play?p=sun" data-continue>Start a little adventure →</a>
+        <span class="continue-caption" data-continue-caption>Island Sketch · A fresh page is waiting</span>
+      </div>
+      <div class="pip-say" data-pip>
+        <Pip size={104} />
+        <div class="pip-bubble"><p data-pip-text>Hi, I’m Pip! Help me light up the island.</p><a class="pip-cta" data-pip-cta hidden></a></div>
+      </div>
     </div>
-    <div class="hero-art"><Island /><span class="island-badge">✦ THE LANTERN ISLES</span></div>
+    <IslandWorld />
   </section>
-  <div class="section-heading"><h2>Your little worlds</h2><span class="eyebrow">Six ways to play</span></div>
+  <div class="section-heading"><h2>Your little worlds</h2><span class="eyebrow">Or pick from the list</span></div>
   <div class="world-grid">{games.map(game => <GameCard game={game} />)}</div>
   <div class="section-heading"><h2>A fresh little challenge</h2><span class="eyebrow">Made for today</span></div>
   <div class="daily-grid">{dailyGames.map(game => <a class="daily-card" href={`/${game.id}/play${game.daily}`}><span class={`world-icon ${game.color}`}><Icon name={game.symbol} size={22} /></span><b>{game.name}</b><small>Today’s daily <span aria-hidden="true">↗</span></small></a>)}</div>
@@ -26,3 +33,48 @@ const dailyGames = games.filter(g => g.daily !== null && g.id !== 'scribble-sieg
   <section class="card expedition-link"><div><p class="eyebrow">A story to wander through</p><h2>A little more light.</h2><p>Sketch the map, rebuild the bridges, and bring the Lantern Isles back to life.</p></div><a class="btn secondary" href="/expedition">Explore the island →</a></section>
   <p class="muted" style="font-size:13px">Free to play. No account needed. Progress stays in this browser. New to a puzzle? Our <a href="/guides">illustrated guides</a> will help you find your way.</p>
 </Base>
+
+<script>
+  import { readSnapshot, worldFrom } from '../lib/world';
+  import { pipSays } from '../lib/pip';
+  import { dailyDates, streak } from '../lib/achievements';
+  import { results, load } from '../lib/storage';
+  import { games } from '../lib/games';
+  import { localDateKey } from '../lib/rng';
+
+  const r = results();
+  const last = load<{ id: string; href: string }>('last-played');
+  const lastGame = games.find((g) => g.id === last?.id);
+  const now = new Date();
+  const line = pipSays({
+    hour: now.getHours(),
+    world: worldFrom(readSnapshot()),
+    streak: streak(r),
+    dailyDoneToday: dailyDates(r).has(localDateKey()),
+    last: lastGame && last && last.href.startsWith(`/${lastGame.id}/`) ? { name: lastGame.name, href: last.href } : undefined,
+    day: Math.floor(now.getTime() / 864e5),
+  });
+  const box = document.querySelector<HTMLElement>('[data-pip]')!;
+  box.querySelector('.pip')!.setAttribute('data-mood', line.mood);
+  box.querySelector('[data-pip-text]')!.textContent = line.text;
+  const cta = box.querySelector<HTMLAnchorElement>('[data-pip-cta]')!;
+  if (line.cta) { cta.href = line.cta.href; cta.textContent = `${line.cta.label} →`; cta.hidden = false; }
+</script>
+
+<style>
+  .home-world { margin:6px 0 10px; }
+  .hw-intro { display:grid; grid-template-columns:1.2fr 1fr; gap:28px; align-items:end; margin-bottom:22px; }
+  .hw-intro h1 { font-size:clamp(36px,4.6vw,54px); line-height:1.05; margin:8px 0 12px; }
+  .hw-lede { color:var(--ink-soft); max-width:440px; }
+  .pip-say { display:flex; align-items:flex-end; gap:10px; }
+  .pip-bubble { position:relative; flex:1; padding:14px 18px; background:var(--paper); border:2.5px solid var(--ink); border-radius:22px 22px 22px 6px;
+    box-shadow:var(--lift-1); animation:pip-pop .5s var(--ease-bounce) .3s both; }
+  .pip-bubble p { margin:0; font-size:15px; line-height:1.5; }
+  .pip-cta { display:inline-block; margin-top:8px; font:600 15px var(--hand); }
+  @keyframes pip-pop { from { opacity:0; transform:scale(.8) translateY(10px); } }
+  @media (max-width:760px) {
+    .hw-intro { grid-template-columns:1fr; gap:16px; }
+    .hw-intro h1 { font-size:36px; }
+    .hw-intro .btn { width:100%; }
+  }
+</style>

@@ -5,8 +5,10 @@ each of the `heroes`, `paper`, `tools`, and `creatures` chains. The filenames an
 item names preserve the game's existing identities. The previous WebP artwork
 and its generation prompts remain in the parent directory.
 
-The drawings share a transparent 128 × 128 viewBox, forest-green rounded
-outlines, warm ivory and pastel fills, and simple grounded shadows. Heroes and
+The drawings share a transparent 128 × 128 viewBox and a soft 3D cartoon
+style: saturated fills, rounded dark outlines, an SVG lighting filter that
+shades each item from the upper left with a glossy highlight, and a blurred
+contact shadow. Heroes and
 creatures have expressive faces; item silhouettes grow distinctively between
 tiers. There are no embedded fonts, external resources, stock assets, or raster
 images. SVG titles name the objects when the files are viewed directly; the

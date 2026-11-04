@@ -1,6 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
   <title id="title">Super Doodle</title>
   <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
-  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
-  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M41 61 Q19 81 19 106 L61 99 L99 111 Q107 81 87 61Z" fill="#DE9EAA" /><path d="M45 70 Q64 62 82 70 L87 99 Q64 108 40 99Z" fill="#A8CCD1" /><path d="M50 101 L47 111 M76 101 L80 111" fill="none" stroke-width="7"/><path d="M44 75 L29 63 M83 74 L98 54" fill="none" stroke-width="8"/><circle cx="64" cy="42" r="24" fill="#FFF8E6" /><path d="M40 39 Q44 14 70 18 L87 30 L74 29 L65 24 L54 38Z" fill="#688D69" /><path d="M43 41 Q64 35 85 41 L82 53 Q64 48 46 53Z" fill="#EBC975" /><circle cx="54" cy="44" r="2.4" fill="#304C3B" stroke="none"/><circle cx="74" cy="44" r="2.4" fill="#304C3B" stroke="none"/><path d="M60 50 Q64 54 68 50" fill="none" stroke-width="2"/><path d="M64 74 L67.6 82.4 L76 86 L67.6 89.6 L64 98 L60.4 89.6 L52 86 L60.4 82.4Z" fill="#EBC975" /><path d="M108 24 L110.1 28.9 L115 31 L110.1 33.1 L108 38 L105.9 33.1 L101 31 L105.9 28.9Z" fill="#EBC975" /></g>
+  <defs>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.5"/></filter>
+    <filter id="clay" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3.2" result="blur"/>
+      <feDiffuseLighting in="blur" surfaceScale="3.5" diffuseConstant="1.15" lighting-color="#ffffff" result="diffuse"><feDistantLight azimuth="235" elevation="58"/></feDiffuseLighting>
+      <feComposite in="SourceGraphic" in2="diffuse" operator="arithmetic" k1="1.08" result="shaded"/>
+      <feSpecularLighting in="blur" surfaceScale="4" specularConstant=".85" specularExponent="26" lighting-color="#ffffff" result="spec"><fePointLight x="34" y="14" z="90"/></feSpecularLighting>
+      <feComposite in="spec" in2="SourceAlpha" operator="in" result="gloss"/>
+      <feComposite in="gloss" in2="shaded" operator="arithmetic" k2=".75" k3="1"/>
+    </filter>
+  </defs>
+  <ellipse cx="64" cy="114" rx="38" ry="7" fill="#2E3B33" opacity=".22" filter="url(#soft)"/>
+  <g filter="url(#clay)"><g stroke="#2E3B33" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M41 61 Q19 81 19 106 L61 99 L99 111 Q107 81 87 61Z" fill="#F07C98" /><path d="M45 70 Q64 62 82 70 L87 99 Q64 108 40 99Z" fill="#5DB3E0" /><path d="M50 101 L47 111 M76 101 L80 111" fill="none" stroke-width="7"/><path d="M44 75 L29 63 M83 74 L98 54" fill="none" stroke-width="8"/><circle cx="64" cy="42" r="24" fill="#FFF3D6" /><path d="M40 39 Q44 14 70 18 L87 30 L74 29 L65 24 L54 38Z" fill="#3F8F55" /><path d="M43 41 Q64 35 85 41 L82 53 Q64 48 46 53Z" fill="#F7C23E" /><circle cx="54" cy="44" r="2.4" fill="#2E3B33" stroke="none"/><circle cx="74" cy="44" r="2.4" fill="#2E3B33" stroke="none"/><path d="M60 50 Q64 54 68 50" fill="none" stroke-width="2"/><path d="M64 74 L67.6 82.4 L76 86 L67.6 89.6 L64 98 L60.4 89.6 L52 86 L60.4 82.4Z" fill="#F7C23E" /><path d="M108 24 L110.1 28.9 L115 31 L110.1 33.1 L108 38 L105.9 33.1 L101 31 L105.9 28.9Z" fill="#F7C23E" /></g></g>
 </svg>

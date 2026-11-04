@@ -618,3 +618,72 @@ import '../../games/merge/studio.css';
   @media(prefers-reduced-motion:reduce) { .mm *, .mm *::before,.mm *::after { animation:none!important; transition:none!important; } }
   [data-reduced-motion] .mm *,[data-reduced-motion] .mm *::before,[data-reduced-motion] .mm *::after { animation:none!important; transition:none!important; }
 </style>
+
+<!-- Workshop look: a wooden tray of recessed slots, puffy cream tiles,
+     glossy 3D controls. Overrides the base rules above. -->
+<style is:global>
+  .mm { --wood:#C88E58; --wood-dark:#8E5A30; --slot:#E7CFA6; --tile-hi:#FFFDF4; --tile-lo:#F2E0BC; --tile-edge:#C9A574; }
+  .mm-board {
+    gap:7px; padding:14px; border:0; border-radius:30px;
+    background:
+      repeating-linear-gradient(97deg, #FFFFFF0A 0 2px, transparent 2px 22px),
+      repeating-linear-gradient(83deg, #00000008 0 1px, transparent 1px 15px),
+      linear-gradient(160deg, #D9A26A, var(--wood) 45%, #B57A45);
+    box-shadow: inset 0 2px 0 #F1C58F, inset 0 -3px 0 #9A6436, 0 8px 0 var(--wood-dark), 0 18px 30px rgba(94,56,24,.35);
+  }
+  .mm-cell {
+    border:0; border-radius:16px; padding:2px;
+    background:linear-gradient(180deg, #DDBF91, var(--slot));
+    box-shadow: inset 0 3px 5px rgba(96,58,26,.38), inset 0 -1px 0 #F6E2BD;
+    transition:transform .18s var(--ease-bounce), box-shadow .18s;
+  }
+  .mm-cell[data-chain] {
+    border:0; transform:translateY(-3px);
+    background:radial-gradient(circle at 32% 24%, var(--tile-hi), var(--tile-lo) 78%);
+    box-shadow: inset 0 2px 0 #FFFFFF, inset 0 -3px 0 #E4CB9E, 0 4px 0 var(--tile-edge), 0 7px 10px rgba(96,58,26,.28);
+  }
+  .mm-cell[data-chain=heroes] { --tile-hi:#FFF8FB; --tile-lo:#F6DCE6; --tile-edge:#D2A2B4; }
+  .mm-cell[data-chain=paper] { --tile-hi:#FFFDF2; --tile-lo:#F7E5B4; --tile-edge:#D3B26C; }
+  .mm-cell[data-chain=tools] { --tile-hi:#F7FCFF; --tile-lo:#D6EAF3; --tile-edge:#94BCCB; }
+  .mm-cell[data-chain=creatures] { --tile-hi:#FAFFF4; --tile-lo:#DDEFCB; --tile-edge:#9EC284; }
+  .mm-cell .merge-art { filter:drop-shadow(0 3px 2px rgba(60,35,15,.18)); }
+  .mm-cell .tier {
+    right:2px; bottom:4px; min-width:20px; height:20px; border-radius:50%; font-size:10px; color:#5A3A0E;
+    background:radial-gradient(circle at 35% 30%, #FFF0B8, #F2BE3F 60%, #C98B16); box-shadow:inset 0 -1px 0 rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.25);
+  }
+  .mm-cell.sel { outline:0; transform:translateY(-8px) scale(1.05); box-shadow: inset 0 2px 0 #fff, 0 0 0 3px #F7C23E, 0 10px 0 var(--tile-edge), 0 16px 18px rgba(96,58,26,.32); }
+  .mm-cell.match { box-shadow: inset 0 2px 0 #fff, 0 0 0 3px #7CC48A, 0 4px 0 var(--tile-edge), 0 7px 10px rgba(96,58,26,.28); animation:mm-match 1.2s ease-in-out infinite; }
+  /* Glow, not movement: tap targets must hold still. */
+  @keyframes mm-match { 50% { box-shadow: inset 0 2px 0 #fff, 0 0 0 4px #A8E2B2, 0 4px 0 var(--tile-edge), 0 0 16px #8FD89E; } }
+  .mm-cell.match::before { content:''; }
+  .mm-cell.drop-target { outline:0; background:radial-gradient(circle, #F1FFE8, #CDEDBA); box-shadow: inset 0 0 0 3px #5DAA6E, 0 0 18px #9BE0A6; }
+  .mm-cell.pop::after { border-color:#F7C23E; border-width:3px; }
+  .mm-ghost { filter:drop-shadow(0 14px 10px rgba(60,35,15,.35)); }
+
+  /* Level gem, XP bar and resource pills. */
+  .mm-level { width:46px; height:46px; border-radius:50%; font:700 20px var(--hand); color:#fff; text-shadow:0 1px 0 rgba(0,0,0,.25);
+    background:radial-gradient(circle at 35% 28%, #9BE3A4, #3E9B57 58%, #24683A); box-shadow:inset 0 -3px 0 rgba(0,0,0,.2), 0 3px 0 #1E5530, 0 0 0 3px #fff; }
+  .mm-xp { height:14px; border-radius:999px; background:#E9DFC9; box-shadow:inset 0 2px 3px rgba(96,58,26,.25); }
+  .mm-xp i { border-radius:999px; background:linear-gradient(180deg, #A6EBB1, #4FB06A); box-shadow:inset 0 2px 0 #ffffff80; }
+  .mm-pill { border:0; border-radius:999px; padding:6px 12px; font-weight:900; background:linear-gradient(180deg, #FFFFFF, #F4EBD8); box-shadow:inset 0 -2px 0 #E2D2B2, 0 3px 0 #D9C6A0; }
+  .resource-drop, .resource-coin { display:inline-block; width:16px; height:16px; font-size:0; flex:none; }
+  .resource-coin { border-radius:50%; background:radial-gradient(circle at 35% 30%, #FFF0B8, #F2BE3F 55%, #B9780F); box-shadow:inset 0 -2px 0 rgba(0,0,0,.18); }
+  .resource-drop { border-radius:50% 0 50% 50%; transform:rotate(-45deg) scale(.9); background:radial-gradient(circle at 40% 60%, #CDEBFF, #4FA7DD 55%, #26709F); }
+
+  /* Chunky glossy buttons. */
+  .mm-actions .btn { border-radius:18px; font-family:var(--hand); font-weight:600; }
+  .mm-draw { background:linear-gradient(180deg, #5CC27A, #2E8A4C) !important; border-color:#26703F; box-shadow:inset 0 2px 0 #ffffff66, 0 5px 0 #1E5A31, 0 8px 14px rgba(30,90,49,.3) !important; font-size:17px !important; text-shadow:0 1px 0 rgba(0,0,0,.2); }
+  .mm-draw small { color:#EFFFF0; opacity:.9; }
+  .mm-draw:active { transform:translateY(4px); box-shadow:inset 0 2px 0 #ffffff66, 0 1px 0 #1E5A31 !important; }
+  .mm-actions .btn.secondary { background:linear-gradient(180deg, #FFFFFF, #F3EAD6); border-color:#D8C7A3; box-shadow:inset 0 -2px 0 #E5D6B6, 0 4px 0 #CDB88E; }
+
+  /* Story banner and order cards on parchment. */
+  .mm-chapter-summary { border:0; border-radius:18px; background:linear-gradient(180deg, #FFE9A8, #F5CF6E); box-shadow:inset 0 0 0 2px #FFF4CF, inset 0 0 0 4px #E6B850, 0 4px 0 #C9962D, 0 8px 14px rgba(150,100,20,.25); }
+  .mm-order { border:0; border-radius:22px; background:linear-gradient(180deg, #FFFDF6, #F5EBD5); box-shadow:inset 0 2px 0 #fff, 0 4px 0 #D9C6A0, 0 8px 14px rgba(96,58,26,.15); }
+  .mm-order .merge-art { filter:drop-shadow(0 3px 2px rgba(60,35,15,.2)); }
+  .mm-order.ready { background:linear-gradient(180deg, #F2FFEA, #D3F0C2); box-shadow:inset 0 2px 0 #fff, 0 0 0 3px #7CC48A, 0 4px 0 #8CB878, 0 10px 18px rgba(60,140,80,.25); animation:mm-ready 1.6s ease-in-out infinite; }
+  @keyframes mm-ready { 50% { box-shadow:inset 0 2px 0 #fff, 0 0 0 4px #A8E2B2, 0 4px 0 #8CB878, 0 0 22px #8FD89E; } }
+  .mm-book li { background:radial-gradient(circle at 32% 24%, #FFFDF4, #F2E0BC 80%); box-shadow:inset 0 2px 0 #fff, 0 3px 0 #D9C6A0; }
+  .mm-book .unknown { background:linear-gradient(180deg, #DDBF91, #E7CFA6); box-shadow:inset 0 3px 5px rgba(96,58,26,.35); color:#8E5A30; }
+  @media(max-width:480px) { .mm-board { gap:5px; padding:9px; border-radius:22px; } .mm-cell { border-radius:12px; } .mm-level { width:40px; height:40px; font-size:18px; } }
+</style>

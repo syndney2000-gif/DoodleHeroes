@@ -1,6 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
   <title id="title">Margin Dragon</title>
   <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
-  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
-  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M74 76 L96 41 L112 74 L96 68 L86 90Z" fill="#C6B9DE" /><path d="M39 74 L18 52 L17 86 L32 81 L43 93Z" fill="#C6B9DE" /><path d="M80 100 Q110 107 111 87 Q121 113 90 115 L72 107Z" fill="#B9D4A4" /><ellipse cx="64" cy="87" rx="29" ry="26" fill="#B9D4A4" /><ellipse cx="64" cy="92" rx="15" ry="18" fill="#FFF8E6" /><path d="M40 43 L40 23 L52 34 M77 34 L91 23 L89 46" fill="#EBC975" /><rect x="37" y="34" width="56" height="41" rx="18" fill="#B9D4A4"/><circle cx="52" cy="49" r="2.4" fill="#304C3B" stroke="none"/><circle cx="76" cy="49" r="2.4" fill="#304C3B" stroke="none"/><path d="M60 55 Q64 59 68 55" fill="none" stroke-width="2"/><ellipse cx="49" cy="54" rx="3.5" ry="2" fill="#F0B697" stroke="none"/><ellipse cx="79" cy="54" rx="3.5" ry="2" fill="#F0B697" stroke="none"/><ellipse cx="64" cy="66" rx="22" ry="11" fill="#B9D4A4" /><circle cx="56" cy="63" r="2" fill="#304C3B" stroke="none"/><circle cx="72" cy="63" r="2" fill="#304C3B" stroke="none"/><ellipse cx="43" cy="109" rx="12" ry="5" fill="#688D69" /><ellipse cx="85" cy="109" rx="12" ry="5" fill="#688D69" /><path d="M36 77 L27 66 M93 72 L99 57" fill="none" stroke-width="2"/></g>
+  <defs>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.5"/></filter>
+    <filter id="clay" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3.2" result="blur"/>
+      <feDiffuseLighting in="blur" surfaceScale="3.5" diffuseConstant="1.15" lighting-color="#ffffff" result="diffuse"><feDistantLight azimuth="235" elevation="58"/></feDiffuseLighting>
+      <feComposite in="SourceGraphic" in2="diffuse" operator="arithmetic" k1="1.08" result="shaded"/>
+      <feSpecularLighting in="blur" surfaceScale="4" specularConstant=".85" specularExponent="26" lighting-color="#ffffff" result="spec"><fePointLight x="34" y="14" z="90"/></feSpecularLighting>
+      <feComposite in="spec" in2="SourceAlpha" operator="in" result="gloss"/>
+      <feComposite in="gloss" in2="shaded" operator="arithmetic" k2=".75" k3="1"/>
+    </filter>
+  </defs>
+  <ellipse cx="64" cy="114" rx="38" ry="7" fill="#2E3B33" opacity=".22" filter="url(#soft)"/>
+  <g filter="url(#clay)"><g stroke="#2E3B33" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M74 76 L96 41 L112 74 L96 68 L86 90Z" fill="#A48AE6" /><path d="M39 74 L18 52 L17 86 L32 81 L43 93Z" fill="#A48AE6" /><path d="M80 100 Q110 107 111 87 Q121 113 90 115 L72 107Z" fill="#8FCB6E" /><ellipse cx="64" cy="87" rx="29" ry="26" fill="#8FCB6E" /><ellipse cx="64" cy="92" rx="15" ry="18" fill="#FFF3D6" /><path d="M40 43 L40 23 L52 34 M77 34 L91 23 L89 46" fill="#F7C23E" /><rect x="37" y="34" width="56" height="41" rx="18" fill="#8FCB6E"/><circle cx="52" cy="49" r="2.4" fill="#2E3B33" stroke="none"/><circle cx="76" cy="49" r="2.4" fill="#2E3B33" stroke="none"/><path d="M60 55 Q64 59 68 55" fill="none" stroke-width="2"/><ellipse cx="49" cy="54" rx="3.5" ry="2" fill="#F59A6B" stroke="none"/><ellipse cx="79" cy="54" rx="3.5" ry="2" fill="#F59A6B" stroke="none"/><ellipse cx="64" cy="66" rx="22" ry="11" fill="#8FCB6E" /><circle cx="56" cy="63" r="2" fill="#2E3B33" stroke="none"/><circle cx="72" cy="63" r="2" fill="#2E3B33" stroke="none"/><ellipse cx="43" cy="109" rx="12" ry="5" fill="#3F8F55" /><ellipse cx="85" cy="109" rx="12" ry="5" fill="#3F8F55" /><path d="M36 77 L27 66 M93 72 L99 57" fill="none" stroke-width="2"/></g></g>
 </svg>

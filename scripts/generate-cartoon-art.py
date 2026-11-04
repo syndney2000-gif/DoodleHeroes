@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Generate original Margin Merge storybook SVGs. SPDX-License-Identifier: CC0-1.0
 
+Style: soft 3D cartoon. Saturated fills, a lighting filter ("clay") that
+shades each item from the upper left and adds a glossy highlight, and a
+blurred contact shadow.
+
 No fonts, stock artwork, external resources, or raster images are used. The
 paths and arrangement below are the editable source for all 32 illustrations.
 Run from any directory: python3 scripts/generate-cartoon-art.py
@@ -11,15 +15,15 @@ from html import escape
 import xml.etree.ElementTree as ET
 
 OUT = Path(__file__).resolve().parents[1] / "public/images/merge/cartoon"
-INK = "#304C3B"
-IVORY = "#FFF8E6"
-SAGE = "#B9D4A4"
-GREEN = "#688D69"
-PEACH = "#F0B697"
-GOLD = "#EBC975"
-BLUE = "#A8CCD1"
-LILAC = "#C6B9DE"
-ROSE = "#DE9EAA"
+INK = "#2E3B33"
+IVORY = "#FFF3D6"
+SAGE = "#8FCB6E"
+GREEN = "#3F8F55"
+PEACH = "#F59A6B"
+GOLD = "#F7C23E"
+BLUE = "#5DB3E0"
+LILAC = "#A48AE6"
+ROSE = "#F07C98"
 
 
 def path(d, fill="none", **attrs):
@@ -118,8 +122,19 @@ def render(name, artwork):
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
   <title id="title">{escape(name)}</title>
   <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
-  <ellipse cx="64" cy="115" rx="36" ry="5" fill="{INK}" opacity=".10"/>
-  <g stroke="{INK}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">{artwork}</g>
+  <defs>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.5"/></filter>
+    <filter id="clay" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3.2" result="blur"/>
+      <feDiffuseLighting in="blur" surfaceScale="3.5" diffuseConstant="1.15" lighting-color="#ffffff" result="diffuse"><feDistantLight azimuth="235" elevation="58"/></feDiffuseLighting>
+      <feComposite in="SourceGraphic" in2="diffuse" operator="arithmetic" k1="1.08" result="shaded"/>
+      <feSpecularLighting in="blur" surfaceScale="4" specularConstant=".85" specularExponent="26" lighting-color="#ffffff" result="spec"><fePointLight x="34" y="14" z="90"/></feSpecularLighting>
+      <feComposite in="spec" in2="SourceAlpha" operator="in" result="gloss"/>
+      <feComposite in="gloss" in2="shaded" operator="arithmetic" k2=".75" k3="1"/>
+    </filter>
+  </defs>
+  <ellipse cx="64" cy="114" rx="38" ry="7" fill="{INK}" opacity=".22" filter="url(#soft)"/>
+  <g filter="url(#clay)"><g stroke="{INK}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">{artwork}</g></g>
 </svg>
 '''
 

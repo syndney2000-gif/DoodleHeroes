@@ -1,6 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title">
   <title id="title">Ink Wizard</title>
   <metadata>Original Doodle Heroes storybook artwork. SPDX-License-Identifier: CC0-1.0</metadata>
-  <ellipse cx="64" cy="115" rx="36" ry="5" fill="#304C3B" opacity=".10"/>
-  <g stroke="#304C3B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M46 66 L29 107 Q65 117 96 106 L80 67Z" fill="#C6B9DE" /><circle cx="64" cy="54" r="22" fill="#FFF8E6" /><circle cx="55" cy="55" r="2.4" fill="#304C3B" stroke="none"/><circle cx="73" cy="55" r="2.4" fill="#304C3B" stroke="none"/><path d="M60 61 Q64 65 68 61" fill="none" stroke-width="2"/><ellipse cx="52" cy="60" rx="3.5" ry="2" fill="#F0B697" stroke="none"/><ellipse cx="76" cy="60" rx="3.5" ry="2" fill="#F0B697" stroke="none"/><path d="M37 41 L58 10 Q62 6 68 15 L87 42Z" fill="#C6B9DE" /><path d="M29 43 Q65 31 97 44 Q66 55 29 43Z" fill="#A8CCD1" /><path d="M62 23 L63.8 27.2 L68 29 L63.8 30.8 L62 35 L60.2 30.8 L56 29 L60.2 27.2Z" fill="#EBC975" /><path d="M55 80 L57.7 86.3 L64 89 L57.7 91.7 L55 98 L52.3 91.7 L46 89 L52.3 86.3Z" fill="#EBC975" /><path d="M100 108 L104 48" fill="none" stroke-width="5"/><path d="M105 27 L108.6 35.4 L117 39 L108.6 42.6 L105 51 L101.4 42.6 L93 39 L101.4 35.4Z" fill="#EBC975" /><circle cx="94" cy="76" r="6" fill="#FFF8E6" /></g>
+  <defs>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.5"/></filter>
+    <filter id="clay" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3.2" result="blur"/>
+      <feDiffuseLighting in="blur" surfaceScale="3.5" diffuseConstant="1.15" lighting-color="#ffffff" result="diffuse"><feDistantLight azimuth="235" elevation="58"/></feDiffuseLighting>
+      <feComposite in="SourceGraphic" in2="diffuse" operator="arithmetic" k1="1.08" result="shaded"/>
+      <feSpecularLighting in="blur" surfaceScale="4" specularConstant=".85" specularExponent="26" lighting-color="#ffffff" result="spec"><fePointLight x="34" y="14" z="90"/></feSpecularLighting>
+      <feComposite in="spec" in2="SourceAlpha" operator="in" result="gloss"/>
+      <feComposite in="gloss" in2="shaded" operator="arithmetic" k2=".75" k3="1"/>
+    </filter>
+  </defs>
+  <ellipse cx="64" cy="114" rx="38" ry="7" fill="#2E3B33" opacity=".22" filter="url(#soft)"/>
+  <g filter="url(#clay)"><g stroke="#2E3B33" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M46 66 L29 107 Q65 117 96 106 L80 67Z" fill="#A48AE6" /><circle cx="64" cy="54" r="22" fill="#FFF3D6" /><circle cx="55" cy="55" r="2.4" fill="#2E3B33" stroke="none"/><circle cx="73" cy="55" r="2.4" fill="#2E3B33" stroke="none"/><path d="M60 61 Q64 65 68 61" fill="none" stroke-width="2"/><ellipse cx="52" cy="60" rx="3.5" ry="2" fill="#F59A6B" stroke="none"/><ellipse cx="76" cy="60" rx="3.5" ry="2" fill="#F59A6B" stroke="none"/><path d="M37 41 L58 10 Q62 6 68 15 L87 42Z" fill="#A48AE6" /><path d="M29 43 Q65 31 97 44 Q66 55 29 43Z" fill="#5DB3E0" /><path d="M62 23 L63.8 27.2 L68 29 L63.8 30.8 L62 35 L60.2 30.8 L56 29 L60.2 27.2Z" fill="#F7C23E" /><path d="M55 80 L57.7 86.3 L64 89 L57.7 91.7 L55 98 L52.3 91.7 L46 89 L52.3 86.3Z" fill="#F7C23E" /><path d="M100 108 L104 48" fill="none" stroke-width="5"/><path d="M105 27 L108.6 35.4 L117 39 L108.6 42.6 L105 51 L101.4 42.6 L93 39 L101.4 35.4Z" fill="#F7C23E" /><circle cx="94" cy="76" r="6" fill="#FFF3D6" /></g></g>
 </svg>

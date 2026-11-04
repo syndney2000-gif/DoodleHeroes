@@ -29,8 +29,11 @@ function TileIcon() {
   </View>;
 }
 function SectionTitle({ children, detail }) {
-  return <View style={S.sectionTitle}><Text style={S.sectionText}>{children}</Text>{detail && <Text style={S.eyebrow}>{detail}</Text>}</View>;
+  return <View style={S.sectionTitle}><Text style={S.sectionText}>{children}</Text>{detail ? <Text style={S.eyebrow}>{detail}</Text> : null}</View>;
 }
+// Built once: completed sessions are checked against the catalogue on every render.
+const catalogueIds = new Set(allPuzzles.map(p => p.id));
+
 function Reveal({ children, reducedMotion, identity }) {
   const value = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -93,7 +96,8 @@ function NativeApp() {
   const session = progress?.sessions[progress.activeId];
   const reducedMotion = systemReduced || !!progress?.reducedMotion;
   const completed = progress ? Object.values(progress.sessions).filter(s => s.completedAt) : [];
-  const completedCatalogue = completed.filter(s => allPuzzles.some(p => p.id === s.puzzle.id)).length;
+  const completedCatalogue = completed.filter(s => catalogueIds.has(s.puzzle.id)).length;
+  const streak = progress ? streakFor(progress, today) : 0;
   const nextPuzzle = allPuzzles.find(p => !progress?.sessions[p.id]?.completedAt) || allPuzzles[0];
   const back = () => { setScreen(screen === 'play' ? 'library' : 'home'); setMessage(''); };
 
@@ -172,7 +176,7 @@ function NativeApp() {
     <Pressable accessibilityRole="button" accessibilityLabel="Play today’s daily Island Sketch" onPress={openDaily} style={({ pressed }) => [S.dailyCard, pressed && { opacity: 0.7 }]}>
       <TileIcon /><View style={{ flex: 1 }}><Text style={S.cardTitle}>Island Sketch</Text><Text style={S.cardCopy}>Find the picture in the pastels.</Text><Text style={S.chip}>10 × 10 · Daily logic</Text></View><Text style={S.arrow}>↗</Text>
     </Pressable>
-    <View style={S.streak}><View><Text style={S.smallBold}>✦ {streakFor(progress, today)} lovely {streakFor(progress, today) === 1 ? 'day' : 'days'}</Text><Text style={S.cardCopy}>A little play goes a long way.</Text></View><Text style={S.dots}>{'●'.repeat(Math.min(7, streakFor(progress, today)))}{'○'.repeat(Math.max(0, 7 - streakFor(progress, today)))}</Text></View>
+    <View style={S.streak}><View><Text style={S.smallBold}>✦ {streak} lovely {streak === 1 ? 'day' : 'days'}</Text><Text style={S.cardCopy}>A little play goes a long way.</Text></View><Text style={S.dots}>{'●'.repeat(Math.min(7, streak))}{'○'.repeat(Math.max(0, 7 - streak))}</Text></View>
     <Button secondary onPress={() => setScreen('library')}>Explore the game collection  ▦</Button>
   </>;
 
@@ -218,7 +222,7 @@ function NativeApp() {
     <Text style={S.eyebrow}>YOUR LITTLE JOURNAL</Text><Text style={S.hero}>Look how far{"\n"}you’ve wandered.</Text>
     <View style={S.progressCircle}><Text style={S.progressNumber}>{completedCatalogue}</Text><Text style={S.cardCopy}>of {allPuzzles.length} sketches</Text></View>
     <Text style={[S.body, { textAlign: 'center' }]}>{completed.length ? 'Every sketch brings a little more light.' : 'Your first discovery is waiting on the island.'}</Text>
-    <View style={S.streak}><Text style={S.smallBold}>✦ Current streak</Text><Text style={S.smallBold}>{streakFor(progress, today)} days</Text></View>
+    <View style={S.streak}><Text style={S.smallBold}>✦ Current streak</Text><Text style={S.smallBold}>{streak} days</Text></View>
     <SectionTitle>Little milestones</SectionTitle>
     {[['First light', 'Finish your first sketch', completed.length >= 1], ['A page of wonders', 'Complete all four Shore sketches', chapters[0].puzzles.every(p => progress.sessions[p.id]?.completedAt)], ['A thoughtful start', 'Finish a sketch without hints', completed.some(s => !s.hints)]].map(([title, copy, earned]) => <View key={title} style={S.puzzleRow}><View style={S.puzzleIcon}><Text style={[S.puzzleGlyph, !earned && { opacity: 0.25 }]}>{earned ? '✦' : '○'}</Text></View><View><Text style={S.cardTitle}>{title}</Text><Text style={S.cardCopy}>{earned ? 'Earned · ' : ''}{copy}</Text></View></View>)}
     <SectionTitle detail={`${completed.length} COMPLETE`}>Your discoveries</SectionTitle>

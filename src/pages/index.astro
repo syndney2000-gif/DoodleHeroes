@@ -23,6 +23,15 @@ const dailyGames = games.filter(g => g.daily !== null && g.id !== 'scribble-sieg
         <div class="pip-bubble"><p data-pip-text>Hi, I’m Pip! Help me light up the island.</p><a class="pip-cta" data-pip-cta hidden></a></div>
       </div>
     </div>
+    <section class="style-pick card" data-style-pick hidden aria-labelledby="style-pick-title">
+      <h2 id="style-pick-title">How do you like to play?</h2>
+      <p class="muted">You can change this any time in Settings.</p>
+      <div class="style-options">
+        <button type="button" class="style-option rose" data-pick="sprout"><span class="badge big rose"><Icon name="heart" size={28} /></span><b>Sprout</b><small>Relaxed. No clock, bigger text, a helping hand.</small></button>
+        <button type="button" class="style-option sage" data-pick="explorer"><span class="badge big sage"><Icon name="sail" size={28} /></span><b>Explorer</b><small>The classic. A quiet timer and hints when you want.</small></button>
+        <button type="button" class="style-option gold" data-pick="master"><span class="badge big gold"><Icon name="trophy" size={28} /></span><b>Master</b><small>Personal bests and badges for flawless solves.</small></button>
+      </div>
+    </section>
     <IslandWorld />
   </section>
   <div class="section-heading"><h2>Your little worlds</h2><span class="eyebrow">Or pick from the list</span></div>
@@ -41,6 +50,22 @@ const dailyGames = games.filter(g => g.daily !== null && g.id !== 'scribble-sieg
   import { results, load } from '../lib/storage';
   import { games } from '../lib/games';
   import { localDateKey } from '../lib/rng';
+  import { hasChosenStyle, setPlayStyle, type PlayStyle } from '../lib/prefs';
+  import { playSound } from '../lib/audio';
+  import { confetti } from '../lib/juice';
+
+  const pick = document.querySelector<HTMLElement>('[data-style-pick]')!;
+  pick.hidden = hasChosenStyle();
+  for (const b of pick.querySelectorAll<HTMLButtonElement>('[data-pick]')) {
+    b.addEventListener('click', () => {
+      setPlayStyle(b.dataset.pick as PlayStyle);
+      playSound('discover');
+      confetti(60);
+      pick.querySelector('h2')!.textContent = `${b.querySelector('b')!.textContent} it is! Have fun.`;
+      pick.querySelector('.style-options')!.remove();
+      window.setTimeout(() => { pick.hidden = true; }, 1800);
+    });
+  }
 
   const r = results();
   const last = load<{ id: string; href: string }>('last-played');
@@ -72,7 +97,18 @@ const dailyGames = games.filter(g => g.daily !== null && g.id !== 'scribble-sieg
   .pip-bubble p { margin:0; font-size:15px; line-height:1.5; }
   .pip-cta { display:inline-block; margin-top:8px; font:600 15px var(--hand); }
   @keyframes pip-pop { from { opacity:0; transform:scale(.8) translateY(10px); } }
+  .style-pick { margin:0 0 20px; text-align:center; }
+  .style-pick h2 { margin:0 0 4px; }
+  .style-options { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px; }
+  .style-option { display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 12px; border:2px solid var(--rule); border-radius:22px;
+    background:linear-gradient(160deg,var(--tile),var(--paper)); color:var(--ink); box-shadow:var(--lift-1); transition:transform .25s var(--ease-bounce); }
+  .style-option:hover { transform:translateY(-4px) rotate(-1deg); }
+  .style-option b { font:600 20px var(--hand); }
+  .style-option small { font-size:13px; line-height:1.4; }
   @media (max-width:760px) {
+    .style-options { grid-template-columns:1fr; }
+    .style-option { display:grid; grid-template-columns:auto 1fr; column-gap:14px; row-gap:0; align-items:center; text-align:left; }
+    .style-option .badge { grid-row:span 2; }
     .hw-intro { grid-template-columns:1fr; gap:16px; }
     .hw-intro h1 { font-size:36px; }
     .hw-intro .btn { width:100%; }

@@ -36,6 +36,8 @@ import '../../games/bridges/board.css';
     const chapter = chapters.find((c) => c.puzzles.includes(puzzle));
     const next = isDaily ? undefined : allPuzzles[allPuzzles.indexOf(puzzle) + 1];
     setupPlay({
+      game: 'isle-spans',
+      puzzleId: puzzle.id,
       eyebrow: isDaily ? 'Isle Spans · daily challenge' : `Isle Spans · ${chapter?.title}`,
       title: puzzle.title,
       note: puzzle.note,

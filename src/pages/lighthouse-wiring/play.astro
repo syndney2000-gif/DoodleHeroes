@@ -41,6 +41,8 @@ import '../../games/net/board.css';
     const chapter = chapters.find((c) => c.puzzles.includes(puzzle));
     const next = isDaily ? undefined : allPuzzles[allPuzzles.indexOf(puzzle) + 1];
     const board = setupPlay({
+      game: 'lighthouse-wiring',
+      puzzleId: puzzle.id,
       eyebrow: isDaily ? 'Lighthouse Wiring · daily challenge' : `Lighthouse Wiring · ${chapter?.title}`,
       title: puzzle.title,
       note: puzzle.note,

@@ -40,6 +40,8 @@ import '../../games/nonogram/board.css';
     const chapter = chapters.find((c) => c.puzzles.includes(puzzle));
     const next = isDaily ? undefined : allPuzzles[allPuzzles.indexOf(puzzle) + 1];
     const board = setupPlay({
+      game: 'island-sketch',
+      puzzleId: puzzle.id,
       eyebrow: isDaily ? 'Island Sketch · daily challenge' : `Island Sketch · ${chapter?.title}`,
       title: puzzle.title,
       note: puzzle.note,

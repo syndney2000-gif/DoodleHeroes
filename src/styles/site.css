@@ -256,3 +256,25 @@ html[data-reduced-motion]::view-transition-new(root) { animation:none; }
 }
 [data-theme=night] .pl-board-viewport { background:#FAF7EF; border-radius:20px; padding:12px; box-shadow:var(--lift-1); }
 [data-theme=night] .mm { background:#FAF7EF; border-radius:28px; padding:16px; }
+
+/* ---------- Play styles and accessibility (Settings) ---------- */
+/* Text size: reading text grows; headings already scale with the page. */
+[data-text=large] body { font-size:18px; }
+[data-text=larger] body { font-size:20px; }
+[data-text=large] main :is(p,li,td,th,label):not(.eyebrow,.pl-report) { font-size:18px; }
+[data-text=larger] main :is(p,li,td,th,label):not(.eyebrow,.pl-report) { font-size:20px; }
+[data-text=large] .btn { font-size:17px; } [data-text=larger] .btn { font-size:19px; }
+
+/* Sprout: no clock, roomier controls. */
+[data-style=sprout] .pl-chip-time, [data-style=sprout] .pl-best { display:none!important; }
+[data-style=sprout] .pl-toolbar .btn { min-height:52px; font-size:17px; }
+
+/* Clearer patterns: shape cues alongside colour. */
+[data-patterns] .sp-island.done circle { stroke-width:4.5; }
+[data-patterns] .sp-island.over circle { stroke-dasharray:5 4; }
+[data-patterns] .sp-bridge.wrong { stroke-dasharray:6 4; }
+[data-patterns] .nw-tile:not(.lit) .nw-wire { stroke-dasharray:3 6; }
+[data-patterns] .nw-tile.wrong .nw-bg { stroke:#A65347; stroke-width:3; stroke-dasharray:5 3; }
+[data-patterns] .ns-cell.wrong { background-image:repeating-linear-gradient(45deg,transparent 0 4px,rgba(166,83,71,.45) 4px 7px); }
+[data-patterns] .ns-cell.hint-cell, [data-patterns] .ns-cell.hint-line { outline:2px dashed #367A78; outline-offset:-4px; }
+[data-patterns] .iw-window.lit { stroke-dasharray:none; stroke-width:4; }

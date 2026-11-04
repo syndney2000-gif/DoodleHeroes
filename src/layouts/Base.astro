@@ -51,6 +51,11 @@ const navKey = section && gameSections.includes(section) ? 'games' : section;
         document.documentElement.dataset.theme = 'night';
         document.querySelector('meta[name=theme-color]').content = '#13222A';
       }
+      var get = function (k, d) { var v = localStorage.getItem('dh:settings:' + k); return v == null ? d : JSON.parse(v); };
+      var html = document.documentElement;
+      html.dataset.style = get('play-style', 'explorer');
+      html.dataset.text = get('text-size', 'normal');
+      if (get('patterns', false)) html.setAttribute('data-patterns', '');
     } catch (e) { /* Storage blocked: stay in daylight. */ }
   </script>
   <link rel="icon" type="image/png" sizes="64x64" href="/icons/favicon-64.png">

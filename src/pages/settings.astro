@@ -11,6 +11,10 @@ import Base from '../layouts/Base.astro';
     <label class="setting-row" for="setting-music"><span><strong>Meadow music</strong><p>A playful island stroll: plucked strings, soft whistles and a gentle rhythm. Off until you invite it in.</p></span><input type="checkbox" id="setting-music" /></label>
     <label class="setting-row" for="setting-music-volume"><span><strong>Music volume</strong><p>Keep the melody as soft as you like.</p></span><input type="range" id="setting-music-volume" min="0" max="100" step="5" /></label>
     <label class="setting-row" for="setting-motion"><span><strong>Reduce motion</strong><p>Keep things still. Your device’s preference is always respected.</p></span><input type="checkbox" id="setting-motion" /></label>
+    <label class="setting-row" for="setting-style"><span><strong>Play style</strong><p>Sprout is relaxed with no clock and a helping hand; Master tracks personal bests and flawless solves.</p></span><select id="setting-style"><option value="sprout">Sprout</option><option value="explorer">Explorer</option><option value="master">Master</option></select></label>
+    <label class="setting-row" for="setting-text"><span><strong>Text size</strong><p>Bigger words for comfortable reading.</p></span><select id="setting-text"><option value="normal">Normal</option><option value="large">Large</option><option value="larger">Larger</option></select></label>
+    <label class="setting-row" for="setting-patterns"><span><strong>Clearer patterns</strong><p>Adds dashes and outlines alongside colours, so finished and wrong pieces stand out without relying on colour.</p></span><input type="checkbox" id="setting-patterns" /></label>
+    <label class="setting-row" for="setting-tips"><span><strong>Pip’s tips</strong><p>Show the little how-to-play tours again in each puzzle.</p></span><button class="btn secondary" type="button" id="setting-tips">Show again</button></label>
     <label class="setting-row" for="setting-theme"><span><strong>Theme</strong><p>Daylight, or a lantern-lit night with the boards glowing like paper.</p></span><select id="setting-theme"><option value="day">Daylight</option><option value="night">Night</option><option value="auto">Match my device</option></select></label>
     <label class="setting-row" for="setting-haptics"><span><strong>Vibration</strong><p>A gentle buzz when you finish a line or a puzzle, on phones that support it.</p></span><input type="checkbox" id="setting-haptics" /></label>
     <p id="settings-status" role="status" aria-live="polite" style="margin-top:18px;margin-bottom:0"></p>
@@ -20,7 +24,8 @@ import Base from '../layouts/Base.astro';
 </Base>
 <script>
   import { musicOn, musicVolume, playSound, setMusic, setMusicVolume, setSound, setVolume, soundOn, soundVolume } from '../lib/audio';
-  import { load, save } from '../lib/storage';
+  import { keys, load, remove, save } from '../lib/storage';
+  import { patternsOn, playStyle, setPatterns, setPlayStyle, setTextSize, textSize, type PlayStyle, type TextSize } from '../lib/prefs';
   import { syncMotion } from '../lib/site-shell';
   import { buzz, hapticsOn } from '../lib/juice';
   const sound = document.getElementById('setting-sound') as HTMLInputElement;
@@ -31,6 +36,17 @@ import Base from '../layouts/Base.astro';
   const haptics = document.getElementById('setting-haptics') as HTMLInputElement;
   const status = document.getElementById('settings-status')!;
   haptics.checked = hapticsOn();
+  const style = document.getElementById('setting-style') as HTMLSelectElement;
+  const text = document.getElementById('setting-text') as HTMLSelectElement;
+  const patterns = document.getElementById('setting-patterns') as HTMLInputElement;
+  style.value = playStyle(); text.value = textSize(); patterns.checked = patternsOn();
+  style.addEventListener('change', () => { setPlayStyle(style.value as PlayStyle); status.textContent = `Play style set to ${style.selectedOptions[0].text}.`; });
+  text.addEventListener('change', () => { setTextSize(text.value as TextSize); status.textContent = `Text size set to ${text.selectedOptions[0].text.toLowerCase()}.`; });
+  patterns.addEventListener('change', () => { setPatterns(patterns.checked); status.textContent = patterns.checked ? 'Clearer patterns on.' : 'Clearer patterns off.'; });
+  document.getElementById('setting-tips')!.addEventListener('click', () => {
+    for (const k of keys()) if (k.startsWith('tour:')) remove(k);
+    status.textContent = 'Pip will show the tips again next time you play.';
+  });
   const theme = document.getElementById('setting-theme') as HTMLSelectElement;
   theme.value = load<string>('settings:theme') ?? 'day';
   theme.addEventListener('change', () => {

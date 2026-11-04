@@ -8,6 +8,9 @@ import { results } from './storage';
 import { earnedIds, stickers } from './achievements';
 import { buzz, chime, confetti, fanfare, pop, sparkle } from './juice';
 import { iconSvg } from './icons';
+import { load, save } from './storage';
+import { playStyle } from './prefs';
+import { tours } from './tours';
 
 /** How far through the puzzle the player is, and what they just completed. */
 export interface Progress {
@@ -34,6 +37,9 @@ export interface PlayableBoard {
 }
 
 interface Setup<B extends PlayableBoard> {
+  /** Game id and puzzle id: the key for saved results and Pip's tour. */
+  game: string;
+  puzzleId: string;
   eyebrow: string;
   title: string;
   /** Shown in the solved panel. */
@@ -63,6 +69,50 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
 
   // Stickers held before this puzzle, so the report card can announce new ones.
   const stickersBefore = earnedIds(results());
+  const bestBefore = results()[`${s.game}/${s.puzzleId}`];
+  const style = playStyle();
+
+  /* Pip's tour on a first visit, and in Sprout a gentle nudge after a pause. */
+  const coach = $('pl-coach');
+  const steps = tours[s.game] ?? [];
+  let step = load<boolean>(`tour:${s.game}`) ? steps.length : 0;
+  let nudging = false;
+  const showCoach = () => {
+    if (nudging) return;
+    if (step >= steps.length) { coach.hidden = true; return; }
+    coach.hidden = false;
+    $('pl-coach-text').textContent = steps[step].text;
+    $('pl-coach-step').textContent = `Tip ${step + 1} of ${steps.length}`;
+    $('pl-coach-next').textContent = steps[step].until === 'ok' ? 'Let’s play!' : 'Skip tips';
+  };
+  const finishTour = () => { step = steps.length; save(`tour:${s.game}`, true); showCoach(); };
+  const advance = (event: 'move' | 'gain') => {
+    if (step < steps.length && steps[step].until === event) {
+      step++;
+      playSound('tap');
+      showCoach();
+    }
+  };
+  let idle = 0;
+  const resetIdle = () => {
+    window.clearTimeout(idle);
+    if (nudging) { nudging = false; $('pl-hint').classList.remove('pl-nudge'); showCoach(); }
+    if (style !== 'sprout') return;
+    idle = window.setTimeout(() => {
+      if (!$('pl-done').hidden || step < steps.length) return;
+      nudging = true;
+      coach.hidden = false;
+      $('pl-coach-text').textContent = 'Taking a little think? That’s great. If you’d like, tap the bulb and I’ll point at a good spot.';
+      $('pl-coach-step').textContent = '';
+      $('pl-coach-next').textContent = 'Thanks, Pip';
+      $('pl-hint').classList.add('pl-nudge');
+    }, 30000);
+  };
+  $('pl-coach-next').addEventListener('click', () => {
+    if (nudging) { nudging = false; coach.hidden = true; $('pl-hint').classList.remove('pl-nudge'); return; }
+    if (steps[step]?.until === 'ok') { step++; if (step >= steps.length) finishTour(); else showCoach(); }
+    else finishTour();
+  });
   // Completions within a few seconds of each other climb the scale.
   let streak = { step: -1, at: 0 };
   let board: B | undefined;
@@ -76,6 +126,7 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
       ribbon.style.setProperty('--p', String(total ? done / total : 0));
       ribbon.setAttribute('aria-valuenow', String(Math.round((done / Math.max(1, total)) * 100)));
       if (!gained.length || !board) return;
+      advance('gain');
       const now = performance.now();
       streak = { step: now - streak.at < 5000 ? streak.step + 1 : 0, at: now };
       chime(streak.step);
@@ -88,6 +139,22 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
     onSolved({ stars, seconds, hints, fresh: justSolved }) {
       const done = $('pl-done');
       done.classList.toggle('fresh', !!justSolved);
+      window.clearTimeout(idle);
+      nudging = false;
+      if (step < steps.length) { if (justSolved) finishTour(); else coach.hidden = true; }
+      const best = $('pl-best');
+      const chips: [string, boolean][] = [];
+      if (justSolved && !bestBefore) chips.push(['First solve — your time to beat', false]);
+      else if (justSolved && bestBefore && seconds < bestBefore.seconds) chips.push([`New personal best! (was ${formatTime(bestBefore.seconds)})`, true]);
+      else if (bestBefore) chips.push([`Best: ${formatTime(Math.min(bestBefore.seconds, seconds))}`, false]);
+      if (style === 'master' && hints === 0) chips.push(['Flawless — no hints', true]);
+      best.replaceChildren(...chips.map(([text, gold]) => {
+        const chip = document.createElement('span');
+        chip.textContent = text;
+        if (gold) chip.className = 'gold';
+        return chip;
+      }));
+      best.hidden = chips.length === 0;
       $('pl-progress').style.setProperty('--p', '1');
       if (justSolved) {
         playSound('solved');
@@ -118,7 +185,7 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
       const stickerEl = $('pl-sticker');
       stickerEl.hidden = fresh.length === 0;
       stickerEl.innerHTML = fresh.map((x) =>
-        `<span class="sticker-chip"><span class="badge ${x.tint}">${iconSvg(x.icon, 22)}</span>New sticker: <b></b></span>`).join('');
+        `<span class="sticker-chip"><span class="badge ${x.tint}">${iconSvg(x.icon, 22)}</span><span>New sticker: <b></b></span></span>`).join('');
       stickerEl.querySelectorAll('b').forEach((b, k) => { b.textContent = fresh[k].name; });
       fresh.forEach((x) => stickersBefore.add(x.id));
       const next = $<HTMLAnchorElement>('pl-next');
@@ -130,8 +197,9 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
     },
   });
   showHints(board.hintCount);
-  $('pl-board').addEventListener('pointerup', () => { if ($('pl-done').hidden) playSound('place'); });
-  $('pl-board').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') playSound('place'); });
+  $('pl-board').addEventListener('pointerup', () => { if ($('pl-done').hidden) { playSound('place'); advance('move'); resetIdle(); } });
+  $('pl-board').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { playSound('place'); advance('move'); } resetIdle(); });
+  if ($('pl-done').hidden) { showCoach(); resetIdle(); }
 
   const more = $('pl-more');
   const menu = $('pl-more-menu');
@@ -147,7 +215,13 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
 
   $('pl-undo').addEventListener('click', () => { board!.undo(); playSound('place'); });
   $('pl-check').addEventListener('click', () => { board!.check(); playSound('tap'); });
-  $('pl-hint').addEventListener('click', () => { board!.hint(); playSound('hint'); });
+  let hintOk = style !== 'master';
+  $('pl-hint').addEventListener('click', () => {
+    // Master players get one check per puzzle, so a stray tap can't cost a star.
+    if (!hintOk && !confirm('A hint costs a star and ends a flawless run. Use one?')) return;
+    hintOk = true;
+    board!.hint(); playSound('hint'); resetIdle();
+  });
   const startOver = () => {
     board!.restart();
     $('pl-done').hidden = true;

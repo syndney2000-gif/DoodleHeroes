@@ -1,37 +1,29 @@
-# Original Doodle Heroes audio — CC0-1.0
+# Doodle Heroes audio — credits
 
-Every `.wav` in this directory is an original mathematical synthesis generated
-by `scripts/generate-audio.py`. No recordings, stock samples, songs, casino
-assets, melodies from existing works, or third-party audio were used.
+All audio here is **CC0 1.0 (public domain)**: free to use, modify and
+redistribute, including commercially, with no attribution required. We credit
+the creators anyway, with thanks.
 
-**A Stroll Around the Island** (`meadow-loop.wav`) is an original 60-second,
-24-bar background miniature at 96 BPM. Six phrases trade a thumb-piano-style
-plucked hook and soft whistle responses, with lightly strummed chords, warm
-bass, brushed shakers and quiet wooden percussion. A contrasting middle passage,
-sparse countermelody and changing instrumentation give the tune room to develop.
-Stereo room reflections and instrument release tails wrap across the boundary
-for seamless looping. The master is stereo 24 kHz PCM WAV.
+## Sound effects (`*.mp3`)
 
-`meadow-loop.ogg` is the compact Vorbis playback version. The browser falls back
-to the WAV master if Vorbis is unavailable. Regeneration also creates the Ogg
-when `ffmpeg` with `libvorbis` is installed; Python alone reproduces the master.
-The other eleven files are layered game effects, stored as mono 32 kHz PCM
-WAV: filtered-noise transients and pencil scribbles, pitch-dropping "thumps"
-for weight, inharmonic bell partials and plucks for tone, sparkle runs, and a
-small synthetic room on reward sounds. They are mastered to a -1 dBFS peak
-(UI ticks lower). All instrument sounds are synthesized
-from scratch, with no recordings, samples or borrowed melodies.
+Built by `scripts/build-audio.sh` from these packs on OpenGameArt:
 
-Music is off by default, starts after a user gesture, and has its own volume
-and toggle in the toolbar and Settings. Effects retain their separate saved
-preference. Both pause in background tabs. Music is fetched only when enabled.
+| Pack | Creator | Used for |
+|---|---|---|
+| [Interface Sounds](https://opengameart.org/content/interface-sounds) | Kenney (kenney.nl) | taps, placing, drawing, merging, hints, errors, erase; Siege hits, pops, gems, hurts, splashes, swipes |
+| [85 Short music jingles](https://opengameart.org/content/85-short-music-jingles) | Kenney (kenney.nl) | discovery, level-up and solved (steel-drum set); Siege boss and game-over |
+| [Casino Audio](https://opengameart.org/content/54-casino-sound-effects-cards-dice-chips) | Kenney (kenney.nl) | coin clinks for deliveries and Siege coins |
 
-To the extent possible under law, the authors dedicate these sound assets and
-their generator to the public domain under CC0 1.0 Universal. They may be used,
-modified and redistributed, including commercially, without attribution.
+The merge sound layers Kenney's confirmation with a short synthesized thump.
+Effects are mono, peak-normalised to -1.5 dBFS.
 
-SPDX-License-Identifier: CC0-1.0
-Legal code: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+## Music (`music/*.ogg`, with `.mp3` for Safari)
 
-Regenerate from source with Python 3: `python3 scripts/generate-audio.py`.
-The rest of the project is not relicensed by this dedication.
+| Track | Creator | Where |
+|---|---|---|
+| [Happy Vibes](https://opengameart.org/content/happy-vibes) (`island-vibes`) | Ruskerdax | default everywhere |
+| [Shine Blitz](https://opengameart.org/content/shine-blitz) (`shine-blitz`) | zesona | default in Scribble Siege |
+| Meadow Stroll (`meadow-loop.ogg/.wav`) | Doodle Heroes, `scripts/generate-audio.py` | optional, in Settings |
+
+Music is off until the player turns it on, and starts after a tap or key
+press. Settings → Music track can override the automatic choice.

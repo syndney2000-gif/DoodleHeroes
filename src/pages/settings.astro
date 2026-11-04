@@ -8,7 +8,8 @@ import Base from '../layouts/Base.astro';
   <section class="card" aria-label="Preferences">
     <label class="setting-row" for="setting-sound"><span><strong>Sound effects</strong><p>Soft taps, little discoveries, and a reason to celebrate.</p></span><input type="checkbox" id="setting-sound" /></label>
     <label class="setting-row" for="setting-volume"><span><strong>Effects volume</strong><p>Find your comfortable level.</p></span><input type="range" id="setting-volume" min="0" max="100" step="5" /></label>
-    <label class="setting-row" for="setting-music"><span><strong>Meadow music</strong><p>A playful island stroll: plucked strings, soft whistles and a gentle rhythm. Off until you invite it in.</p></span><input type="checkbox" id="setting-music" /></label>
+    <label class="setting-row" for="setting-music"><span><strong>Music</strong><p>Upbeat island tunes while you play. Off until you invite it in.</p></span><input type="checkbox" id="setting-music" /></label>
+    <label class="setting-row" for="setting-music-track"><span><strong>Music track</strong><p>Automatic plays the island tune, and a high-energy track in Scribble Siege.</p></span><select id="setting-music-track"><option value="auto">Automatic</option><option value="island">Island Vibes</option><option value="blitz">Shine Blitz (high energy)</option><option value="meadow">Meadow Stroll (gentle)</option></select></label>
     <label class="setting-row" for="setting-music-volume"><span><strong>Music volume</strong><p>Keep the melody as soft as you like.</p></span><input type="range" id="setting-music-volume" min="0" max="100" step="5" /></label>
     <label class="setting-row" for="setting-motion"><span><strong>Reduce motion</strong><p>Keep things still. Your device’s preference is always respected.</p></span><input type="checkbox" id="setting-motion" /></label>
     <label class="setting-row" for="setting-style"><span><strong>Play style</strong><p>Sprout is relaxed with no clock and a helping hand; Master tracks personal bests and flawless solves.</p></span><select id="setting-style"><option value="sprout">Sprout</option><option value="explorer">Explorer</option><option value="master">Master</option></select></label>
@@ -20,10 +21,10 @@ import Base from '../layouts/Base.astro';
     <p id="settings-status" role="status" aria-live="polite" style="margin-top:18px;margin-bottom:0"></p>
   </section>
   <section class="card"><h2>Your progress belongs to you.</h2><p>Games save in this browser. You can review your discoveries and reset your progress in the Journal.</p><a class="btn secondary" href="/progress">Open your journal →</a></section>
-  <p class="muted">The music and cartoon sound effects are original, synthesized and free to reuse under CC0. <a href="/audio/README.md">Audio source and dedication</a>.</p>
+  <p class="muted">Sound effects and music are free-to-use CC0 works by Kenney, Ruskerdax and zesona, plus our own Meadow Stroll. <a href="/audio/README.md">Audio credits</a>.</p>
 </Base>
 <script>
-  import { musicOn, musicVolume, playSound, setMusic, setMusicVolume, setSound, setVolume, soundOn, soundVolume } from '../lib/audio';
+  import { musicChoice, musicOn, musicVolume, playSound, setMusic, setMusicTrack, setMusicVolume, setSound, setVolume, soundOn, soundVolume, type MusicTrack } from '../lib/audio';
   import { keys, load, remove, save } from '../lib/storage';
   import { patternsOn, playStyle, setPatterns, setPlayStyle, setTextSize, textSize, type PlayStyle, type TextSize } from '../lib/prefs';
   import { syncMotion } from '../lib/site-shell';
@@ -33,6 +34,9 @@ import Base from '../layouts/Base.astro';
   const motion = document.getElementById('setting-motion') as HTMLInputElement;
   const music = document.getElementById('setting-music') as HTMLInputElement;
   const musicLevel = document.getElementById('setting-music-volume') as HTMLInputElement;
+  const track = document.getElementById('setting-music-track') as HTMLSelectElement;
+  track.value = musicChoice();
+  track.addEventListener('change', () => { setMusicTrack(track.value as MusicTrack | 'auto'); status.textContent = `Music track: ${track.selectedOptions[0].text}.`; });
   const haptics = document.getElementById('setting-haptics') as HTMLInputElement;
   const status = document.getElementById('settings-status')!;
   haptics.checked = hapticsOn();

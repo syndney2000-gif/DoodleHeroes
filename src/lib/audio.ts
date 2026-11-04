@@ -1,13 +1,32 @@
 /* Original CC0 cues; shared, gesture-unlocked Web Audio engine.
    Architecture informed by ../casino/web/src/lib/sfx.ts; no casino samples. */
 import { load, save } from './storage';
-export type Cue = 'tap' | 'place' | 'draw' | 'merge' | 'discover' | 'deliver' | 'levelup' | 'invalid' | 'erase' | 'hint' | 'solved';
+/** Background music: CC0 tracks (see public/audio/README.md). Auto picks the
+    high-energy track for Scribble Siege and the island track elsewhere. */
+export type MusicTrack = 'island' | 'blitz' | 'meadow';
+const MUSIC: Record<MusicTrack, string[]> = {
+  island: ['/audio/music/island-vibes.ogg', '/audio/music/island-vibes.mp3'],
+  blitz: ['/audio/music/shine-blitz.ogg', '/audio/music/shine-blitz.mp3'],
+  meadow: ['/audio/meadow-loop.ogg', '/audio/meadow-loop.wav'],
+};
+export function musicChoice(): MusicTrack | 'auto' {
+  return load<MusicTrack | 'auto'>('settings:music-track') ?? 'auto';
+}
+function musicTrack(): MusicTrack {
+  const choice = musicChoice();
+  if (choice !== 'auto' && choice in MUSIC) return choice;
+  return typeof location !== 'undefined' && location.pathname.startsWith('/scribble-siege/play') ? 'blitz' : 'island';
+}
+const CUES = ['tap', 'place', 'draw', 'merge', 'discover', 'deliver', 'levelup', 'invalid', 'erase', 'hint', 'solved'] as const;
+const SIEGE_CUES = ['sg-hit', 'sg-kill', 'sg-gem', 'sg-coin', 'sg-hurt', 'sg-boss', 'sg-dead', 'sg-splash', 'sg-swipe'] as const;
+export type Cue = typeof CUES[number] | typeof SIEGE_CUES[number];
 let ctx: AudioContext | undefined;
 let bus: GainNode | undefined;
 let musicBus: GainNode | undefined;
 let musicSource: AudioBufferSourceNode | undefined;
-let musicBuffer: AudioBuffer | undefined;
+const musicBuffers = new Map<MusicTrack, AudioBuffer>();
 let musicPending: Promise<void> | undefined;
+let musicPlaying: MusicTrack | undefined;
 let unlocked = false;
 const buffers = new Map<Cue, AudioBuffer>();
 const pending = new Map<Cue, Promise<AudioBuffer | undefined>>();
@@ -40,7 +59,7 @@ async function buffer(cue: Cue) {
   if (!c) return;
   const task = (async () => {
     try {
-      const response = await fetch(`/audio/${cue}.wav`);
+      const response = await fetch(`/audio/${cue}.mp3`);
       if (!response.ok) return;
       const result = await c.decodeAudioData(await response.arrayBuffer());
       buffers.set(cue, result);
@@ -56,7 +75,9 @@ export function unlockAudio() {
   const c = context();
   if (!c) return;
   if (c.state === 'suspended') void c.resume().catch(() => {});
-  for (const cue of ['tap', 'place', 'draw', 'merge', 'discover', 'deliver', 'levelup', 'invalid', 'erase', 'hint', 'solved'] as Cue[]) void buffer(cue);
+  for (const cue of CUES) void buffer(cue);
+  // Siege's own cues load only where they're used.
+  if (typeof location !== 'undefined' && location.pathname.startsWith('/scribble-siege/play')) for (const cue of SIEGE_CUES) void buffer(cue);
   void startMusic();
 }
 export function soundOn() { return enabled; }
@@ -67,16 +88,17 @@ async function startMusic() {
   if (!unlocked || !musicEnabled || document.hidden || musicSource) return;
   const c = context();
   if (!c || !musicBus) return;
-  if (!musicBuffer) {
+  const track = musicTrack();
+  if (!musicBuffers.has(track)) {
     musicPending ??= (async () => {
       try {
-        for (const path of ['/audio/meadow-loop.ogg', '/audio/meadow-loop.wav']) {
+        for (const path of MUSIC[track]) {
           try {
             const response = await fetch(path);
             if (!response.ok) continue;
-            musicBuffer = await c.decodeAudioData(await response.arrayBuffer());
+            musicBuffers.set(track, await c.decodeAudioData(await response.arrayBuffer()));
             break;
-          } catch { /* Try the PCM master if this browser cannot decode Vorbis. */ }
+          } catch { /* Try the fallback if this browser cannot decode the format. */ }
         }
       } catch { /* Music is optional; a failed load never interrupts play. */ }
       finally { musicPending = undefined; }
@@ -84,22 +106,31 @@ async function startMusic() {
     await musicPending;
   }
   // Recheck after decoding: the user may have muted or left the tab.
-  if (!musicBuffer || !musicEnabled || document.hidden || musicSource) return;
+  const buffer = musicBuffers.get(track);
+  if (!buffer || !musicEnabled || document.hidden || musicSource) return;
   const source = c.createBufferSource();
-  source.buffer = musicBuffer;
+  source.buffer = buffer;
   source.loop = true;
   source.connect(musicBus);
   musicBus.gain.cancelScheduledValues(c.currentTime);
   musicBus.gain.setTargetAtTime(musicLevel, c.currentTime, .15);
   musicSource = source;
+  musicPlaying = track;
   source.start();
+}
+function stopMusic() {
+  if (!musicSource) return;
+  musicSource.stop(); musicSource.disconnect(); musicSource = undefined; musicPlaying = undefined;
+}
+/** Switches the background track; plays the new one at once if music is on. */
+export function setMusicTrack(choice: MusicTrack | 'auto') {
+  save('settings:music-track', choice);
+  if (musicPlaying && musicPlaying !== musicTrack()) { stopMusic(); void startMusic(); }
 }
 export function setMusic(on: boolean) {
   musicEnabled = on;
   save('settings:music', on);
-  if (!on && musicSource) {
-    musicSource.stop(); musicSource.disconnect(); musicSource = undefined;
-  }
+  if (!on) stopMusic();
   if (on) void startMusic();
   mix();
 }

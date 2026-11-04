@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import StreakStrip from '../components/StreakStrip.astro';
 import { stickers } from '../lib/achievements';
+import Icon from '../components/Icon.astro';
 ---
 <Base
   title="Your journal"
@@ -20,7 +21,7 @@ import { stickers } from '../lib/achievements';
   <ul class="stickers">
     {stickers.map((x) => (
       <li data-sticker={x.id}>
-        <span class="icon" aria-hidden="true">{x.icon}</span>
+        <span class={`badge big ${x.tint}`}><Icon name={x.icon} size={30} /></span>
         <span class="name">{x.name}</span>
         <span class="how">{x.how}</span>
       </li>
@@ -149,12 +150,12 @@ import { stickers } from '../lib/achievements';
     margin:0; display:flex; flex-direction:column; align-items:center; text-align:center; gap:2px;
     padding:12px 8px; border:2px dashed var(--rule); border-radius:var(--wobble-soft); background:var(--paper);
   }
-  .stickers .icon{ font-size:34px; filter:grayscale(1); opacity:.3; }
+  .stickers .badge{ filter:grayscale(1); opacity:.3; }
   .stickers .name{ font-family:var(--hand); font-size:20px; color:var(--ink-soft); }
   .stickers .how{ font-size:13px; color:var(--ink-soft); }
   /* Earned stickers peel off the sheet: solid border, colour, a slight tilt. */
   .stickers li.earned{ border:2px solid var(--ink); box-shadow:2px 3px 0 var(--shadow);  background:#FFF8D9; }
   .stickers li.earned:nth-child(even){  }
-  .stickers li.earned .icon{ filter:none; opacity:1; }
+  .stickers li.earned .badge{ filter:none; opacity:1; }
   .stickers li.earned .name{ color:var(--ink); }
 </style>

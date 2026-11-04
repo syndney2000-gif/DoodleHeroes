@@ -37,7 +37,10 @@ body.game-page{ min-height:100dvh; overflow-x:hidden; }
   display:flex; align-items:center; gap:10px; width:100%; max-width:440px; margin:22px 0 0; padding:10px 12px;
   background:var(--paper); border:1px solid var(--rule); border-radius:var(--wobble-soft); text-align:left;
 }
-.sg-jar-ic{ font-size:34px; line-height:1; }
+.sg-jar-ic{ line-height:1; }
+.sg-coin-ic{ display:inline-flex; color:#B8862B; vertical-align:-4px; }
+.sg-side button{ display:inline-flex; align-items:center; gap:10px; }
+.sg-node .cost svg{ vertical-align:-2px; }
 .sg-jar-text{ flex:1; display:flex; flex-direction:column; line-height:1.3; }
 .sg-jar-text b{ font-family:var(--hand); font-weight:400; font-size:21px; }
 .sg-jar-text small{ font-size:13px; color:var(--ink-soft); }

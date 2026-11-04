@@ -1,6 +1,7 @@
 ---
 import GameLayout from '../../layouts/GameLayout.astro';
 import '../../games/survivor/siege.css';
+import Icon from '../../components/Icon.astro';
 ---
 <GameLayout
   title="Play Scribble Siege"
@@ -9,7 +10,7 @@ import '../../games/survivor/siege.css';
   <div class="siege" id="siege">
     <header class="sg-top">
       <a class="sg-home" href="/scribble-siege">← Guide &amp; tips</a>
-      <span class="sg-coins" title="Coins"><span aria-hidden="true">🪙</span> <b id="sg-coins">0</b><span class="sr-only"> coins</span></span>
+      <span class="sg-coins" title="Coins"><span class="sg-coin-ic"><Icon name="coin" size={20} /></span> <b id="sg-coins">0</b><span class="sr-only"> coins</span></span>
     </header>
 
     <noscript><p class="note">Scribble Siege needs JavaScript. The <a href="/scribble-siege">guide</a> works without it.</p></noscript>
@@ -21,16 +22,16 @@ import '../../games/survivor/siege.css';
       <p class="sg-hero-name" id="sg-menu-hero-name"></p>
       <button class="sg-play" type="button" id="sg-play">PLAY</button>
       <div class="sg-jar" id="sg-jar">
-        <span class="sg-jar-ic" aria-hidden="true">🫙</span>
-        <div class="sg-jar-text"><b><span id="jar-coins">0</span> 🪙 in the coin jar</b><small id="jar-info"></small></div>
+        <span class="sg-jar-ic badge big gold"><Icon name="jar" size={30} /></span>
+        <div class="sg-jar-text"><b><span id="jar-coins">0</span> coins in the jar</b><small id="jar-info"></small></div>
         <button class="btn" type="button" id="jar-collect">Collect</button>
       </div>
       <nav class="sg-side" aria-label="Game menu">
-        <button type="button" data-go="heroes"><span aria-hidden="true">🧍</span> Heroes</button>
-        <button type="button" data-go="upgrades"><span aria-hidden="true">🎒</span> Upgrades</button>
-        <button type="button" data-go="daily"><span aria-hidden="true">📅</span> Daily siege</button>
-        <button type="button" data-go="draw"><span aria-hidden="true">✏️</span> Draw your hero</button>
-        <button type="button" data-go="records"><span aria-hidden="true">🏆</span> Records</button>
+        <button type="button" data-go="heroes"><span class="badge rose"><Icon name="hero" size={20} /></span> Heroes</button>
+        <button type="button" data-go="upgrades"><span class="badge sage"><Icon name="backpack" size={20} /></span> Upgrades</button>
+        <button type="button" data-go="daily"><span class="badge blue"><Icon name="calendar" size={20} /></span> Daily siege</button>
+        <button type="button" data-go="draw"><span class="badge lavender"><Icon name="pencil" size={20} /></span> Draw your hero</button>
+        <button type="button" data-go="records"><span class="badge gold"><Icon name="trophy" size={20} /></span> Records</button>
       </nav>
       <p class="sg-help">Move with <kbd>WASD</kbd> or the arrow keys, or drag anywhere on the screen. Your hero attacks on their own — just survive ten minutes.</p>
     </section>
@@ -101,7 +102,7 @@ import '../../games/survivor/siege.css';
         <div class="sg-row">
           <div class="sg-hp"><span aria-hidden="true">❤</span><div class="sg-hpbar"><i id="hud-hp"></i></div><b id="hud-hp-text">100</b></div>
           <div class="sg-stats"><b id="hud-time">10:00</b> <span aria-hidden="true">☠</span> <b id="hud-kills">0</b><span class="sr-only"> defeated</span>
-            <button type="button" class="sg-pause-btn" id="hud-pause" aria-label="Pause">⏸</button>
+            <button type="button" class="sg-pause-btn" id="hud-pause" aria-label="Pause"><Icon name="pause" size={22} /></button>
           </div>
         </div>
         <div class="sg-boss" id="hud-boss" hidden><span>The Big Eraser</span><div class="sg-bossbar"><i id="hud-boss-hp"></i></div></div>
@@ -124,7 +125,7 @@ import '../../games/survivor/siege.css';
           <div class="sg-cards" id="lv-cards"></div>
           <p class="sg-level-actions">
             <button class="btn secondary" type="button" id="lv-reroll">🎲 Reroll</button>
-            <button class="btn secondary" type="button" id="lv-skip">Skip (+3 🪙)</button>
+            <button class="btn secondary" type="button" id="lv-skip">Skip (+3 coins)</button>
           </p>
         </div>
       </div>
@@ -139,7 +140,7 @@ import '../../games/survivor/siege.css';
               <tr><th>Time survived</th><td id="end-time"></td></tr>
               <tr><th>Scribbles defeated</th><td id="end-kills"></td></tr>
               <tr><th>Level reached</th><td id="end-level"></td></tr>
-              <tr><th>Coins earned</th><td><b id="end-coins">0</b> 🪙</td></tr>
+              <tr><th>Coins earned</th><td><b id="end-coins">0</b> coins</td></tr>
             </tbody>
           </table>
           <p class="sg-unlocked" id="end-unlocked" hidden></p>

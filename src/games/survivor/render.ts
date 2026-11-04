@@ -172,7 +172,7 @@ export function draw(v: View, g: Game, sprites: SpriteSet, heroSprite: Sprite) {
   c.textAlign = 'center';
   for (const f of g.floaters) {
     c.globalAlpha = Math.min(1, f.life * 2.5);
-    c.font = `${f.crit ? 28 : 19}px "Patrick Hand", cursive`;
+    c.font = `${f.crit ? 28 : 19}px "Fredoka", system-ui, sans-serif`;
     c.fillStyle = f.crit ? '#E0474C' : '#2D2B33';
     c.fillText(f.text, f.x, f.y);
     if (f.crit) {

@@ -11,7 +11,10 @@ type Results = Record<string, Result>;
 
 export interface Sticker {
   id: string;
+  /** A name from lib/icons. */
   icon: string;
+  /** Badge colour: one of the game tile tints in site.css. */
+  tint: 'rose' | 'sage' | 'gold' | 'blue' | 'lavender' | 'peach';
   name: string;
   how: string;
   earned(r: Results, streak: number): boolean;
@@ -22,17 +25,17 @@ const allOf = (r: Results, game: string, ids: { id: string }[]) => ids.every((p)
 const chapterDone = (r: Results, k: number) => expedition[k].tasks.every((t) => r[`${t.game}/${t.puzzleId}`]);
 
 export const stickers: Sticker[] = [
-  { id: 'first-sketch', icon: '✏️', name: 'First Sketch', how: 'Solve any Island Sketch puzzle.', earned: (r) => solvedIn(r, 'island-sketch').length > 0 },
-  { id: 'first-bridge', icon: '🌉', name: 'Bridge Builder', how: 'Solve any Isle Spans map.', earned: (r) => solvedIn(r, 'isle-spans').length > 0 },
-  { id: 'first-light', icon: '💡', name: 'Lights On', how: 'Solve any Lighthouse Wiring grid.', earned: (r) => solvedIn(r, 'lighthouse-wiring').length > 0 },
-  { id: 'clean-sheet', icon: '⭐', name: 'Clean Sheet', how: 'Solve any puzzle without a hint.', earned: (r) => Object.values(r).some((x) => x.stars === 3) },
-  { id: 'daily-3', icon: '📅', name: 'Daily Habit', how: 'Solve a daily puzzle three days in a row.', earned: (_, s) => s >= 3 },
-  { id: 'daily-7', icon: '🗓️', name: 'Week Strong', how: 'Solve a daily puzzle seven days in a row.', earned: (_, s) => s >= 7 },
-  { id: 'landfall', icon: '⛵', name: 'Landfall', how: 'Finish chapter 1 of the Lantern Isles expedition.', earned: (r) => chapterDone(r, 0) },
-  { id: 'sketchbook', icon: '📒', name: 'Full Sketchbook', how: 'Solve all 12 Island Sketch puzzles.', earned: (r) => allOf(r, 'island-sketch', sketches) },
-  { id: 'master-builder', icon: '🏗️', name: 'Master Builder', how: 'Solve all 12 Isle Spans maps.', earned: (r) => allOf(r, 'isle-spans', maps) },
-  { id: 'electrician', icon: '🔌', name: 'Island Electrician', how: 'Solve all 12 Lighthouse Wiring grids.', earned: (r) => allOf(r, 'lighthouse-wiring', grids) },
-  { id: 'keeper', icon: '🗼', name: 'Lighthouse Keeper', how: 'Finish the whole Lantern Isles expedition.', earned: (r) => expedition.every((_, k) => chapterDone(r, k)) },
+  { id: 'first-sketch', icon: 'pencil', tint: 'rose', name: 'First Sketch', how: 'Solve any Island Sketch puzzle.', earned: (r) => solvedIn(r, 'island-sketch').length > 0 },
+  { id: 'first-bridge', icon: 'bridge', tint: 'sage', name: 'Bridge Builder', how: 'Solve any Isle Spans map.', earned: (r) => solvedIn(r, 'isle-spans').length > 0 },
+  { id: 'first-light', icon: 'bulb', tint: 'gold', name: 'Lights On', how: 'Solve any Lighthouse Wiring grid.', earned: (r) => solvedIn(r, 'lighthouse-wiring').length > 0 },
+  { id: 'clean-sheet', icon: 'star', tint: 'gold', name: 'Clean Sheet', how: 'Solve any puzzle without a hint.', earned: (r) => Object.values(r).some((x) => x.stars === 3) },
+  { id: 'daily-3', icon: 'calendar', tint: 'blue', name: 'Daily Habit', how: 'Solve a daily puzzle three days in a row.', earned: (_, s) => s >= 3 },
+  { id: 'daily-7', icon: 'calendar-check', tint: 'blue', name: 'Week Strong', how: 'Solve a daily puzzle seven days in a row.', earned: (_, s) => s >= 7 },
+  { id: 'landfall', icon: 'sail', tint: 'blue', name: 'Landfall', how: 'Finish chapter 1 of the Lantern Isles expedition.', earned: (r) => chapterDone(r, 0) },
+  { id: 'sketchbook', icon: 'book', tint: 'rose', name: 'Full Sketchbook', how: 'Solve all 12 Island Sketch puzzles.', earned: (r) => allOf(r, 'island-sketch', sketches) },
+  { id: 'master-builder', icon: 'hammer', tint: 'sage', name: 'Master Builder', how: 'Solve all 12 Isle Spans maps.', earned: (r) => allOf(r, 'isle-spans', maps) },
+  { id: 'electrician', icon: 'plug', tint: 'gold', name: 'Island Electrician', how: 'Solve all 12 Lighthouse Wiring grids.', earned: (r) => allOf(r, 'lighthouse-wiring', grids) },
+  { id: 'keeper', icon: 'lighthouse', tint: 'peach', name: 'Lighthouse Keeper', how: 'Finish the whole Lantern Isles expedition.', earned: (r) => expedition.every((_, k) => chapterDone(r, k)) },
 ];
 
 /** Dates (YYYY-MM-DD) on which any daily puzzle was solved. */

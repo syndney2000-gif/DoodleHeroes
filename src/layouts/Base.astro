@@ -43,11 +43,21 @@ const navKey = section && gameSections.includes(section) ? 'games' : section;
   <meta property="og:type" content="website">
   <meta property="og:url" content={canonical.href}>
   <meta name="theme-color" content="#FAF7EF">
+  <script is:inline>
+    /* Apply the saved theme before first paint so there's no flash. */
+    try {
+      var theme = JSON.parse(localStorage.getItem('dh:settings:theme') || '"day"');
+      if (theme === 'night' || (theme === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.dataset.theme = 'night';
+        document.querySelector('meta[name=theme-color]').content = '#13222A';
+      }
+    } catch (e) { /* Storage blocked: stay in daylight. */ }
+  </script>
   <link rel="icon" type="image/png" sizes="64x64" href="/icons/favicon-64.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   {ads && (
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2838226413097378" crossorigin="anonymous"></script>
   )}

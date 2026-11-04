@@ -7,6 +7,7 @@ import { reducedMotion } from './site-shell';
 import { results } from './storage';
 import { earnedIds, stickers } from './achievements';
 import { buzz, chime, confetti, fanfare, pop, sparkle } from './juice';
+import { iconSvg } from './icons';
 
 /** How far through the puzzle the player is, and what they just completed. */
 export interface Progress {
@@ -116,7 +117,9 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
       const fresh = stickers.filter((x) => earnedIds(results()).has(x.id) && !stickersBefore.has(x.id));
       const stickerEl = $('pl-sticker');
       stickerEl.hidden = fresh.length === 0;
-      stickerEl.textContent = fresh.map((x) => `${x.icon} New sticker: ${x.name}`).join('  ·  ');
+      stickerEl.innerHTML = fresh.map((x) =>
+        `<span class="sticker-chip"><span class="badge ${x.tint}">${iconSvg(x.icon, 22)}</span>New sticker: <b></b></span>`).join('');
+      stickerEl.querySelectorAll('b').forEach((b, k) => { b.textContent = fresh[k].name; });
       fresh.forEach((x) => stickersBefore.add(x.id));
       const next = $<HTMLAnchorElement>('pl-next');
       next.href = s.next?.href ?? s.listHref;

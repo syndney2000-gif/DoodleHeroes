@@ -1,3 +1,4 @@
+import { iconSvg } from '../../lib/icons';
 import { reducedMotion } from '../../lib/site-shell';
 /* Scribble Siege — the menus, the game loop and the overlays. */
 
@@ -171,7 +172,7 @@ export async function start(root: HTMLElement) {
         const go = document.createElement('button');
         go.className = 'btn';
         go.type = 'button';
-        go.textContent = '✏️ Draw one now';
+        go.textContent = 'Draw one now';
         go.addEventListener('click', () => show('draw'));
         grid.append(go);
         detail.hidden = true;
@@ -224,7 +225,7 @@ export async function start(root: HTMLElement) {
       b.className = `sg-node${owned ? ' owned' : ''}${maxed ? ' maxed' : ''}${!maxed && profile.coins >= price ? ' afford' : ''}`;
       b.style.left = `${pos[k].x}%`;
       b.style.top = `${pos[k].y}%`;
-      b.innerHTML = `<span class="ic" aria-hidden="true">${u.icon}</span><span class="nm"></span><span class="pips" aria-hidden="true">${pips(owned, u.max)}</span><span class="cost">${maxed ? 'MAX' : `${price} 🪙`}</span>`;
+      b.innerHTML = `<span class="ic" aria-hidden="true">${u.icon}</span><span class="nm"></span><span class="pips" aria-hidden="true">${pips(owned, u.max)}</span><span class="cost">${maxed ? 'MAX' : `${iconSvg('coin', 14)} ${price}`}</span>`;
       b.querySelector('.nm')!.textContent = u.name;
       b.setAttribute('aria-label', `${u.name}, level ${owned} of ${u.max}. ${u.effect}. ${maxed ? 'Fully upgraded.' : `Costs ${price} coins.`}`);
       b.title = u.effect;

@@ -1,0 +1,50 @@
+/* One line-icon set (24 × 24, 2px rounded strokes) for build-time markup
+   (components/Icon.astro) and for scripts that build elements at runtime. */
+
+export const iconPaths: Record<string, string> = {
+  home: 'M3 10 12 3l9 7M5 9v12h5v-7h4v7h5V9',
+  grid: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',
+  journal: 'M5 3h14a1 1 0 0 1 1 1v17H6a3 3 0 0 1-3-3V5a2 2 0 0 1 2-2ZM6 3v14m-3 1a2 2 0 0 1 3-1h14M10 7h6m-6 4h4',
+  settings: 'm9 3-1 3-3 1-2 3 2 2v3l2 2 3-1 2 2 3-1 1-3 3-1 1-3-2-2V7l-3-1-2-3Zm3 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6',
+  sun: 'M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10',
+  bridge: 'M3 19V5m18 14V5M3 8c5 8 13 8 18 0M3 17h18M7 12v5m5-3v3m5-5v5',
+  pencil: 'm15 4 5 5M3 21l2-7L16 3a2 2 0 0 1 3 0l2 2a2 2 0 0 1 0 3L10 19ZM5 14l5 5',
+  spark: 'm12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5ZM20 2v4m-2-2h4',
+  merge: 'M2 3h6v6H2zM2 15h6v6H2zM15 8h7v8h-7zM8 6h3v6h4m-7 6h3v-6m1-3 3 3-3 3',
+  swords: 'm4 3 14 14m-1-14L3 17M3 3l1 6 4-4Zm18 0-1 6-4-4ZM2 18l4 4m12-4 4 4M4 20l4-4m12 4-4-4',
+  arrow: 'M4 12h16m-6-6 6 6-6 6',
+  sound: 'M4 9h4l5-5v16l-5-5H4ZM17 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14',
+  undo: 'M9 14 4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11',
+  bulb: 'M9 18h6m-5 3h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z',
+  more: 'M5 12h.01M12 12h.01M19 12h.01',
+  check: 'm4 12 5 5L20 6',
+  restart: 'M3 12a9 9 0 1 0 3-6.7L3 8m0-5v5h5',
+  clock: 'M12 7v5l3 2m6-2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+  music: 'M9 17V5l12-2v12M9 8l12-2M9 17c0 2-2 3-4 3s-3-1-3-2 2-3 4-3 3 1 3 2Zm12-2c0 2-2 3-4 3s-3-1-3-2 2-3 4-3 3 1 3 2Z',
+  coin: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 4v10m-3-7.5c0-1.4 1.3-2 3-2s3 .7 3 2-1.3 1.8-3 2.2-3 .9-3 2.3 1.3 2 3 2 3-.6 3-2',
+  jar: 'M8 3h8v3H8zM7 6h10l1 3v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Zm0 6h10',
+  hero: 'M12 3a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM5 21v-3a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v3',
+  backpack: 'M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M6 7h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Zm3 7h6v4H9z',
+  calendar: 'M4 6h16v15H4zM4 10h16M8 3v5m8-5v5m-8 6h2m4 0h2m-8 4h2',
+  'calendar-check': 'M4 6h16v15H4zM4 10h16M8 3v5m8-5v5m-7 7 2 2 4-4',
+  trophy: 'M8 4h8v6a4 4 0 0 1-8 0ZM8 6H4a3 3 0 0 0 4 4m8-4h4a3 3 0 0 1-4 4m-4 4v4m-4 3h8',
+  pause: 'M9 5v14m6-14v14',
+  star: 'm12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9Z',
+  sail: 'M12 3v14M12 4l7 11h-7m0-9-6 9h6M3 18h18l-2 3H5Z',
+  book: 'M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v16a2 2 0 0 0-2-2H3Zm18 0a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v16a2 2 0 0 1 2-2h7Z',
+  hammer: 'M14 4 9 9l3 3 5-5m-3-3 3-1 4 4-1 3-3-3M10.5 10.5 3 18l3 3 7.5-7.5',
+  plug: 'M9 3v5m6-5v5M6 8h12v3a6 6 0 0 1-12 0Zm6 9v4',
+  lighthouse: 'M10 21 11 8h2l1 13M9 8h6l-3-4ZM6 21h12m-5-9h-2m2 4h-2M16 6l4-2m-4 4h5',
+  moon: 'M20 14A8 8 0 1 1 10 4a6.5 6.5 0 0 0 10 10Z',
+  flag: 'M5 21V4m0 1h11l-2 4 2 4H5',
+  gift: 'M4 9h16v4H4zM5 13h14v8H5zM12 9v12M12 9c-1-3-5-4-5-1.5S10 9 12 9Zm0 0c1-3 5-4 5-1.5S14 9 12 9Z',
+  lock: 'M6 11h12v10H6zM8 11V8a4 4 0 0 1 8 0v3',
+  heart: 'M12 20s-8-4.6-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.4-8 10-8 10Z',
+  palette: 'M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2a4 4 0 0 0 4-4c0-4.4-4-8-9-8ZM7.5 11h.01M10 7h.01M15 7h.01',
+  x: 'M6 6l12 12M18 6 6 18',
+};
+
+/** Inline SVG markup for an icon, for scripts that build elements. */
+export function iconSvg(name: string, size = 24): string {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${iconPaths[name] ?? iconPaths.spark}"/></svg>`;
+}

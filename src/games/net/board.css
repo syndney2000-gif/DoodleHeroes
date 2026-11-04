@@ -3,7 +3,7 @@
 
 .nw-board{
   display:block; margin:0 auto;
-  width:min(100%, calc(var(--w) * 58px)); height:auto;
+  width:min(100%, calc(var(--w) * 64px), calc((100dvh - 300px) * var(--w) / var(--h))); min-width:min(100%, 280px); height:auto;
   background:#D9D2BF; border:2.5px solid var(--ink); border-radius:var(--wobble-soft);
   touch-action:manipulation; user-select:none; -webkit-user-select:none;
 }
@@ -40,3 +40,13 @@
 .nw-board.solved .nw-tile{ cursor:default; }
 .nw-board.solved .nw-bg{ fill:#FFF6D8; }
 .nw-board.solved .nw-lock{ fill:transparent; }
+
+.nw-wire, .nw-hub, .nw-house{ transition:stroke .25s, fill .25s; }
+.nw-tile.lit .nw-house{ filter:drop-shadow(0 0 4px #FFCB47); }
+
+/* Solved: a wave of light rolls out from the lighthouse. */
+.celebrate .nw-board .nw-bg{ animation:nw-wave .7s ease-out calc(var(--d) * 70ms) both; }
+@keyframes nw-wave{ 35%{ fill:#FFE58A; } }
+.celebrate .nw-board .nw-source{ transform-box:fill-box; transform-origin:center; animation:nw-beam 1.2s ease-in-out 2; }
+@keyframes nw-beam{ 50%{ transform:scale(1.35); fill:#FFF3B8; } }
+@media (prefers-reduced-motion:reduce){ .nw-board *{ animation:none!important; } }

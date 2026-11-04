@@ -3,7 +3,7 @@
 
 .sp-board{
   display:block; margin:0 auto;
-  width:min(100%, calc(var(--w) * 52px)); height:auto;
+  width:min(100%, calc(var(--w) * 60px), calc((100dvh - 300px) * var(--w) / var(--h))); min-width:min(100%, 280px); height:auto;
   background:#DCEFF2; border:2.5px solid var(--ink); border-radius:var(--wobble-soft);
   touch-action:pinch-zoom; user-select:none; -webkit-user-select:none;
   font-family:'Nunito', system-ui, sans-serif; font-weight:700;
@@ -28,3 +28,12 @@
 .sp-board.solved .sp-hit{ cursor:default; fill:transparent; }
 .sp-board.solved .sp-island{ cursor:default; }
 .sp-board.solved .sp-island circle{ fill:#FFE58A; }
+
+/* Solved: islands bob up in a ripple from the top-left, bridges glow gold. */
+.celebrate .sp-board .sp-island circle{ transform-box:fill-box; transform-origin:center;
+  animation:sp-bob .6s cubic-bezier(.3,1.6,.5,1) calc(var(--d) * 60ms) both; }
+@keyframes sp-bob{ 40%{ transform:scale(1.28); fill:#FFF3B8; } }
+.sp-board.solved .sp-bridge{ stroke:#C98A1E; }
+.celebrate .sp-board .sp-bridge{ animation:sp-glow 1.4s ease-in-out .2s 2; }
+@keyframes sp-glow{ 50%{ stroke:#F2C14E; stroke-width:5; } }
+@media (prefers-reduced-motion:reduce){ .sp-board *{ animation:none!important; } }

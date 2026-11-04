@@ -2,6 +2,7 @@
 /* The play screen every game shares. Ad-free by design: the page is mostly a
    board and its controls. Pair with setupPlay() from lib/play-ui. */
 import Base from '../layouts/Base.astro';
+import Icon from './Icon.astro';
 
 interface Props {
   game: string;
@@ -12,26 +13,40 @@ interface Props {
 
 const { game, description, section, listHref } = Astro.props;
 ---
-<Base title={`Play ${game}`} description={description} ads={false} section={section} wide>
-  <p class="eyebrow" id="pl-eyebrow">{game}</p>
-  <h1 id="pl-title">{game}</h1>
+<Base title={`Play ${game}`} description={description} ads={false} section={section} wide play>
+  <header class="pl-head">
+    <div>
+      <p class="eyebrow" id="pl-eyebrow">{game}</p>
+      <h1 id="pl-title">{game}</h1>
+    </div>
+    <p class="pl-meta">
+      <span class="pl-chip"><Icon name="clock" size={15} /><span id="pl-time">0:00</span></span>
+      <span class="pl-chip"><Icon name="bulb" size={15} /><span id="pl-hints">no hints used</span></span>
+    </p>
+  </header>
 
   <noscript>
     <p class="note">The puzzle needs JavaScript to run. The <a href={listHref}>rules and guides</a> work without it.</p>
   </noscript>
 
   <div id="pl-play" hidden>
+    <div class="pl-progress" id="pl-progress" role="progressbar" aria-label="Puzzle progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+
     <div class="pl-toolbar" role="toolbar" aria-label="Puzzle tools">
       <slot name="modes" />
       <div class="pl-actions">
-        <button class="btn secondary" type="button" id="pl-undo">↶ Undo</button>
-        <button class="btn secondary" type="button" id="pl-check">Check</button>
-        <button class="btn secondary" type="button" id="pl-hint">Hint</button>
-        <button class="btn secondary" type="button" id="pl-restart">Restart</button>
+        <button class="btn secondary" type="button" id="pl-undo"><Icon name="undo" size={18} /><span class="pl-label">Undo</span></button>
+        <button class="btn secondary" type="button" id="pl-hint"><Icon name="bulb" size={18} /><span class="pl-label">Hint</span></button>
+        <div class="pl-more-wrap">
+          <button class="btn secondary pl-more" type="button" id="pl-more" aria-label="More tools" aria-expanded="false" aria-controls="pl-more-menu"><Icon name="more" size={22} /></button>
+          <div class="pl-more-menu" id="pl-more-menu">
+            <button class="btn secondary" type="button" id="pl-check"><Icon name="check" size={18} />Check</button>
+            <button class="btn secondary" type="button" id="pl-restart"><Icon name="restart" size={18} />Restart</button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <p class="pl-meta"><span id="pl-time">0:00</span> · <span id="pl-hints">no hints used</span></p>
     {section === 'island-sketch' && <div class="pl-zoom-tools"><button class="btn secondary" type="button" id="pl-zoom" aria-pressed="false" aria-controls="pl-board">Larger squares</button><small id="pl-zoom-help" hidden>Swipe the clue area to scroll. Tap or drag the squares to draw.</small></div>}
     <div class="pl-board-viewport" tabindex="0" role="region" aria-label={`${game} board, scroll to explore`}><div id="pl-board"></div></div>
 
@@ -75,22 +90,40 @@ const { game, description, section, listHref } = Astro.props;
 </script>
 
 <style is:global>
-  .pl-toolbar{ display:flex; flex-wrap:wrap; gap:10px 16px; justify-content:center; margin:6px 0 10px; }
+  .pl-head{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:6px 18px; max-width:780px; margin:0 auto; }
+  .pl-head h1{ margin:2px 0 6px; }
+  .pl-meta{ display:flex; gap:8px; margin:0 0 10px; font-variant-numeric:tabular-nums; }
+  .pl-chip{ display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; background:var(--paper); border:2px solid var(--rule); color:var(--ink-soft); font-size:13px; font-weight:800; }
+
+  /* Fills as lines, islands or tiles are completed. */
+  .pl-progress{ --p:0; position:relative; max-width:780px; height:10px; margin:4px auto 14px; border-radius:999px; background:var(--soft); overflow:hidden; box-shadow:inset 0 1px 2px rgba(48,76,59,.12); }
+  .pl-progress span{ position:absolute; inset:0; transform-origin:left; transform:scaleX(var(--p)); border-radius:inherit;
+    background:linear-gradient(90deg, var(--teal), #7FB685 55%, var(--gold)); transition:transform .45s cubic-bezier(.3,1.4,.5,1); }
+
+  .pl-toolbar{ display:flex; flex-wrap:wrap; gap:10px 16px; justify-content:center; margin:6px 0 14px; }
   .pl-modes, .pl-actions{ display:flex; flex-wrap:wrap; gap:8px; }
-  .pl-toolbar .btn{ font-size:15px; padding:8px 12px; }
+  .pl-toolbar .btn{ font-size:15px; padding:8px 14px; }
   .pl-toolbar .btn:disabled{ opacity:.45; cursor:default; transform:none; }
-  .pl-meta{ text-align:center; color:var(--ink-soft); font-size:15px; margin-bottom:12px; font-variant-numeric:tabular-nums; }
+  .pl-more-wrap, .pl-more-menu{ display:contents; }
+  .pl-more{ display:none; }
   .pl-board-viewport{ max-width:100%; overflow:auto; padding:5px; border-radius:12px; }
   .pl-zoom-tools{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center; margin-bottom:12px; }
   .pl-zoom-tools .btn{ font-size:12px; }
   .pl-zoom-tools small{ font-size:12px; }
   .pl-status{ text-align:center; min-height:1.65em; margin:14px auto; max-width:620px; }
+  #pl-board.celebrate{ animation:pl-cheer .7s cubic-bezier(.3,1.5,.5,1) .15s; }
+  @keyframes pl-cheer{ 40%{ transform:scale(1.04) rotate(-.6deg); } 70%{ transform:scale(.99) rotate(.3deg); } }
+
   .pl-done{ max-width:560px; margin:26px auto; text-align:center; }
+  .pl-done.fresh{ animation:pl-rise .55s cubic-bezier(.3,1.4,.5,1) .7s both; }
+  @keyframes pl-rise{ from{ opacity:0; transform:translateY(40px) scale(.94); } }
   .pl-done h2{ margin-top:0; }
   .pl-sticker{
     display:inline-block; font-family:var(--hand); font-size:21px; padding:4px 14px;
     background:#FFF3B8; border:2px dashed var(--orange); border-radius:var(--wobble-soft); transform:rotate(-1.5deg);
   }
+  .pl-done.fresh .pl-sticker{ animation:pl-slap .5s cubic-bezier(.3,1.6,.5,1) 2s both; }
+  @keyframes pl-slap{ from{ opacity:0; transform:rotate(-14deg) scale(1.8); } to{ opacity:1; transform:rotate(-1.5deg) scale(1); } }
   .pl-report{ font-family:var(--hand); font-size:18px; color:var(--ink-soft); margin:0; text-transform:uppercase; letter-spacing:.1em; }
   /* A rubber-stamp grade in the corner of the report card. */
   .pl-grade{
@@ -100,9 +133,51 @@ const { game, description, section, listHref } = Astro.props;
     border:3.5px solid var(--red); border-radius:50%; opacity:.85;
     animation:pl-stamp .35s ease-out;
   }
+  .pl-done.fresh .pl-grade{ animation-delay:1.75s; animation-fill-mode:both; }
   @keyframes pl-stamp{ from{ transform:rotate(-12deg) scale(2.2); opacity:0; } to{ transform:rotate(-12deg) scale(1); opacity:.85; } }
-  @media (prefers-reduced-motion:reduce){ .pl-grade{ animation:none; } }
-  .pl-stars{ font-size:34px; color:var(--orange); letter-spacing:4px; margin:0; }
+  .pl-stars{ font-size:40px; color:var(--orange); letter-spacing:6px; margin:0; }
+  .pl-stars span{ display:inline-block; }
+  .pl-stars .off{ color:#C9C2A8; }
+  /* Stars land one by one after the report card rises. */
+  .pl-done.fresh .pl-stars span{ animation:pl-star .5s cubic-bezier(.3,1.7,.5,1) calc(1.05s + var(--k) * .22s) both; }
+  @keyframes pl-star{ from{ opacity:0; transform:translateY(-30px) scale(2.2) rotate(-40deg); } }
   .pl-done-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:12px 0 0; }
   .pl-help{ max-width:780px; margin:40px auto 0; }
+  @media (prefers-reduced-motion:reduce){ .pl-grade, .pl-done.fresh, .pl-done.fresh *, #pl-board.celebrate{ animation:none!important; } }
+
+  /* Phones: the tools sit in a thumb bar where the bottom nav would be, and
+     the rarely needed ones fold into a menu. */
+  @media (max-width:760px){
+    .pl-head h1{ font-size:28px; margin-bottom:4px; }
+    .pl-head{ align-items:center; }
+    .pl-meta{ margin:0 0 4px; }
+    .pl-chip{ padding:3px 10px; font-size:12px; }
+    .pl-toolbar{
+      position:fixed; left:0; right:0; bottom:0; z-index:40; margin:0;
+      display:flex; flex-wrap:nowrap; justify-content:space-between; align-items:center; gap:8px;
+      padding:10px 12px max(10px, env(safe-area-inset-bottom));
+      background:color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter:blur(8px);
+      border-top:2px solid var(--rule); box-shadow:0 -6px 20px rgba(48,76,59,.08);
+    }
+    .pl-toolbar .pl-modes{ flex-wrap:nowrap; gap:0; padding:3px; border-radius:18px; background:var(--soft); }
+    .pl-toolbar .pl-modes .btn{ min-height:46px; box-shadow:none; border-color:transparent; font-size:15px; padding:8px 14px; }
+    .pl-toolbar .pl-modes .btn.secondary{ background:transparent; }
+    .pl-toolbar .pl-actions{ flex-wrap:nowrap; gap:6px; }
+    .pl-actions > .btn, .pl-more{ min-width:48px; min-height:48px; padding:8px; }
+    .pl-actions .pl-label{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+    .pl-more{ display:inline-flex; }
+    .pl-more-wrap{ display:block; position:relative; }
+    .pl-more-menu{
+      display:none; position:absolute; right:0; bottom:calc(100% + 12px); min-width:170px; padding:8px;
+      flex-direction:column; gap:6px; background:var(--paper); border:2px solid var(--rule); border-radius:18px;
+      box-shadow:0 10px 30px rgba(48,76,59,.18);
+    }
+    .pl-more-menu.open{ display:flex; animation:pl-menu .18s ease-out; }
+    .pl-more-menu .btn{ justify-content:flex-start; box-shadow:none; }
+    /* No mode switch (Isle Spans): the actions share the bar, labelled. */
+    .pl-toolbar:not(:has(.pl-modes)) .pl-actions{ flex:1; }
+    .pl-toolbar:not(:has(.pl-modes)) .pl-actions > .btn{ flex:1; gap:6px; }
+    .pl-toolbar:not(:has(.pl-modes)) .pl-label{ position:static; width:auto; height:auto; clip:auto; }
+    @keyframes pl-menu{ from{ opacity:0; transform:translateY(8px) scale(.96); } }
+  }
 </style>

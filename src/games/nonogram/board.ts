@@ -67,6 +67,7 @@ export class NonogramBoard implements PlayableBoard {
 
     this.render();
     this.refreshAllClues();
+    this.reportProgress([]);
     if (this.solved) this.showSolved(false);
     else this.startTimer();
 
@@ -125,6 +126,8 @@ export class NonogramBoard implements PlayableBoard {
         const cell = el('div', 'ns-cell');
         cell.setAttribute('role', 'gridcell');
         cell.dataset.i = String(i);
+        cell.style.setProperty('--d', String(r + c));
+        cell.style.setProperty('--mix', `${Math.round((r / Math.max(1, n - 1)) * 100)}%`);
         cell.tabIndex = i === this.focusIndex ? 0 : -1;
         if (c % 5 === 4 && c < n - 1) cell.classList.add('thick-r');
         if (r % 5 === 4 && r < n - 1) cell.classList.add('thick-b');
@@ -156,14 +159,23 @@ export class NonogramBoard implements PlayableBoard {
     cell.setAttribute('aria-label', `Row ${r}, column ${c}, ${STATE_WORD[v]}`);
   }
 
-  /** Dims a clue once the line's filled cells match it exactly. */
-  private refreshClue(kind: 'row' | 'col', index: number) {
+  /** Dims a clue once the line's filled cells match it exactly.
+      Returns the clue element if this call is what completed it. */
+  private refreshClue(kind: 'row' | 'col', index: number): HTMLElement | null {
     const { n } = this;
     const line = Array.from({ length: n }, (_, k) =>
       this.cells[kind === 'row' ? index * n + k : k * n + index] === FILLED);
     const clue = kind === 'row' ? this.clues.rows[index] : this.clues.cols[index];
     const done = sameRuns(runs(line), clue);
-    (kind === 'row' ? this.rowClueEls : this.colClueEls)[index].classList.toggle('done', done);
+    const clueEl = (kind === 'row' ? this.rowClueEls : this.colClueEls)[index];
+    const was = clueEl.classList.contains('done');
+    clueEl.classList.toggle('done', done);
+    return done && !was ? clueEl : null;
+  }
+
+  private reportProgress(gained: Element[]) {
+    const done = [...this.rowClueEls, ...this.colClueEls].filter((el) => el.classList.contains('done')).length;
+    this.opts.onProgress?.({ done, total: this.n * 2, gained });
   }
 
   private refreshAllClues() {
@@ -193,9 +205,13 @@ export class NonogramBoard implements PlayableBoard {
     this.clearMarks();
     const rows = new Set(batch.map((ch) => Math.floor(ch.i / this.n)));
     const cols = new Set(batch.map((ch) => ch.i % this.n));
-    rows.forEach((r) => this.refreshClue('row', r));
-    cols.forEach((c) => this.refreshClue('col', c));
-    if (this.isComplete()) this.finish();
+    const gained: Element[] = [];
+    rows.forEach((r) => { const el = this.refreshClue('row', r); if (el) gained.push(el); });
+    cols.forEach((c) => { const el = this.refreshClue('col', c); if (el) gained.push(el); });
+    const complete = this.isComplete();
+    // The finish fanfare covers the last line; no separate chime for it.
+    this.reportProgress(complete ? [] : gained);
+    if (complete) this.finish();
     this.persist();
   }
 
@@ -222,6 +238,7 @@ export class NonogramBoard implements PlayableBoard {
     this.root.classList.remove('solved');
     this.clearMarks();
     this.refreshAllClues();
+    this.reportProgress([]);
     remove(this.saveKey);
     this.opts.onTick(0);
     this.startTimer();
@@ -426,7 +443,7 @@ export class NonogramBoard implements PlayableBoard {
     const stars = starsFor(this.hints);
     recordResult(GAME, this.puzzle.id, { stars, seconds: this.seconds, date: new Date().toISOString() });
     this.showSolved(true);
-    this.opts.onSolved({ stars, seconds: this.seconds, hints: this.hints });
+    this.opts.onSolved({ stars, seconds: this.seconds, hints: this.hints, fresh: true });
   }
 
   private showSolved(announce: boolean) {

@@ -6,11 +6,22 @@ import { playSound } from './audio';
 import { reducedMotion } from './site-shell';
 import { results } from './storage';
 import { earnedIds, stickers } from './achievements';
+import { buzz, chime, confetti, fanfare, pop, sparkle } from './juice';
+
+/** How far through the puzzle the player is, and what they just completed. */
+export interface Progress {
+  done: number;
+  total: number;
+  /** Elements finished by the latest move: they sparkle and chime. */
+  gained: Element[];
+}
 
 export interface BoardCallbacks {
   onStatus(message: string): void;
-  onSolved(result: { stars: number; seconds: number; hints: number }): void;
+  /** fresh is true only when the player solved it just now, not on reload. */
+  onSolved(result: { stars: number; seconds: number; hints: number; fresh?: boolean }): void;
   onTick(seconds: number): void;
+  onProgress?(progress: Progress): void;
 }
 
 export interface PlayableBoard {
@@ -51,22 +62,53 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
 
   // Stickers held before this puzzle, so the report card can announce new ones.
   const stickersBefore = earnedIds(results());
+  // Completions within a few seconds of each other climb the scale.
+  let streak = { step: -1, at: 0 };
   let board: B | undefined;
   board = s.create($('pl-board'), {
     onStatus(message) {
       status.textContent = message;
       if (board) showHints(board.hintCount);
     },
+    onProgress({ done, total, gained }) {
+      const ribbon = $('pl-progress');
+      ribbon.style.setProperty('--p', String(total ? done / total : 0));
+      ribbon.setAttribute('aria-valuenow', String(Math.round((done / Math.max(1, total)) * 100)));
+      if (!gained.length || !board) return;
+      const now = performance.now();
+      streak = { step: now - streak.at < 5000 ? streak.step + 1 : 0, at: now };
+      chime(streak.step);
+      buzz(10);
+      for (const el of gained.slice(0, 6)) { sparkle(el, 7); pop(el); }
+    },
     onTick(seconds) {
       $('pl-time').textContent = formatTime(seconds);
     },
-    onSolved({ stars, seconds, hints }) {
-      playSound('solved');
+    onSolved({ stars, seconds, hints, fresh: justSolved }) {
+      const done = $('pl-done');
+      done.classList.toggle('fresh', !!justSolved);
+      $('pl-progress').style.setProperty('--p', '1');
+      if (justSolved) {
+        playSound('solved');
+        fanfare();
+        buzz([18, 60, 18, 60, 40]);
+        $('pl-board').classList.add('celebrate');
+        window.setTimeout(() => confetti(), 380);
+        window.setTimeout(() => {
+          done.scrollIntoView({ behavior: reducedMotion() ? 'instant' : 'smooth', block: 'center' });
+        }, 1100);
+      }
       showHints(hints);
       $('pl-time').textContent = formatTime(seconds);
       // S for a clean solve, then A and B, like a stamped report card.
       $('pl-grade').textContent = ['B', 'B', 'A', 'S'][stars];
-      $('pl-stars').textContent = starText(stars);
+      $('pl-stars').replaceChildren(...[...starText(stars)].map((ch, k) => {
+        const star = document.createElement('span');
+        star.textContent = ch;
+        star.style.setProperty('--k', String(k));
+        star.className = k < stars ? 'on' : 'off';
+        return star;
+      }));
       $('pl-stars').setAttribute('aria-label', `${stars} of 3 stars`);
       $('pl-done-text').textContent =
         `Solved in ${formatTime(seconds)} with ${hints === 0 ? 'no hints' : hints === 1 ? '1 hint' : `${hints} hints`}.`;
@@ -88,12 +130,25 @@ export function setupPlay<B extends PlayableBoard>(s: Setup<B>): B {
   $('pl-board').addEventListener('pointerup', () => { if ($('pl-done').hidden) playSound('place'); });
   $('pl-board').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') playSound('place'); });
 
+  const more = $('pl-more');
+  const menu = $('pl-more-menu');
+  const closeMenu = () => { menu.classList.remove('open'); more.setAttribute('aria-expanded', 'false'); };
+  more.addEventListener('click', (e) => {
+    e.stopPropagation();
+    playSound('tap');
+    more.setAttribute('aria-expanded', String(menu.classList.toggle('open')));
+  });
+  menu.addEventListener('click', closeMenu);
+  document.addEventListener('click', (e) => { if (!menu.contains(e.target as Node)) closeMenu(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+
   $('pl-undo').addEventListener('click', () => { board!.undo(); playSound('place'); });
   $('pl-check').addEventListener('click', () => { board!.check(); playSound('tap'); });
   $('pl-hint').addEventListener('click', () => { board!.hint(); playSound('hint'); });
   const startOver = () => {
     board!.restart();
     $('pl-done').hidden = true;
+    $('pl-board').classList.remove('celebrate');
     for (const b of tools()) b.disabled = false;
     showHints(0);
   };

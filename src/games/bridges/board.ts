@@ -33,6 +33,8 @@ export class SpansBoard implements PlayableBoard {
   private bridgeLayer!: SVGGElement;
   private islandEls: SVGGElement[] = [];
   private press: { island: number; x: number; y: number } | null = null;
+  /** Which islands were complete at the last redraw, to spot new ones. */
+  private wasDone: boolean[] = [];
 
   constructor(private readonly root: HTMLElement, private readonly puzzle: SpansPuzzle, private readonly cb: BoardCallbacks) {
     this.board = parse(puzzle.rows);
@@ -72,6 +74,7 @@ export class SpansBoard implements PlayableBoard {
     svg.setAttribute('role', 'application');
     svg.setAttribute('aria-label', `${this.puzzle.title}: ${islands.length} islands on a ${w} by ${h} map`);
     svg.style.setProperty('--w', String(w));
+    svg.style.setProperty('--h', String(h));
     this.svg = svg;
 
     const water = document.createElementNS(NS, 'g');
@@ -113,6 +116,7 @@ export class SpansBoard implements PlayableBoard {
       g.setAttribute('tabindex', isl.id === this.focus ? '0' : '-1');
       g.setAttribute('role', 'button');
       g.dataset.island = String(isl.id);
+      g.style.setProperty('--d', String(isl.r + isl.c));
       const circle = document.createElementNS(NS, 'circle');
       circle.setAttribute('cx', String(isl.c * S + S / 2));
       circle.setAttribute('cy', String(isl.r * S + S / 2));
@@ -166,14 +170,20 @@ export class SpansBoard implements PlayableBoard {
         this.bridgeLayer.append(line);
       }
     }
+    const gained: Element[] = [];
+    const first = this.wasDone.length === 0;
     for (const isl of this.board.islands) {
       const have = this.board.spansOf[isl.id].reduce((t, s) => t + this.counts[s], 0);
       const g = this.islandEls[isl.id];
+      if (have === isl.n && !this.wasDone[isl.id] && !first) gained.push(g);
+      this.wasDone[isl.id] = have === isl.n;
       g.classList.toggle('done', have === isl.n);
       g.classList.toggle('over', have > isl.n);
       g.classList.toggle('hint', marks.focusIsland === isl.id);
       g.setAttribute('aria-label', `Island ${isl.n} at row ${isl.r + 1}, column ${isl.c + 1}: ${have} of ${isl.n} bridges`);
     }
+    const complete = this.counts.every((v, i) => v === this.answer[i]);
+    this.cb.onProgress?.({ done: this.wasDone.filter(Boolean).length, total: this.board.islands.length, gained: complete ? [] : gained });
   }
 
   /* ---------- editing ---------- */
@@ -394,13 +404,13 @@ export class SpansBoard implements PlayableBoard {
     this.stopTimer();
     const stars = starsFor(this.hints);
     recordResult(GAME, this.puzzle.id, { stars, seconds: this.seconds, date: new Date().toISOString() });
-    this.showSolved();
+    this.showSolved(true);
   }
 
-  private showSolved() {
+  private showSolved(fresh = false) {
     this.svg.classList.add('solved');
     this.redraw();
-    this.cb.onSolved({ stars: starsFor(this.hints), seconds: this.seconds, hints: this.hints });
+    this.cb.onSolved({ stars: starsFor(this.hints), seconds: this.seconds, hints: this.hints, fresh });
   }
 
   private startTimer() {

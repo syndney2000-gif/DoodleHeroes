@@ -10,6 +10,7 @@ import '../../games/merge/studio.css';
   ads={false}
   section="merge"
   wide
+  play
 >
   <div class="merge-intro"><a class="play-back merge-return" href="/games" aria-label="Back to your game collection">←</a><div><p class="eyebrow">Your little workshop</p><h1>Margin Merge</h1></div><span class="merge-mascot" aria-hidden="true"><img src="/images/merge/cartoon/heroes-4.svg" width="56" height="56" alt="" /></span></div>
   <noscript><p class="note">Margin Merge needs JavaScript. The <a href="/margin-merge">guide</a> works without it.</p></noscript>
@@ -32,7 +33,7 @@ import '../../games/merge/studio.css';
       <button class="btn secondary" type="button" id="mm-store" disabled>Store selected</button>
       <button class="btn secondary" type="button" id="mm-book">Collection book</button>
     </div>
-    <p class="mm-status" id="mm-status" role="status" aria-live="polite">Tap the sketchbook to draw your first doodle.</p>
+    <p class="mm-status" id="mm-status" role="status" aria-live="polite">Drag one doodle onto its twin to merge them — or tap one, then the other.</p>
 
     <section class="studio-card" id="mm-studio" aria-labelledby="studio-title">
       <div class="studio-top"><p class="eyebrow" data-story-act>Story 1 of 3 · A place to begin</p><small data-studio-count>0 of {studioChapters.length} projects complete</small></div>
@@ -97,10 +98,20 @@ import '../../games/merge/studio.css';
   import { itemMarkup } from '../../games/merge/art';
   import { mergePerks, storeItem, retrieveItem } from '../../games/merge/perks';
   import { setupStudio } from '../../games/merge/studio-ui';
+  import { buzz, chime, confetti, sparkle } from '../../lib/juice';
 
   const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
   const SAVE = 'margin-merge:state';
-  const s: MergeState = load<MergeState>(SAVE) ?? newState((Math.random() * 2 ** 32) >>> 0, Date.now());
+  const saved = load<MergeState>(SAVE);
+  const s: MergeState = saved ?? newState((Math.random() * 2 ** 32) >>> 0, Date.now());
+  if (!saved) {
+    // A first visit opens on a matching pair, so the very first move is a merge.
+    const chain = unlockedChains(s)[0];
+    const middle = Math.floor(BOARD_H / 2) * BOARD_W + Math.floor(BOARD_W / 2);
+    s.cells[middle - 1] = { chain, tier: 1 };
+    s.cells[middle] = { chain, tier: 1 };
+    if (!s.discovered.includes(`${chain}:1`)) s.discovered.push(`${chain}:1`);
+  }
   refillInk(s, Date.now());
   let selected: number | null = null;
   const persist = () => save(SAVE, s);
@@ -193,6 +204,11 @@ import '../../games/merge/studio.css';
       playSound(s.level > level ? 'levelup' : fresh ? 'discover' : 'merge');
       if (fresh) celebrate(`Discovered: ${itemName(it)}`);
       if (s.level > level) celebrate(`Level ${s.level}! ${newChainNote(level)}`);
+      // Higher tiers chime higher; discoveries and level-ups get more sparkle.
+      chime(it.tier + (fresh ? 2 : 0));
+      sparkle(cellEls[to], fresh ? 16 : 8);
+      buzz(fresh ? [12, 40, 12] : 10);
+      if (s.level > level) confetti(90);
     } else if (r === 'swapped') { status('Swapped. Match two identical items to merge.'); playSound('place'); }
     else if (r === 'moved') { status('A new spot for a little wonder.'); playSound('place'); }
     else playSound('invalid');
@@ -405,7 +421,11 @@ import '../../games/merge/studio.css';
     }
     $('mm-satchel').querySelectorAll<HTMLButtonElement>('button').forEach(button => { button.disabled = !s.cells.includes(null); });
   }
-  function render(flash?: number) { paintBar(); paintOrders(); paintBoard(flash); studio.render(); paintTools(); }
+  function render(flash?: number) {
+    paintBar(); paintOrders(); paintBoard(flash); studio.render(); paintTools();
+    // Until the first merge, matching items wiggle to show what to do.
+    $('mm-board').classList.toggle('coach', s.merges === 0);
+  }
   $('mm-focus').addEventListener('change', () => {
     const value = $<HTMLSelectElement>('mm-focus').value as keyof typeof chains;
     if (!mergePerks(s).focus || (value && !unlockedChains(s).includes(value))) return;
@@ -586,6 +606,15 @@ import '../../games/merge/studio.css';
   .mm-notice { top:auto; bottom:96px; right:16px; left:auto; transform:none; max-width:min(340px,calc(100vw - 32px)); animation:mm-notice .18s ease-out; }
   .mm-notice+.mm-notice { top:auto; bottom:154px; }
   @media(max-width:480px) { .merge-intro h1 { font-size:28px; } .merge-mascot { width:52px; height:52px; border-radius:18px 18px 18px 5px; } .merge-mascot img { width:46px; height:46px; } .mm-chapter-summary { gap:8px; padding:8px 10px; } .mm-bar { gap:6px; } .mm-actions .mm-draw { flex:1 0 65%; } }
+  .mm-board.coach .mm-cell:has(img) { animation:mm-coach 1.6s ease-in-out infinite; box-shadow:0 0 0 3px #F2C14E; }
+  .mm-board.coach .mm-cell:has(img) + .mm-cell:has(img) { animation-delay:.2s; }
+  @keyframes mm-coach { 0%,60%,100% { transform:none; } 70% { transform:rotate(-6deg) scale(1.06); } 80% { transform:rotate(5deg) scale(1.06); } 90% { transform:rotate(-2deg); } }
+  /* Phones: Draw and the board tools stay within thumb reach. */
+  @media(max-width:760px) {
+    .mm-actions { position:sticky; bottom:0; z-index:20; margin:12px -22px 8px; padding:10px 14px max(10px,env(safe-area-inset-bottom)); max-width:none;
+      background:color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter:blur(8px); border-top:2px solid var(--rule); }
+    body.play-page { padding-bottom:0; }
+  }
   @media(prefers-reduced-motion:reduce) { .mm *, .mm *::before,.mm *::after { animation:none!important; transition:none!important; } }
   [data-reduced-motion] .mm *,[data-reduced-motion] .mm *::before,[data-reduced-motion] .mm *::after { animation:none!important; transition:none!important; }
 </style>

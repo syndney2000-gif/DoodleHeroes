@@ -34,6 +34,8 @@ export class WiringBoard implements PlayableBoard {
   private svg!: SVGSVGElement;
   private tileEls: SVGGElement[] = [];
   private spinEls: SVGGElement[] = [];
+  /** Tiles powered at the last refresh, to spot cottages that just lit up. */
+  private wasLit: Set<number> | null = null;
 
   constructor(private readonly root: HTMLElement, private readonly puzzle: NetPuzzle, private readonly cb: BoardCallbacks) {
     this.board = parse(puzzle);
@@ -80,6 +82,7 @@ export class WiringBoard implements PlayableBoard {
     svg.setAttribute('role', 'grid');
     svg.setAttribute('aria-label', `${this.puzzle.title}: ${w} by ${h} grid of wire tiles`);
     svg.style.setProperty('--w', String(w));
+    svg.style.setProperty('--h', String(h));
     this.svg = svg;
 
     tiles.forEach((orig, i) => {
@@ -90,6 +93,7 @@ export class WiringBoard implements PlayableBoard {
       g.setAttribute('tabindex', i === this.focus ? '0' : '-1');
       g.setAttribute('role', 'gridcell');
       g.dataset.i = String(i);
+      g.style.setProperty('--d', String(Math.abs(r - Math.floor(source / w)) + Math.abs(c - (source % w))));
 
       const bg = document.createElementNS(NS, 'rect');
       bg.setAttribute('class', 'nw-bg');
@@ -163,6 +167,13 @@ export class WiringBoard implements PlayableBoard {
 
   private refresh(marks: { wrong?: number[]; hint?: number } = {}) {
     const lit = powered(this.board, this.masks());
+    const gained = this.wasLit && !isSolved(this.board, this.masks())
+      ? [...lit].filter((i) => !this.wasLit!.has(i)).map((i) => this.tileEls[i].querySelector('.nw-house')).filter((el): el is Element => !!el)
+      : [];
+    this.wasLit = lit;
+    // Only cottages pop: tiles carry their position in a transform attribute
+    // that an animation would override.
+    this.cb.onProgress?.({ done: lit.size, total: this.board.tiles.length, gained });
     this.tileEls.forEach((g, i) => {
       this.spinEls[i].style.transform = `rotate(${this.turns[i] * 90}deg)`;
       g.classList.toggle('lit', lit.has(i));
@@ -344,13 +355,13 @@ export class WiringBoard implements PlayableBoard {
     this.stopTimer();
     const stars = starsFor(this.hints);
     recordResult(GAME, this.puzzle.id, { stars, seconds: this.seconds, date: new Date().toISOString() });
-    this.showSolved();
+    this.showSolved(true);
   }
 
-  private showSolved() {
+  private showSolved(fresh = false) {
     this.svg.classList.add('solved');
     this.refresh();
-    this.cb.onSolved({ stars: starsFor(this.hints), seconds: this.seconds, hints: this.hints });
+    this.cb.onSolved({ stars: starsFor(this.hints), seconds: this.seconds, hints: this.hints, fresh });
   }
 
   private startTimer() {

@@ -231,7 +231,7 @@ try {
   await page.screenshot({ path: `${output}/studio-free-play-desktop.png`, fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
 
-  for (const path of ['/games', '/progress', '/island-sketch/play?p=sun', '/isle-spans/play?p=two-coves', '/lighthouse-wiring/play?p=first-light', '/doodle-guess/play', '/scribble-siege/play']) {
+  for (const path of ['/games', '/progress', '/island-sketch/play?p=volcano', '/isle-spans/play?p=two-coves', '/lighthouse-wiring/play?p=first-light', '/doodle-guess/play', '/scribble-siege/play']) {
     await open(path); await noOverflow();
     if (path.startsWith('/island-sketch/play')) {
       await page.locator('#pl-zoom').click();

@@ -48,5 +48,7 @@ import '../../games/nonogram/board.css';
       create: (root, callbacks) => new NonogramBoard(root, puzzle, callbacks),
     });
     setupModes((mode) => board.setMode(mode as 'fill' | 'cross'));
+    // 5 × 5 sketches already get big squares; larger ones may need the zoom.
+    document.querySelector<HTMLElement>('.pl-zoom-tools')!.hidden = puzzle.solution.length < 10;
   }
 </script>

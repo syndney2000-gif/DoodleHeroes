@@ -4,7 +4,11 @@
 .ns-board{
   --line: rgba(31,27,45,0.22);
   --clue-w: calc(var(--rc) * var(--cell) * 0.62 + 8px);
-  --cell: min(40px, calc((min(100vw, 1000px) - 40px - var(--rc) * 0.62 * 30px) / var(--n)));
+  /* As large as fits both the width and the height left under the header
+     and the phone thumb bar, up to a comfortable 54px. */
+  --cell: max(16px, min(54px,
+    calc((min(100vw, 1000px) - 68px) / (var(--n) + var(--rc) * 0.62)),
+    calc((100dvh - 330px) / (var(--n) + var(--cc) * 0.62))));
   display:grid;
   grid-template-columns: var(--clue-w) repeat(var(--n), var(--cell));
   width:max-content; max-width:100%;
@@ -51,7 +55,10 @@
   .ns-board:not(.solved) .ns-cell:not(.filled):hover{ background:#FFF1C2; }
 }
 .ns-cell.hint-line:not(.filled){ background:#FFF1C2; }
-.ns-cell.filled{ background:var(--ink); }
+.ns-cell.filled{ background:var(--ink); animation:ns-press .22s cubic-bezier(.3,1.6,.5,1); }
+@keyframes ns-press{ from{ transform:scale(.72); border-radius:30%; } }
+.ns-cell.crossed::after{ animation:ns-press .2s ease-out; }
+.ns-clue.done{ text-decoration:line-through; text-decoration-thickness:2px; text-decoration-color:var(--gold); }
 .ns-cell.crossed::after{
   content:""; position:absolute; inset:24%;
   background:
@@ -66,6 +73,25 @@
 
 /* Solved: grid lines and crosses fall away and the sketch is left on paper. */
 .ns-board.solved .ns-cell{ cursor:default; border-color:transparent; background:var(--paper); }
-.ns-board.solved .ns-cell.filled{ background:var(--ink); }
+.ns-board.solved .ns-cell.filled{ background:var(--ink); animation:ns-press .22s cubic-bezier(.3,1.6,.5,1); }
+@keyframes ns-press{ from{ transform:scale(.72); border-radius:30%; } }
+.ns-cell.crossed::after{ animation:ns-press .2s ease-out; }
+.ns-clue.done{ text-decoration:line-through; text-decoration-thickness:2px; text-decoration-color:var(--gold); }
 .ns-board.solved .ns-cell.crossed::after{ display:none; }
 .ns-board.solved .ns-clue{ opacity:.3; }
+
+/* The reveal: the sketch takes on colour in a wave from the top-left corner,
+   teal at the top to gold at the bottom. */
+.ns-board.solved .ns-cell.filled{
+  background:color-mix(in oklab, var(--teal), #D9973A var(--mix, 50%));
+  border-radius:4px;
+}
+.ns-board.celebrate .ns-cell.filled{
+  animation:ns-reveal .55s cubic-bezier(.3,1.5,.5,1) calc(var(--d) * 45ms) both;
+}
+@keyframes ns-reveal{
+  0%{ transform:scale(1); background:var(--ink); }
+  45%{ transform:scale(1.22) rotate(6deg); border-radius:50%; }
+  100%{ transform:scale(1); }
+}
+@media (prefers-reduced-motion:reduce){ .ns-cell, .ns-cell::after{ animation:none!important; } }

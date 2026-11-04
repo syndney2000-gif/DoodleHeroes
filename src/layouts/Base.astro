@@ -13,9 +13,11 @@ interface Props {
     | 'island-sketch' | 'isle-spans' | 'lighthouse-wiring' | 'guides' | 'about' | 'journal' | 'settings';
   wide?: boolean;
   noindex?: boolean;
+  /** A play screen: on phones the board's own toolbar replaces the bottom nav. */
+  play?: boolean;
 }
 
-const { title, description, ads = true, section, wide = false, noindex = false } = Astro.props;
+const { title, description, ads = true, section, wide = false, noindex = false, play = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname.replace(/\/index$/, '/').replace(/\.html$/, ''), Astro.site);
 const fullTitle = title === 'Doodle Heroes' ? title : `${title} · Doodle Heroes`;
 const nav = [
@@ -51,7 +53,7 @@ const navKey = section && gameSections.includes(section) ? 'games' : section;
   )}
   <slot name="head" />
 </head>
-<body>
+<body class={play ? 'play-page' : undefined}>
   <a class="sr-only skip" href="#main">Skip to content</a>
   <header class="topbar">
     <div class={wide ? 'wrap wide' : 'wrap'}>

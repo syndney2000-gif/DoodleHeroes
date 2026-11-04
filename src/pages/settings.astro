@@ -11,6 +11,7 @@ import Base from '../layouts/Base.astro';
     <label class="setting-row" for="setting-music"><span><strong>Meadow music</strong><p>A playful island stroll: plucked strings, soft whistles and a gentle rhythm. Off until you invite it in.</p></span><input type="checkbox" id="setting-music" /></label>
     <label class="setting-row" for="setting-music-volume"><span><strong>Music volume</strong><p>Keep the melody as soft as you like.</p></span><input type="range" id="setting-music-volume" min="0" max="100" step="5" /></label>
     <label class="setting-row" for="setting-motion"><span><strong>Reduce motion</strong><p>Keep things still. Your device’s preference is always respected.</p></span><input type="checkbox" id="setting-motion" /></label>
+    <label class="setting-row" for="setting-haptics"><span><strong>Vibration</strong><p>A gentle buzz when you finish a line or a puzzle, on phones that support it.</p></span><input type="checkbox" id="setting-haptics" /></label>
     <p id="settings-status" role="status" aria-live="polite" style="margin-top:18px;margin-bottom:0"></p>
   </section>
   <section class="card"><h2>Your progress belongs to you.</h2><p>Games save in this browser. You can review your discoveries and reset your progress in the Journal.</p><a class="btn secondary" href="/progress">Open your journal →</a></section>
@@ -20,12 +21,16 @@ import Base from '../layouts/Base.astro';
   import { musicOn, musicVolume, playSound, setMusic, setMusicVolume, setSound, setVolume, soundOn, soundVolume } from '../lib/audio';
   import { load, save } from '../lib/storage';
   import { syncMotion } from '../lib/site-shell';
+  import { buzz, hapticsOn } from '../lib/juice';
   const sound = document.getElementById('setting-sound') as HTMLInputElement;
   const volume = document.getElementById('setting-volume') as HTMLInputElement;
   const motion = document.getElementById('setting-motion') as HTMLInputElement;
   const music = document.getElementById('setting-music') as HTMLInputElement;
   const musicLevel = document.getElementById('setting-music-volume') as HTMLInputElement;
+  const haptics = document.getElementById('setting-haptics') as HTMLInputElement;
   const status = document.getElementById('settings-status')!;
+  haptics.checked = hapticsOn();
+  haptics.addEventListener('change', () => { save('settings:haptics', haptics.checked); buzz(30); status.textContent = haptics.checked ? 'Vibration enabled.' : 'Vibration off.'; });
   sound.checked = soundOn(); volume.value = String(soundVolume() * 100);
   music.checked = musicOn(); musicLevel.value = String(musicVolume() * 100);
   motion.checked = !!load<boolean>('settings:reduced-motion');

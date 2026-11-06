@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import { notes, longDate } from '../lib/notes';
+---
+<Base
+  title="Notes: how the puzzles are made"
+  description="Articles from behind the scenes at Doodle Heroes: how every puzzle is checked for a single answer, how daily puzzles are generated, and how hints and play styles are designed."
+  section="notes"
+  ads={false}
+>
+  <h1>Notes</h1>
+  <p class="lede">Behind the scenes at Doodle Heroes: how the puzzles are built and checked, and why the games work the way they do. For solving techniques, see the <a href="/guides">guides</a>. For a dated list of changes, see <a href="/updates">what’s new</a>.</p>
+
+  <div class="grid-cards">
+    {notes.map((n) => (
+      <article class="card">
+        <p class="eyebrow"><time datetime={n.date}>{longDate(n.date)}</time></p>
+        <h2><a href={`/notes/${n.slug}`}>{n.title}</a></h2>
+        <p>{n.description}</p>
+      </article>
+    ))}
+  </div>
+</Base>
+
+<style>
+  .card .eyebrow { margin-bottom: 4px; }
+  .card h2 { margin-top: 0; font-size: 1.35rem; }
+</style>

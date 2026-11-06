@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import { longDate } from '../lib/notes';
+
+/* A plain record of what changed and when. Add new entries at the top. */
+const updates: { date: string; items: string[] }[] = [
+  {
+    date: '2026-11-06',
+    items: [
+      'Started <a href="/notes">Notes</a>, a set of articles on how the puzzles are made: <a href="/notes/one-answer-every-time">checking every puzzle has one answer</a>, <a href="/notes/daily-puzzles-without-a-server">how the daily puzzles work</a>, <a href="/notes/hints-that-teach">how hints are designed</a> and <a href="/notes/designing-for-every-player">the three play styles</a>.',
+      'Added this page, so you can see what has changed and when.',
+    ],
+  },
+  {
+    date: '2026-11-04',
+    items: [
+      'New sound effects and music throughout, all from freely licensed (CC0) collections.',
+      'Phone play is easier: a compact header, a crosshair and drag count in <a href="/island-sketch">Island Sketch</a>, bridge previews in <a href="/isle-spans">Isle Spans</a>, and zoom in <a href="/scribble-siege">Scribble Siege</a>.',
+      '<a href="/margin-merge">Margin Merge</a> has a softer, rounded look and a wooden workshop board.',
+      'Three play styles: Sprout, Explorer and Master. Also new: larger text sizes, a Clearer patterns option that doesn’t rely on colour, and short tours from Pip the pencil.',
+      'The home page is now a map of the Lantern Isles. There are daily tasks, weekly events, decorations to earn with lantern light, and a weekly streak freeze.',
+      'A new display typeface, icon badges and an optional Night theme.',
+      'Every game responds to your moves with sparkles, sounds and a celebration when you solve a puzzle.',
+    ],
+  },
+  {
+    date: '2026-11-02',
+    items: [
+      'Margin Merge gained a four-chapter story about restoring an old studio, with island stories and workshop tools to earn.',
+      'A new soundtrack for the island.',
+    ],
+  },
+  {
+    date: '2026-10-23',
+    items: [
+      'Doodle Heroes relaunched as a collection of logic puzzles and doodle games. It starts with <a href="/island-sketch">Island Sketch</a> (picture logic), <a href="/isle-spans">Isle Spans</a> (bridges) and <a href="/lighthouse-wiring">Lighthouse Wiring</a> (rotating tiles), tied together by <a href="/expedition">the Lantern Isles expedition</a>.',
+      'Six illustrated <a href="/guides">solving guides</a> and three complete walkthroughs, with every step taken from a real puzzle.',
+      'Also new: <a href="/scribble-siege">Scribble Siege</a>, an action game, <a href="/doodle-guess">Doodle Guess</a>, a daily drawing to guess, and <a href="/margin-merge">Margin Merge</a>.',
+      'A new daily puzzle for each logic game, generated fresh every day and checked to be solvable without guessing.',
+    ],
+  },
+];
+---
+<Base
+  title="What’s new"
+  description="A dated record of changes to Doodle Heroes: new games, puzzles, guides, accessibility settings and fixes."
+  section="notes"
+  ads={false}
+>
+  <h1>What’s new</h1>
+  <p class="lede">Everything that has changed on Doodle Heroes, newest first. Want to know how something works? See the <a href="/notes">notes</a>.</p>
+
+  {updates.map((u) => (
+    <section>
+      <h2><time datetime={u.date}>{longDate(u.date)}</time></h2>
+      <ul>{u.items.map((item) => <li set:html={item} />)}</ul>
+    </section>
+  ))}
+</Base>

@@ -10,7 +10,7 @@ interface Props {
   ads?: boolean;
   /** Which top-level section to mark as current in the nav. */
   section?: 'home' | 'games' | 'scribble-siege' | 'doodle-guess' | 'merge' | 'expedition'
-    | 'island-sketch' | 'isle-spans' | 'lighthouse-wiring' | 'guides' | 'about' | 'journal' | 'settings';
+    | 'island-sketch' | 'isle-spans' | 'lighthouse-wiring' | 'guides' | 'notes' | 'about' | 'journal' | 'settings';
   wide?: boolean;
   noindex?: boolean;
   /** A play screen: on phones the board's own toolbar replaces the bottom nav. */
@@ -63,6 +63,7 @@ const navKey = section && gameSections.includes(section) ? 'games' : section;
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-2838226413097378">
   {ads && (
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2838226413097378" crossorigin="anonymous"></script>
   )}
@@ -99,6 +100,8 @@ const navKey = section && gameSections.includes(section) ? 'games' : section;
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
         <a href="/guides">Guides</a>
+        <a href="/notes">Notes</a>
+        <a href="/updates">What’s new</a>
         <a href="/expedition">Expedition</a>
         <a href="/progress">Journal</a>
       </nav>

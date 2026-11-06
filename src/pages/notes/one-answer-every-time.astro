@@ -1,0 +1,58 @@
+---
+import NotePage from '../../components/NotePage.astro';
+---
+<NotePage slug="one-answer-every-time">
+  <p class="lede">A logic puzzle with two answers is a broken puzzle. Somewhere along the way you are forced to guess, and the guess can be “wrong” even when it fits every clue. So before any puzzle reaches this site, a program has to finish it without guessing even once.</p>
+
+  <h2>The rule we hold ourselves to</h2>
+  <p>Every puzzle in <a href="/island-sketch">Island Sketch</a>, <a href="/isle-spans">Isle Spans</a> and <a href="/lighthouse-wiring">Lighthouse Wiring</a> has to pass one test: a solver that knows only the techniques a person would use, and is never allowed to try something and back out, must be able to fill in the whole board.</p>
+  <p>That one test gives us two guarantees at once:</p>
+  <ul>
+    <li><strong>The puzzle has exactly one answer.</strong> Each step the solver takes is forced: it writes down only what must be true in <em>every</em> solution. If forced steps alone fill the whole board, there was only ever one way to fill it.</li>
+    <li><strong>You never need to guess.</strong> The solver uses the same deductions our <a href="/guides">guides</a> teach, so a person can follow the same path. If the program needed trial and error, the puzzle is rejected.</li>
+  </ul>
+  <p>The first guarantee is about the puzzle. The second is about you, and it is the one we care about more. A puzzle can have a unique answer and still be miserable if the only way to find it is to try every option.</p>
+
+  <h2>Island Sketch: one line at a time</h2>
+  <p>In a picture-logic puzzle each row and column has a clue, such as <code>3 1</code>: a run of three filled squares, then a gap, then one more. Our solver looks at a single line and asks a simple question about each square: <em>in every way these blocks could be placed, given what we already know, is this square always filled, or always empty?</em></p>
+  <p>If a square is filled in every arrangement, it must be filled. If it is empty in every arrangement, it must be empty. Otherwise we can’t say yet. The solver then moves to the next line, and keeps going round all the rows and columns until a full pass changes nothing.</p>
+  <p>The clever part is not checking every arrangement one by one, because a long line can have thousands. The solver works from both ends with a small table that records, for each position, whether the rest of the line can still hold the remaining blocks. That makes a 10 × 10 grid take a fraction of a millisecond. It is fast enough to check a whole year of daily puzzles in a test run, and to work out a hint the moment you ask for one.</p>
+  <p>This is exactly “line logic”: the overlap rule, out-of-reach squares, gaps too small for a block. All of it falls out of that one question, which is why the <a href="/guides/nonogram-basics">beginner</a> and <a href="/guides/nonogram-advanced">advanced</a> guides can show every technique as a real step the solver took.</p>
+
+  <h2>Isle Spans: ranges, not guesses</h2>
+  <p>A bridge puzzle is harder to reason about, because a choice in one corner can matter on the far side of the map. Rather than placing bridges, our solver keeps a range for every possible bridge: the fewest and the most it could still hold, from zero to two. Each rule narrows a range, and nothing is final until its range closes to a single number.</p>
+  <p>It uses four kinds of reasoning, in roughly the order a person reaches for them:</p>
+  <ol>
+    <li><strong>Counting.</strong> If an island needs six bridges and its neighbours can offer at most six, every bridge must be at its maximum. If its neighbours could offer only one bridge more than it needs, every neighbour must send it at least one.</li>
+    <li><strong>Crossing.</strong> Bridges can’t cross. Once a bridge is certain, any bridge that would cross it is ruled out.</li>
+    <li><strong>Isolation.</strong> All the islands must end up connected. If a bridge would close off a little group that is already complete, that bridge is impossible.</li>
+    <li><strong>Connection.</strong> If a group of islands has only one way left to reach the rest, it must take it.</li>
+  </ol>
+  <p>The last two are what make bridge puzzles interesting, and they are what the <a href="/guides/bridges-advanced">advanced guide</a> spends its time on.</p>
+
+  <h2>Lighthouse Wiring: every turn a tile could make</h2>
+  <p>Each tile in Lighthouse Wiring can face up to four ways. The solver keeps the list of turns each tile might still have, and crosses turns off using rules a player learns quickly:</p>
+  <ul>
+    <li>a wire can’t point off the board, and two neighbours must agree about the wire between them;</li>
+    <li>two tiles already joined can’t be joined again, because that would make a loop;</li>
+    <li>a connection that would seal off a finished section is impossible;</li>
+    <li>a section with only one way out must take it.</li>
+  </ul>
+  <p>When every tile is down to one turn, the puzzle is solved, and because each turn was crossed off by a rule, it is the only solution.</p>
+
+  <h2>Two checks, not one</h2>
+  <p>For the hand-built Isle Spans and Lighthouse Wiring puzzles, we don’t rely on the deduction check alone. Our test suite also runs a separate, brute-force search that tries every possibility and counts the solutions, and for each puzzle that count must be exactly one. The two programs are written differently and share no reasoning, so a bug in one is very unlikely to hide a bug in the other. For Island Sketch, the tests also confirm that the picture the solver draws is exactly the picture we designed.</p>
+  <p>Those tests run on every change to the site. If someone edits a puzzle and accidentally makes it ambiguous, the build fails before the change can go live.</p>
+
+  <h2>Making new puzzles</h2>
+  <p>The daily puzzles are made fresh rather than drawn by hand, using the same idea in reverse:</p>
+  <ol>
+    <li>Build a random <em>finished</em> board. For Isle Spans, islands grow outward from a single starting island, with an occasional extra bridge so the maps aren’t all simple trees. For Lighthouse Wiring, wires branch out from the lighthouse until every tile is lit, then each tile is spun to a random turn.</li>
+    <li>Turn that board into clues: island numbers, line clues, or scrambled tiles.</li>
+    <li>Hand the clues to the deduction solver. If it finishes, keep the puzzle. If it gets stuck, throw it away and try again.</li>
+  </ol>
+  <p>Most attempts are thrown away, especially for bridges. That’s fine: each attempt takes a few milliseconds, and the result is a puzzle we know can be finished by thinking alone. You can read more about how a puzzle becomes “today’s” puzzle in <a href="/notes/daily-puzzles-without-a-server">A new puzzle every day, with no server at all</a>.</p>
+
+  <h2>What this means when you play</h2>
+  <p>If you are stuck, there is always a next step that can be worked out from what is on the board. It may be hidden in a column you haven’t looked at for a while, or depend on a group of islands you haven’t noticed is nearly closed. But it is there. The Hint button proves it: it asks the same solver for the next forced step and points you to it. See <a href="/notes/hints-that-teach">Hints that teach instead of telling</a> for how that works.</p>
+</NotePage>

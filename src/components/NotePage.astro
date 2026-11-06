@@ -1,0 +1,45 @@
+---
+/* Shared frame for a Notes article: header with dates, structured data,
+   and links to the other notes. */
+import Base from '../layouts/Base.astro';
+import { notes, noteBySlug, longDate } from '../lib/notes';
+
+interface Props { slug: string }
+const { slug } = Astro.props;
+const note = noteBySlug(slug);
+if (!note) throw new Error(`Unknown note: ${slug}`);
+const others = notes.filter((n) => n.slug !== slug);
+const url = new URL(`/notes/${slug}`, Astro.site).href;
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: note.title,
+  description: note.description,
+  datePublished: note.date,
+  dateModified: note.updated ?? note.date,
+  mainEntityOfPage: url,
+  author: { '@type': 'Organization', name: 'Doodle Heroes', url: new URL('/about', Astro.site).href },
+  publisher: { '@type': 'Organization', name: 'Doodle Heroes', url: new URL('/', Astro.site).href },
+};
+---
+<Base title={note.title} description={note.description} section="notes">
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+  <article class="note-article">
+    <p class="eyebrow"><a href="/notes">Notes</a> · <time datetime={note.date}>{longDate(note.date)}</time>{note.updated && <> · updated <time datetime={note.updated}>{longDate(note.updated)}</time></>}</p>
+    <h1>{note.title}</h1>
+    <slot />
+  </article>
+  <aside class="note-more">
+    <h2>More notes</h2>
+    <ul>
+      {others.map((n) => <li><a href={`/notes/${n.slug}`}>{n.title}</a></li>)}
+    </ul>
+    <p><a href="/notes">All notes</a> · <a href="/updates">What’s new on the site</a> · <a href="/guides">Puzzle guides</a></p>
+  </aside>
+</Base>
+
+<style>
+  .note-article { max-width: 760px; }
+  .note-article :global(pre) { background: var(--soft); border-radius: 14px; padding: 14px 18px; overflow-x: auto; font-size: 14px; }
+  .note-more { max-width: 760px; margin-top: 48px; padding-top: 24px; border-top: 2px dashed var(--rule); }
+</style>

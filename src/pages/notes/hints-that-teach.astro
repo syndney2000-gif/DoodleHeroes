@@ -1,0 +1,38 @@
+---
+import NotePage from '../../components/NotePage.astro';
+---
+<NotePage slug="hints-that-teach">
+  <p class="lede">Most puzzle games answer “I’m stuck” by filling in a random square. That gets you moving again, but you learn nothing, and the puzzle feels a little less yours. We wanted a hint that works more like a friend looking over your shoulder and saying, “Have you looked at that column?”</p>
+
+  <h2>Two presses, not one</h2>
+  <p>In Island Sketch, the first press of Hint doesn’t change the board. It highlights one row or column, shows its clue, and tells you how many squares in it can now be worked out. For example: <em>“Look at column 4 (clue 3 1): you can work out 2 more cells.”</em></p>
+  <p>Very often that is all you need. You look at the line, see the overlap or the gap you missed, and fill it in yourself. Only if you press Hint a second time are those squares filled in for you.</p>
+  <p>Isle Spans and Lighthouse Wiring follow the same idea: the hint shows you <em>where</em> to look before it shows you <em>what</em> goes there.</p>
+
+  <h2>Where the hint comes from</h2>
+  <p>A hint is not a peek at the stored answer. It comes from the same deduction solver that checks every puzzle before it reaches the site (we describe it in <a href="/notes/one-answer-every-time">How we make sure every puzzle has exactly one answer</a>). When you ask, the game hands the solver your board exactly as it is now and asks for a single step: <em>what is the next thing that can be worked out from here?</em></p>
+  <p>That has a useful consequence. The hint always points at something you could have reasoned out yourself from the squares already on the board. It never jumps ahead to a square that only makes sense once you know the picture.</p>
+
+  <h2>Mistakes come first</h2>
+  <p>There is one exception. If something on the board is wrong, the hint shows your mistakes before anything else, marked in red. A deduction built on a wrong square isn’t safe: the solver might “prove” something that isn’t true, and you would end up further from the answer. So the honest hint is to fix the mistake first.</p>
+  <p>If you just want to know whether you’ve gone wrong, without a hint, use Check instead. It marks mistakes and costs nothing.</p>
+
+  <h2>Hints and stars</h2>
+  <p>Each solved puzzle earns up to three stars. Each hint press costs one star, and you never drop below one, so finishing always counts. Undo, Check and starting again are free.</p>
+  <p>How much that matters depends on how you like to play:</p>
+  <ul>
+    <li>In <strong>Sprout</strong>, if you pause for about half a minute, Pip the pencil offers to point at a good spot. You never have to accept.</li>
+    <li>In <strong>Explorer</strong>, hints are there when you want them, with no nudges.</li>
+    <li>In <strong>Master</strong>, the first hint in a puzzle asks you to confirm, because it ends a flawless run. A stray tap shouldn’t cost you a badge.</li>
+  </ul>
+  <p>We write more about the play styles in <a href="/notes/designing-for-every-player">Sprout, Explorer and Master: one puzzle, three ways to play</a>.</p>
+
+  <h2>Learning the technique, not just the square</h2>
+  <p>The hints and the <a href="/guides">guides</a> are built on the same solver. Every example in the guides is a real step the solver took on a real puzzle, so the reasoning a hint points you to has a name and a worked example. If a hint keeps sending you to the same kind of situation, the matching guide section explains it:</p>
+  <ul>
+    <li><a href="/guides/nonogram-basics">Picture logic for beginners</a> and <a href="/guides/nonogram-advanced">advanced picture logic</a></li>
+    <li><a href="/guides/bridges-basics">Bridge puzzles for beginners</a> and <a href="/guides/bridges-advanced">advanced bridge puzzles</a></li>
+    <li><a href="/guides/wiring-basics">Wiring puzzles for beginners</a> and <a href="/guides/wiring-advanced">advanced wiring puzzles</a></li>
+  </ul>
+  <p>The aim is that over time you need the Hint button less and less. That, more than any star count, is how you know you’re getting better.</p>
+</NotePage>

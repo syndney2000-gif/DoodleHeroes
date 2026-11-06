@@ -1,0 +1,39 @@
+---
+import NotePage from '../../components/NotePage.astro';
+---
+<NotePage slug="daily-puzzles-without-a-server">
+  <p class="lede">Every day there is a new Island Sketch grid, a new Isle Spans map and a new Lighthouse Wiring board. Everyone who plays on the same date gets the same three puzzles. Yet the site has no puzzle database and no server that hands them out. Your browser builds each one on the spot.</p>
+
+  <h2>Why not just store the puzzles?</h2>
+  <p>We could make a few hundred puzzles in advance and upload them. But that means a list that runs out, a server to keep running, and a request every time you open the page. Building the puzzle in the browser has some nice side effects:</p>
+  <ul>
+    <li><strong>It works offline.</strong> Once the page has loaded, the daily puzzle needs no network at all.</li>
+    <li><strong>It never runs out.</strong> There is a puzzle for every date, including dates years from now.</li>
+    <li><strong>Nothing about you is needed.</strong> No account, no sign-in, nothing sent to us. Your progress stays in your own browser, as our <a href="/privacy">privacy policy</a> explains.</li>
+  </ul>
+
+  <h2>Randomness you can repeat</h2>
+  <p>The trick is a <em>seeded</em> random number generator. An ordinary random function gives different numbers every time. A seeded one is a small formula: give it the same starting number, the seed, and it produces exactly the same sequence of “random” numbers every time, on every device.</p>
+  <p>We make the seed from text. For Island Sketch on 6 November 2026, the text is:</p>
+  <pre><code>2026-11-06:island-sketch</code></pre>
+  <p>A short hashing function, FNV-1a, turns that text into a 32-bit number. That number seeds a tiny generator called mulberry32, which is a handful of multiplications and bit shifts. Every browser runs the same arithmetic, so every player gets the same sequence and therefore the same puzzle.</p>
+  <p>The game name is part of the seed so the three daily puzzles don’t share a sequence. Change one character, even the date by a single day, and the sequence is completely different.</p>
+
+  <h2>From random numbers to a fair puzzle</h2>
+  <p>Random numbers alone don’t make a good puzzle. Each game feeds them through its generator and then through its solver, which only keeps puzzles that can be finished without guessing. (We explain that check in detail in <a href="/notes/one-answer-every-time">How we make sure every puzzle has exactly one answer</a>.)</p>
+  <ul>
+    <li><strong>Island Sketch</strong> draws a 10 × 10 grid where each square is filled with a probability between 55% and 67%, picked fresh for each attempt. Denser grids give longer runs and friendlier clues, and the small variation means some days are harder than others. The first grid that line logic can finish becomes the day’s puzzle.</li>
+    <li><strong>Isle Spans</strong> grows a 9 × 9 map of up to fifteen islands outward from one island, with a 15% chance of extra bridges that create loops, and keeps the first map the solver can finish.</li>
+    <li><strong>Lighthouse Wiring</strong> branches a network across a 7 × 7 board from the lighthouse in the middle, spins every tile, and keeps the first board the solver can finish. Four-way crossings only have one possible turn and give you nothing to do, so a board with more than one is skipped.</li>
+  </ul>
+  <p>Because the seed fixes the whole sequence, the rejected attempts are the same for everyone too. Two players on opposite sides of the world skip the same unusable grids and land on the same puzzle.</p>
+
+  <h2>Whose “today”?</h2>
+  <p>We use your own device’s date, not a single worldwide clock. A new puzzle appears at your local midnight, not at some arbitrary hour that falls in the middle of your afternoon. The downside is that a friend in another time zone might be a day ahead or behind. We think a puzzle that turns over while you sleep is the better trade.</p>
+
+  <h2>How we know it holds up</h2>
+  <p>A generator that “usually” finds a puzzle isn’t good enough, so our tests check a full year of dates for each game. For every day in the year they confirm that a puzzle is found, that the solver can finish it, and that asking twice for the same date gives the same board while neighbouring dates give different ones. The tests run before every update goes live.</p>
+
+  <h2>Try today’s</h2>
+  <p>The daily puzzles are on the <a href="/">home page</a>, under “Today on the island”. Play every day to keep a streak going. If you miss a day, once a week a lantern freeze keeps the streak alight.</p>
+</NotePage>
